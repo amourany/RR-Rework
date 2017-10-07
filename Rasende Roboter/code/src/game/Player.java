@@ -6,77 +6,78 @@ import java.net.InetAddress;
  * Class containing the data of a user
  */
 public class Player {
-	private InetAddress ip;
-	private String pseudo;
-	private int points;
-	private int nbMoveProposed;
-	private boolean host;
-	private boolean hand;
-	
-	public Player(String pseudo)
-	{
-		this.pseudo = pseudo;
-	}
-	
-	/**
-	 * Constructor
-	 * @param ip : InetAddress
-	 * @param pseudo : String for the username
-	 */
-	public Player(final InetAddress ip, final String pseudo)
-	{
-		this.ip = ip;
-		this.pseudo = pseudo;
-		this.points=0;
-		this.nbMoveProposed=0;
-		this.host=false;
-	}
+    private InetAddress ip;
+    private String pseudo;
+    private int points;
+    private int nbMoveProposed;
+    private boolean host;
+    private boolean hand;
 
-	public boolean isHost() {
-		return host;
-	}
+    public Player(String pseudo) {
+        this.pseudo = pseudo;
+    }
 
-	public void setHost(final boolean host) {
-		this.host = host;
-	}
+    /**
+     * Constructor
+     *
+     * @param ip
+     *            : InetAddress
+     * @param pseudo
+     *            : String for the username
+     */
+    public Player(final InetAddress ip, final String pseudo) {
+        this.ip = ip;
+        this.pseudo = pseudo;
+        this.points = 0;
+        this.nbMoveProposed = 0;
+        this.host = false;
+    }
 
-	public InetAddress getIp() {
-		return ip;
-	}
+    public boolean isHost() {
+        return this.host;
+    }
 
-	public void setIp(final InetAddress ip) {
-		this.ip = ip;
-	}
+    public void setHost(final boolean host) {
+        this.host = host;
+    }
 
-	public String getPseudo() {
-		return pseudo;
-	}
+    public InetAddress getIp() {
+        return this.ip;
+    }
 
-	public void setPseudo(final String pseudo) {
-		this.pseudo = pseudo;
-	}
+    public void setIp(final InetAddress ip) {
+        this.ip = ip;
+    }
 
-	public int getPoints() {
-		return points;
-	}
+    public String getPseudo() {
+        return this.pseudo;
+    }
 
-	public void setPoints(final int points) {
-		this.points = points;
-	}
+    public void setPseudo(final String pseudo) {
+        this.pseudo = pseudo;
+    }
 
-	public int getNbMoveProposed() {
-		return nbMoveProposed;
-	}
+    public int getPoints() {
+        return this.points;
+    }
 
-	public void setNbMoveProposed(final int nbMove) {
-		this.nbMoveProposed = nbMove;
-	}
+    public void setPoints(final int points) {
+        this.points = points;
+    }
 
-	public boolean isHand() {
-		return hand;
-	}
+    public int getNbMoveProposed() {
+        return this.nbMoveProposed;
+    }
 
-	public void setHand(boolean hand) {
-		this.hand = hand;
-	}
+    public void setNbMoveProposed(final int nbMove) {
+        this.nbMoveProposed = nbMove;
+    }
+
+    public boolean isHand() {
+        return this.hand;
+    }
+
+    public void setHand(boolean hand) {
+        this.hand = hand;
+    }
 }
