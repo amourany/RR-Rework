@@ -1,0 +1,11 @@
+package model;
+
+/**
+ * List of possible movements.
+ */
+public enum Movement {
+	Up,
+	Down,
+	Left,
+	Right;
+}

@@ -1,0 +1,126 @@
+package model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Model {
+	private Board gameBoard;
+	private List<Robot> robots;
+	private List<Player> players;
+	private int currentRound;
+	
+	
+	public Model() {
+		this.currentRound = 1;
+		this.gameBoard = new Board();
+		this.robots = new ArrayList<Robot>();
+		this.players = new ArrayList<Player>();
+	}
+
+	public Board getGameBoard() {
+		return gameBoard;
+	}
+
+
+	public void setGameBoard(Board gameBoard) {
+		this.gameBoard = gameBoard;
+	}
+
+
+	public List<Robot> getRobots() {
+		return robots;
+	}
+
+
+	public void setRobots(List<Robot> robots) {
+		this.robots = robots;
+	}
+
+
+	public List<Player> getPlayers() {
+		return players;
+	}
+
+
+	public void setPlayers(List<Player> players) {
+		this.players = players;
+	}
+
+
+	public int getCurrentRound() {
+		return currentRound;
+	}
+
+
+	public void setCurrentRound(int currentRound) {
+		this.currentRound = currentRound;
+	}
+	
+	/**
+	 * Default boxes are empty. Then we change type and color of the special boxes.
+	 */
+	
+	public void generateBoard()
+	{
+		//Robot test
+		Robot r = new Robot(BoxColor.Blue);
+		r = r.placeOnBoard(robots);
+		robots.add(r);
+		r = new Robot(BoxColor.Green);
+		r = r.placeOnBoard(robots);
+		robots.add(r);
+		r = new Robot(BoxColor.Yellow);
+		r = r.placeOnBoard(robots);
+		robots.add(r);
+		r = new Robot(BoxColor.Red);
+		r = r.placeOnBoard(robots);
+		robots.add(r);
+		
+		//Central Box
+		gameBoard.getBox()[7][7].setType(BoxType.Central);
+		gameBoard.getBox()[7][8].setType(BoxType.Central);
+		gameBoard.getBox()[8][7].setType(BoxType.Central);
+		gameBoard.getBox()[8][8].setType(BoxType.Central);
+		
+		//Central Box
+		gameBoard.getBox()[0][0].setType(BoxType.Start);
+		gameBoard.getBox()[0][15].setType(BoxType.Start);
+		gameBoard.getBox()[15][0].setType(BoxType.Start);
+		gameBoard.getBox()[15][15].setType(BoxType.Start);
+		
+		gameBoard.getBox()[0][0].setColor(BoxColor.Blue);
+		gameBoard.getBox()[0][15].setColor(BoxColor.Green);
+		gameBoard.getBox()[15][0].setColor(BoxColor.Yellow);
+		gameBoard.getBox()[15][15].setColor(BoxColor.Red);
+		
+		//More Box
+		gameBoard.getBox()[0][4].setType(BoxType.More);
+		gameBoard.getBox()[4][7].setType(BoxType.More);
+		gameBoard.getBox()[12][2].setType(BoxType.More);
+		gameBoard.getBox()[9][10].setType(BoxType.More);
+		
+		gameBoard.getBox()[0][4].setSouth(true);
+		gameBoard.getBox()[4][7].setSouth(true);
+		gameBoard.getBox()[0][4].setEast(true);
+		gameBoard.getBox()[4][7].setEast(true);
+		
+		gameBoard.getBox()[12][2].setNorth(true);
+		gameBoard.getBox()[9][10].setNorth(true);
+		gameBoard.getBox()[12][2].setWest(true);
+		gameBoard.getBox()[9][10].setWest(true);
+		
+		gameBoard.getBox()[0][4].setColor(BoxColor.Blue);
+		gameBoard.getBox()[4][7].setColor(BoxColor.Green);
+		gameBoard.getBox()[12][2].setColor(BoxColor.Yellow);
+		gameBoard.getBox()[9][10].setColor(BoxColor.Red);
+		
+		
+		
+	}
+	
+	public void move(Robot r,Movement m)
+	{
+		//Move a robot
+	}
+
+}

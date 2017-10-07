@@ -1,0 +1,94 @@
+package game;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.Timer;
+
+import launcher.Controller;
+
+/**
+ * Countdown using the Timer class of Java
+ */
+public class Countdown {
+	/**
+	 * @see Timer
+	 */
+	private Timer timer;
+	private int time;
+	
+	/**
+	 * @see Controller
+	 */
+	private Controller controller;
+	
+	/**
+	 * Constructor of the class
+	 * @param c : Controller
+	 * @see Controller
+	 */
+	public Countdown(Controller c)
+	{
+		controller=c;
+		timer = createCountdown();
+		time=Constant.TIMER;
+	}
+
+	/**
+	 * Creation and management of the countdown
+	 * @return Timer
+	 * @see Timer
+	 */
+	public Timer createCountdown() {
+
+		ActionListener action = new ActionListener (){
+		
+		public void actionPerformed (ActionEvent event){
+			if(time>0)
+			{
+				time--;
+				controller.refreshColumn();
+			}
+			else
+			{
+				timer.stop();
+				controller.timeLimit();
+			}
+		}
+
+		};
+		return new Timer (1000, action); 
+	}
+	
+	/**
+	 * Start the Countdown
+	 */
+	public void startCountdown()
+	{
+		timer.start();
+	}
+	
+	/**
+	 * Stop the Countdown
+	 */
+	public void stopCountdown()
+	{
+		timer.stop();
+	}
+
+	/**
+	 * Reset the Countdown
+	 */
+	public void resetCountdown() {
+		time=Constant.TIMER;
+		
+	}
+	
+	public int getTime() {
+		return time;
+	}
+
+	public void setTime(int time) {
+		this.time = time;
+	}
+}

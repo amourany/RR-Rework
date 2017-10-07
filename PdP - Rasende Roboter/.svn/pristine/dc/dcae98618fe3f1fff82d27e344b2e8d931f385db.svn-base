@@ -1,0 +1,54 @@
+package game;
+
+import javax.swing.JMenuBar;
+
+/**
+ * Class containing all general constants (sizes) and Enum
+ */
+public class Constant {
+	public static final String frameTitle = "Rasende Roboter";
+	
+	public static final String imagesPath = "code/images/";
+
+	public static final int caseSize = 40;
+	public static final int numberOfcase = 16;
+	public static final int boardSize = caseSize * numberOfcase;
+
+	public static final int columnWidth = 250;
+	
+	public static final int frameHeight = boardSize + JMenuBar.HEIGHT;
+	public static final int frameWidth = boardSize + columnWidth;
+		
+	/**
+	 * List of possible directions.
+	 */
+	public enum Direction {
+		Up,
+		Down,
+		Left,
+		Right;
+	}
+
+	/**
+	 * The color of a box or a robot, required for the choice of the associated image.
+	 */
+	public enum Color {
+		Blue,
+		Green,
+		Red,
+		Yellow,
+	}
+
+	/**
+	 * The type of a box, required for the choice of the associated image.
+	 */
+	public enum BoxType {
+		Empty,
+		Central,
+		More,
+		Sun,
+		Diamond,
+		Triangle,
+		Multi;
+	}
+}

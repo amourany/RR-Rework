@@ -1,0 +1,52 @@
+package interactions;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+import model.Constant.Color;
+import model.Constant.Direction;
+
+import controller.Controller;
+
+public class KeyEventListener implements KeyListener {
+
+	private Controller controller;
+	
+	public KeyEventListener(Controller c)
+	{
+		this.controller = c;
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_UP)
+			controller.moveRobotInDirection(Direction.Up);
+		else if (e.getKeyCode() == KeyEvent.VK_DOWN)
+			controller.moveRobotInDirection(Direction.Down);
+		else if (e.getKeyCode() == KeyEvent.VK_RIGHT)
+			controller.moveRobotInDirection(Direction.Right);
+		else if (e.getKeyCode() == KeyEvent.VK_LEFT)
+			controller.moveRobotInDirection(Direction.Left);
+		if (e.getKeyCode() == KeyEvent.VK_1 || e.getKeyCode() == KeyEvent.VK_R)
+			controller.keySelectedRobot(Color.Red);
+		else if (e.getKeyCode() == KeyEvent.VK_2 || e.getKeyCode() == KeyEvent.VK_G)
+			controller.keySelectedRobot(Color.Green);
+		else if (e.getKeyCode() == KeyEvent.VK_3 || e.getKeyCode() == KeyEvent.VK_B)
+			controller.keySelectedRobot(Color.Blue);
+		else if (e.getKeyCode() == KeyEvent.VK_4 || e.getKeyCode() == KeyEvent.VK_Y)
+			controller.keySelectedRobot(Color.Yellow);
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

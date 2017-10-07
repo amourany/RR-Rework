@@ -1,0 +1,26 @@
+package game;
+/**
+ * Class containing a quarter of the Board
+ */
+public class BoardPiece {
+	/**
+	 * @see Box
+	 */
+	private Box[][] box;
+	private static final int piece_size = 8;
+	private int piece_orientation;
+
+	public BoardPiece() {
+		box = new Box[piece_size][piece_size];
+	}
+	
+	/**
+	 * 
+	 * @param piece
+	 */
+	public void rotation(Box[][] piece)
+	{
+		Box[][] rotated_piece;
+		//TODO copier ligne i dans colonne piece_size-1-j
+	}
+}

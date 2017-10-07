@@ -1,0 +1,204 @@
+package launcher;
+
+import game.Constant;
+import game.Game;
+import game.RasendeFrame;
+import game.Robot;
+import game.Constant.Color;
+import game.Constant.Direction;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
+
+public class Controller implements ActionListener, MouseListener, KeyListener, WindowListener{
+	private Game game;
+	private RasendeFrame frame;
+	
+	public Controller() {
+		frame = new RasendeFrame(this);
+		game = new Game();
+		game.startNewGame();
+		
+		frame.refreshBoard(game);
+		
+		frame.pack();
+		
+		frame.setVisible(true);
+	}
+
+	public Game getgame() {
+		return game;
+	}
+
+	private void moveRobotInDirection(Direction d) {
+		if (this.game.getSelectedRobot() != null) {
+			game.moveSelectedRobot(d);
+			frame.refreshBoard(this.game);
+			frame.refreshColumn(this.game);
+		}
+	}
+	
+	private void askToQuit(){
+		frame.dispose();
+	}
+
+	public void actionPerformed(ActionEvent e) {		
+		if(e.getActionCommand() == "<"){
+			game.loadPreviousPosition();
+			frame.refresh(this.game);			
+			return;
+		}
+		else if(e.getActionCommand() == ">"){
+			game.loadNextPosition();
+			frame.refresh(this.game);			
+			return;
+		}		
+		else if(e.getActionCommand() == "Quit"){
+			askToQuit();
+			return;
+		}
+		else if(e.getActionCommand() == "New Game"){
+			game.startNewGame();
+			frame.refresh(this.game);
+			return;
+		}		
+		else if(e.getActionCommand() == "Solution"){
+			game.startSolver();
+		}
+		
+		System.out.println("Controller actionPerformed : " + e.getActionCommand());
+	}
+
+	public void mouseClicked(MouseEvent e) {
+		int line = e.getY()/Constant.caseSize;
+		int column = e.getX()/Constant.caseSize;
+		
+		for(Robot r : this.game.getRobots()){
+			if(column == r.x && line == r.y){
+				this.game.setSelectedRobot(r);
+				frame.refreshBoard(this.game);
+				return;
+			}
+		}
+		
+		if(this.game.getSelectedRobot() != null){
+			if(this.game.getSelectedRobot().x == column){
+				if(this.game.getSelectedRobot().y > line)
+					this.moveRobotInDirection(Direction.Up);
+				else
+					this.moveRobotInDirection(Direction.Down);
+			}
+			else if(this.game.getSelectedRobot().y == line){
+				if(this.game.getSelectedRobot().x > column)
+					this.moveRobotInDirection(Direction.Left);
+				else
+					this.moveRobotInDirection(Direction.Right);
+			}
+		}		
+	}
+
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+		
+		if (arg0.getKeyCode() == KeyEvent.VK_UP)
+			this.moveRobotInDirection(Direction.Up);
+		else if (arg0.getKeyCode() == KeyEvent.VK_DOWN)
+			this.moveRobotInDirection(Direction.Down);
+		else if (arg0.getKeyCode() == KeyEvent.VK_RIGHT)
+			this.moveRobotInDirection(Direction.Right);
+		else if (arg0.getKeyCode() == KeyEvent.VK_LEFT)
+			this.moveRobotInDirection(Direction.Left);
+	
+		else if (arg0.getKeyCode() == KeyEvent.VK_1 || arg0.getKeyCode() == KeyEvent.VK_R)
+			game.setSelectedRobot(Color.Red);
+		else if (arg0.getKeyCode() == KeyEvent.VK_2 || arg0.getKeyCode() == KeyEvent.VK_G)
+			game.setSelectedRobot(Color.Green);
+		else if (arg0.getKeyCode() == KeyEvent.VK_3 || arg0.getKeyCode() == KeyEvent.VK_B)
+			game.setSelectedRobot(Color.Blue);
+		else if (arg0.getKeyCode() == KeyEvent.VK_4 || arg0.getKeyCode() == KeyEvent.VK_Y)
+			game.setSelectedRobot(Color.Yellow);
+		
+		frame.refreshBoard(this.game);
+	}
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		frame.dispose();
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+}

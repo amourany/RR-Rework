@@ -1,0 +1,86 @@
+\documentclass[a4paper, 11pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[frenchb]{babel}
+\usepackage{color}
+\usepackage[final]{pdfpages} 
+\usepackage{verbatim}
+
+\def\blurb{%
+  Université Bordeaux 1 \\
+  Master 1 - Informatique \\[1em]
+  Mémoire - Projet de Programmation}
+\def\clap#1{\hbox to 0pt{\hss #1\hss}}%
+\def\ligne#1{%
+  \hbox to \hsize{%
+    \vbox{\centering #1}}}%
+\def\haut#1#2#3{%
+  \hbox to \hsize{%
+    \rlap{\vtop{\raggedright #1}}%
+    \hss
+    \clap{\vtop{\centering #2}}%
+    \hss
+    \llap{\vtop{\raggedleft #3}}}}%
+\def\bas#1#2#3{%
+  \hbox to \hsize{%
+    \rlap{\vbox{\raggedright #1}}%
+    \hss
+    \clap{\vbox{\centering #2}}%
+    \hss
+    \llap{\vbox{\raggedleft #3}}}}%
+\begin{document}
+\thispagestyle{empty}\vbox to .9\vsize{%
+  \vss
+  \vbox to 1\vsize{%
+    \haut{}{\blurb}{}
+    \vfill
+    \ligne{\Large Création d'IA pour Rasende Roboter}
+    \vspace{5mm}
+    \ligne{Olivier Braïk
+	\\Alexandre Delesse
+	\\Gaëtan Lussagnet
+	\\Alexandre Mourany
+	\\Dimitri Ranc
+\\{\today}}
+    \vfill
+    \ligne{%
+      \begin{tabular}{l}
+         \\Chargé de TD :  Emmanuel Fleury
+      \end{tabular}}
+    \vspace{5mm}
+    \ligne{%
+      \begin{tabular}{l}
+	Clients :\\
+        Tom Bouvier \\
+        Simon Boyé\\
+        Jérôme Kirman \\
+        Noémie-Fleur Sandillon-Rezer \\
+      \end{tabular}
+      }
+    }%
+  \vss
+  }
+
+\newpage
+\section*{Résumé}
+Nous devons proposer aux clients une implémentation du jeu Rasende Roboter sur Mac et Linux. Le programme doit comprendre une partie en solo comprenant les règles basiques du jeu. Les clients ont souhaité ajouter une fonctionnalité qui permet de résoudre le jeu et la possibilité de jouer en réseau.
+Ce document présente notre projet, les différents choix de l'architecture ainsi que des parties délicates du code comme la partie en réseau ou l'algorithme de résolution implémenté.
+
+\tableofcontents
+
+\include{Introduction}
+
+\include{chap1}
+\include{chap2}
+\include{chap3}
+\include{chap4}
+\include{chap5}
+\include{chap6}
+\include{chap7}
+
+\include{Conclusion}
+
+\include{Annexes}
+\nocite*
+\bibliographystyle{plain}
+\bibliography{biblio}
+\end{document}

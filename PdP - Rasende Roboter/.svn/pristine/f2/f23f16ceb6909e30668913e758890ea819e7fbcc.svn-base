@@ -1,0 +1,12 @@
+package interactions;
+
+import java.awt.event.MouseListener;
+
+public class PlayerListener implements BoardInteractions{
+	
+	public MouseListener mouse;
+	
+	public PlayerListener() {
+		
+	}
+}

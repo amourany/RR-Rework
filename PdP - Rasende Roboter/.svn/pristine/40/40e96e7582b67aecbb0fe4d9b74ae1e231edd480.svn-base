@@ -1,0 +1,263 @@
+package game;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+
+/**
+ * Class containing a quarter of the Board
+ */
+public class BoardPiece {
+	/**
+	 * @see Box
+	 */
+	private Box[][] box;
+	private static final int piece_size = 8;
+	private int piece_orientation;
+
+	private File xmlFile;
+	private int initialLocation;
+	private int finalLocation;
+
+	private SAXBuilder sxb = new SAXBuilder();
+
+	private Document xmlDoc = new Document();
+
+
+
+	private ArrayList<Box> boxes;
+
+	public BoardPiece(File xmlFile, int initialLocation, int finalLocation) {
+		this.setXmlFile(xmlFile);
+		this.initialLocation = initialLocation;
+		this.finalLocation = finalLocation;
+
+		boxes = new ArrayList<Box>();
+
+		try {
+			xmlDoc = sxb.build(xmlFile);
+		} catch (JDOMException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+
+		Element root;
+		root = xmlDoc.getRootElement();
+		extractBoxInfo(root);
+		rotateBoxes(boxes);
+		adjustBoxes(boxes);
+	}
+
+	private void rotateBoxes(ArrayList<Box> boxes2) {
+		int difference = initialLocation - finalLocation;
+		System.out.println("Difference  " + difference);
+		
+		if ( Math.abs(difference) == 2 )
+		{
+			rotateRight();
+			rotateRight();
+		}
+		
+		else if ( difference == -1 || difference == 3 )
+			rotateRight();
+		else if ( difference == -3 || difference == 1 )
+		{
+			rotateRight();
+			rotateRight();
+			rotateRight();
+		}
+		
+	}
+
+
+	private void rotateRight() {
+		for( Iterator<Box> i = boxes.iterator(); i.hasNext(); )
+		{
+			Box box = i.next();
+			int oldX=box.getX();
+			int oldY=box.getY();
+			
+			box.setX(Constant.NB_BOXES_PER_PIECE-oldY-1);
+			box.setY(oldX);
+			rotateWalls(box);
+		}
+	}
+		
+
+	private void rotateWalls(Box box) {
+		
+		boolean oldSouth = box.isSouth();
+		boolean oldEast = box.isEast();
+		boolean oldNorth = box.isNorth();
+		boolean oldWest = box.isWest();
+		
+		box.setWest(oldSouth);
+		box.setNorth(oldWest);
+		box.setEast(oldNorth);
+		box.setSouth(oldEast);
+	}
+	
+	private void adjustBoxes(ArrayList<Box> boxes2) {
+		
+		if ( finalLocation == 2 )
+		{
+			adjustX();
+		}
+			
+		else if ( finalLocation == 3 )
+		{
+			adjustX();
+			adjustY();
+		}
+		
+		else if ( finalLocation == 4 )
+		{
+			adjustY();
+		}
+		
+	}
+
+
+	private void adjustY() {
+		for( Iterator<Box> i = boxes.iterator(); i.hasNext(); )
+		{
+			Box box = i.next();
+			box.setY(box.getY()+Constant.NB_BOXES_PER_PIECE);
+		}
+	}
+
+
+	private void adjustX() {
+		for( Iterator<Box> i = boxes.iterator(); i.hasNext(); )
+		{
+			Box box = i.next();
+			box.setX(box.getX()+Constant.NB_BOXES_PER_PIECE);
+		}
+	}
+
+
+	public ArrayList<Box> getBoxes() {
+		return boxes;
+	}
+
+
+	private void extractBoxInfo(Element elem) {
+
+		Element xmlBoxes = elem.getChild("boxes");
+
+		List<Element> xmlBox = xmlBoxes.getChildren("box");
+		Iterator<Element> iteratorBox = xmlBox.iterator();
+		while(iteratorBox.hasNext())
+		{
+			Element box = (Element)iteratorBox.next();
+			Box realBox = new Box();
+
+			int i = Integer.parseInt(box.getChild("i").getText());
+			int j = Integer.parseInt(box.getChild("j").getText());
+			
+			realBox.setX(i);
+			realBox.setY(j);
+
+			Element xmlWalls = box.getChild("walls");
+			List<Element> walls = xmlWalls.getChildren("wall");
+			Iterator<Element> iteratorWalls = walls.iterator();
+			while(iteratorWalls.hasNext())
+			{
+				Element wall = iteratorWalls.next();
+
+				if (wall.getText().equals("Top"))
+					realBox.setWall(Constant.Direction.Up);
+				else if (wall.getText().equals("Right"))
+					realBox.setWall(Constant.Direction.Right);
+				else if (wall.getText().equals("Bottom"))
+					realBox.setWall(Constant.Direction.Down);
+				else if (wall.getText().equals("Left"))
+					realBox.setWall(Constant.Direction.Left);
+			}
+
+			Element xmlGoal = box.getChild("Goal");
+
+			if ( xmlGoal != null )
+			{
+				Element xmlColor = box.getChild("Goal").getChild("color");
+				Element xmlType = box.getChild("Goal").getChild("type");
+				
+				Constant.BoxType boxType = null;
+				Constant.Color boxColor = null;
+				
+				if (xmlType.getText().equals("Plus"))
+					boxType = Constant.BoxType.More;
+				else if (xmlType.getText().equals("Sun"))
+					boxType = Constant.BoxType.Sun;
+				else if (xmlType.getText().equals("Diamond"))
+					boxType = Constant.BoxType.Diamond;
+				else if (xmlType.getText().equals("Triangle"))
+					boxType = Constant.BoxType.Triangle;
+				else if (xmlType.getText().equals("Multi"))
+					boxType = Constant.BoxType.Multi;
+				
+				if (xmlColor.getText().equals("Red"))
+					boxColor = Constant.Color.Red;
+				else if (xmlColor.getText().equals("Green"))
+					boxColor = Constant.Color.Green;
+				else if (xmlColor.getText().equals("Blue"))
+					boxColor = Constant.Color.Blue;
+				else if (xmlColor.getText().equals("Yellow"))
+					boxColor = Constant.Color.Yellow;
+				
+				realBox.setType(boxType, boxColor);
+				
+			}
+
+
+
+				boxes.add(realBox);
+		}
+
+	}
+
+
+	/**
+	 * 
+	 * @param piece
+	 */
+	public void rotation(Box[][] piece)
+	{
+		Box[][] rotated_piece;
+		//TODO copier ligne i dans colonne piece_size-1-j
+	}
+
+	public File getXmlFile() {
+		return xmlFile;
+	}
+
+	public void setXmlFile(File xmlFile) {
+		this.xmlFile = xmlFile;
+	}
+	
+	public int getInitialLocation() {
+		return initialLocation;
+	}
+
+	public void setInitialLocation(int initialLocation) {
+		this.initialLocation = initialLocation;
+	}
+
+	public int getFinalLocation() {
+		return finalLocation;
+	}
+
+	public void setFinalLocation(int finalLocation) {
+		this.finalLocation = finalLocation;
+	}
+
+}

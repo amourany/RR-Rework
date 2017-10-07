@@ -1,0 +1,6 @@
+package model;
+
+public class Movement {
+	Direction mDirection;
+	Robot mRobot;
+}

@@ -1,0 +1,80 @@
+package model;
+
+public class Box {
+	
+	private boolean north; // Is there a wall on the north of the box ?
+	private boolean east;
+	private boolean south;
+	private boolean west;
+	private BoxColor color;//Color of the case type
+	private BoxType type; // Empty, Central, ...
+	
+	public Box() {
+		this.north=false;
+		this.south=false;
+		this.east=false;
+		this.west=false;
+		this.type=BoxType.Empty;
+		this.color=null;
+	}
+
+	public Box(boolean north, boolean east, boolean south, boolean west,
+			BoxColor color, BoxColor start, BoxType type) {
+		this.north = north;
+		this.east = east;
+		this.south = south;
+		this.west = west;
+		this.color = color;
+		this.type = type;
+	}
+
+	public boolean isNorth() {
+		return north;
+	}
+
+	public void setNorth(boolean north) {
+		this.north = north;
+	}
+
+	public boolean isEast() {
+		return east;
+	}
+
+	public void setEast(boolean east) {
+		this.east = east;
+	}
+
+	public boolean isSouth() {
+		return south;
+	}
+
+	public void setSouth(boolean south) {
+		this.south = south;
+	}
+
+	public boolean isWest() {
+		return west;
+	}
+
+	public void setWest(boolean west) {
+		this.west = west;
+	}
+
+	public BoxColor getColor() {
+		return color;
+	}
+
+	public void setColor(BoxColor color) {
+		this.color = color;
+	}
+
+	public BoxType getType() {
+		return type;
+	}
+
+	public void setType(BoxType type) {
+		this.type = type;
+	}
+	
+	
+}

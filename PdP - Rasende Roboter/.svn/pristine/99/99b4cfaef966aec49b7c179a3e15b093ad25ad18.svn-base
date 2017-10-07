@@ -1,0 +1,53 @@
+package game;
+
+import game.Constant.Direction;
+
+/**
+ * Saves the direction that must be taken by a robot.
+ */
+public class Movement {
+	/**
+	 * @see Direction
+	 */
+	private Direction mDirection;
+	/**
+	 * @see Robot
+	 */
+	private Robot mRobot;
+
+	/**
+	 * Constructor of the class
+	 * @param mDirection : direction that must be taken by a robot.
+	 * @param mRobot : the robot to move.
+	 * @see Robot
+	 * @see Direction
+	 */
+	public Movement(Direction mDirection, Robot mRobot) {
+		this.mDirection = mDirection;
+		this.mRobot = mRobot;
+	}
+
+	/**
+	 * Getter of mDirection
+	 * @return Direction
+	 */
+	public Direction getDirection() {
+		return mDirection;
+	}
+
+	/**
+	 * Getter of mRobot
+	 * @return Robot
+	 */
+	public Robot getRobot() {
+		return mRobot;
+	}
+
+	/**
+	 * Setter of mRobot
+	 * @param mRobot
+	 */
+	public void setRobot(Robot mRobot) {
+		this.mRobot = mRobot;
+	}
+}

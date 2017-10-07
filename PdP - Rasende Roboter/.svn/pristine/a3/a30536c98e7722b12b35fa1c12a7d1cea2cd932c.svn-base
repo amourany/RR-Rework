@@ -1,0 +1,14 @@
+package interactions;
+
+import java.util.List;
+import java.util.Stack;
+
+import model.Board;
+import model.Box;
+import model.Robot;
+
+public interface InterfaceAI{	
+	public void startFindSolution(Board board, List<Robot> robots, Box destination);
+	public Stack<Event> getSolution();
+	public void notifyObservers();
+}

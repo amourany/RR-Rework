@@ -1,0 +1,60 @@
+package game;
+
+import java.net.InetAddress;
+
+public class Player {
+	private InetAddress ip;
+	private String pseudo;
+	private int points;
+	private int nb_move_proposed;
+	private boolean host;
+	
+	public Player(InetAddress ip,String pseudo)
+	{
+		this.ip = ip;
+		this.pseudo = pseudo;
+		this.points=0;
+		this.nb_move_proposed=0;
+		this.host=false;
+	}
+
+	public boolean isHost() {
+		return host;
+	}
+
+	public void setHost(boolean host) {
+		this.host = host;
+	}
+
+	public InetAddress getIp() {
+		return ip;
+	}
+
+	public void setIp(InetAddress ip) {
+		this.ip = ip;
+	}
+
+	public String getPseudo() {
+		return pseudo;
+	}
+
+	public void setPseudo(String pseudo) {
+		this.pseudo = pseudo;
+	}
+
+	public int getPoints() {
+		return points;
+	}
+
+	public void setPoints(int points) {
+		this.points = points;
+	}
+
+	public int getNb_move_proposed() {
+		return nb_move_proposed;
+	}
+
+	public void setNb_move_proposed(int nb_move_proposed) {
+		this.nb_move_proposed = nb_move_proposed;
+	}
+}

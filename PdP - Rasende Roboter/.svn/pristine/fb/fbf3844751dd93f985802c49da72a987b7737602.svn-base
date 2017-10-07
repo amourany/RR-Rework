@@ -1,0 +1,10 @@
+\chapter{Le Projet}
+\section{Sujet}
+
+	Nous devons proposer au client une implémentation du jeu Rasende Roboter sur Mac et Linux. Le programme doit comprendre une partie en solo comprenant les règles basiques du jeu. Les clients ont souhaité ajouter une fonctionnalité qui permet de résoudre le jeu et la possibilité de jouer en réseau.
+
+	Rasende Roboter est un jeu de société allemand créé par Alex Randolph et illustré par Franz Vohwinkel, édité en 1999 par Hans im Glück / Tilsit. Le jeu est composé d'un plateau, de tuiles représentant chacune une des cases du plateau, et de pions appelés « robots ». La partie est décomposée en tours de jeu, un tour consistant à déplacer les robots sur un plateau afin d'en amener un sur l'une des cases du plateau. Les robots se déplacent en ligne droite et avancent toujours jusqu'au premier mur qu'ils rencontrent. On peut aussi bien y jouer seul qu'à un grand nombre de participants.
+
+\section{Analyse de l'existant}
+
+\section{Mannuel du jeu}

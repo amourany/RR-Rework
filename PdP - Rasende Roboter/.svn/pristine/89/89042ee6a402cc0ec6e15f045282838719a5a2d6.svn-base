@@ -1,0 +1,173 @@
+package game;
+
+import game.Constant.BoxType;
+import game.Constant.Direction;
+
+import java.util.List;
+
+/**
+ *  Class containing the Board
+ */
+public class Board {
+	/**
+	 * @see Box
+	 */
+	private Box[][] gameBoard;
+
+	private int numBoardPieces[];
+	private int numBoardPiecesSide[];
+	
+	
+	public Board() {
+		gameBoard = new Box[Constant.NB_BOXES][Constant.NB_BOXES];
+		
+		numBoardPieces = new int[Constant.NB_BOARD_PIECES];
+		numBoardPiecesSide = new int[Constant.NB_BOARD_PIECES];
+
+		randomizedBoardPieces();		
+	}
+
+	private void randomizedBoardPieces() {
+		for(int i=0; i<Constant.NB_BOARD_PIECES; i++)
+		{
+			numBoardPieces[i] = (int) (Math.random()*100)%Constant.NB_BOARD_PIECES+1;
+			numBoardPiecesSide[i] = (int) (Math.random()*100)%Constant.NB_BOARD_PIECES_SIDE+1;
+		}
+	}
+	
+	public void initboard()
+	{
+		for (int i=0 ; i<Constant.NB_BOXES ; i++)
+		{
+			for (int j=0 ; j<Constant.NB_BOXES ; j++)
+			{
+				gameBoard[i][j]=new Box();
+			}
+		}
+		
+		putCentralBoxes();
+		putSurroundingWalls();
+
+		
+	}
+
+	private void putSurroundingWalls() {
+		for (int i=0; i<Constant.NB_BOXES;i++)
+		{
+			gameBoard[i][0].setWall(Constant.Direction.Left);
+			gameBoard[i][Constant.NB_BOXES-1].setWall(Constant.Direction.Right);
+			gameBoard[0][i].setWall(Constant.Direction.Up);
+			gameBoard[Constant.NB_BOXES-1][i].setWall(Constant.Direction.Down);
+		}
+	}
+
+	private void putCentralBoxes() {
+		gameBoard[7][7].setWall(Direction.Up);
+		gameBoard[7][7].setWall(Direction.Left);
+
+		gameBoard[7][8].setWall(Direction.Up);
+		gameBoard[7][8].setWall(Direction.Right);
+
+		gameBoard[8][7].setWall(Direction.Down);
+		gameBoard[8][7].setWall(Direction.Left);
+
+		gameBoard[8][8].setWall(Direction.Down);
+		gameBoard[8][8].setWall(Direction.Right);
+
+		gameBoard[7][7].setType(BoxType.Central, null);
+		gameBoard[7][8].setType(BoxType.Central, null);
+		gameBoard[8][7].setType(BoxType.Central, null);
+		gameBoard[8][8].setType(BoxType.Central, null);
+	}
+
+	/**
+	 * Move a robot in a direction
+	 * @param robot robot that have to move
+	 * @param direction direction that the robot is following
+	 * @param robots all the robots of the game
+	 * @see Direction
+	 * @see Robot
+	 */
+	public Robot getNewPosition(Robot robot, Direction direction, List<Robot> robots) {
+		int x = robot.x;
+		int y = robot.y;
+		while (gameBoard[y][x].canContinue(direction) 
+				&& !robot.robotIsHere(x, y, robots, direction)) {
+			switch (direction) {
+			case Right :
+				x++;
+				break;
+			case Left :
+				x--;
+				break;
+			case Down :
+				y++;
+				break;
+			case Up :
+				y--;
+				break;
+			default:
+				break;
+			}
+		}	
+		return new Robot(x, y, robot.getColor());
+	}
+	
+	/**
+	 * Move a robot in a direction
+	 * @param robot robot that have to move
+	 * @param direction direction that the robot is following
+	 * @param robots all the robots of the game
+	 * @see Direction
+	 * @see BoxColor
+	 */
+	public Robot getNewPosition(Movement movement, List<Robot> robots) {
+		int x = movement.getRobot().x;
+		int y = movement.getRobot().y;
+		while (gameBoard[y][x].canContinue(movement.getDirection()) 
+				&& !movement.getRobot().robotIsHere(x, y, robots, movement.getDirection())) {
+			switch (movement.getDirection()) {
+			case Right :
+				x++;
+				break;
+			case Left :
+				x--;
+				break;
+			case Down :
+				y++;
+				break;
+			case Up :
+				y--;
+				break;
+			default:
+				break;
+			}
+		}	
+		return new Robot(x, y, movement.getRobot().getColor());
+	}
+	
+	public Box[][] getGameBoard() {
+		return gameBoard;
+	}
+
+	public void setGameBoard(Box[][] gameBoard) {
+		this.gameBoard = gameBoard;
+	}
+
+	public int[] getNumBoardPieces() {
+		return numBoardPieces;
+	}
+
+	public void setNumBoardPieces(int[] numBoardPieces) {
+		this.numBoardPieces = numBoardPieces;
+	}
+
+	public int[] getNumBoardPiecesSide() {
+		return numBoardPiecesSide;
+	}
+
+	public void setNumBoardPiecesSide(int[] numBoardPiecesSide) {
+		this.numBoardPiecesSide = numBoardPiecesSide;
+	}
+
+}

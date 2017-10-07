@@ -1,0 +1,30 @@
+package test;
+
+import static org.junit.Assert.*;
+
+import model.Board;
+import model.Constant;
+
+import org.junit.Test;
+
+public class BoardTests {
+	Board b = new Board();
+	
+	
+	@Test
+	public void testinit() {
+		for (int i=0; i<Constant.numberOfcase;i++)
+		{
+			for (int j=0; j<Constant.numberOfcase;j++)
+			{
+				assertEquals("Points",b.getBox()[i][j].getType(),Constant.BoxType.Empty);
+				assertNull("Color",b.getBox()[i][j].getColor());
+				assertFalse("North",b.getBox()[i][j].isNorth());
+				assertFalse("South",b.getBox()[i][j].isSouth());
+				assertFalse("East",b.getBox()[i][j].isEast());
+				assertFalse("West",b.getBox()[i][j].isWest());
+			}
+		}
+	}
+
+}

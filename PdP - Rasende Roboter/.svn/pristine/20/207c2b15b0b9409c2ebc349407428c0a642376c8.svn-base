@@ -1,0 +1,65 @@
+This is BibTeX, Version 0.99d (TeX Live 2012)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: Rapport.aux
+A level-1 auxiliary file: Introduction.aux
+A level-1 auxiliary file: chap1.aux
+A level-1 auxiliary file: chap2.aux
+A level-1 auxiliary file: chap3.aux
+A level-1 auxiliary file: chap4.aux
+A level-1 auxiliary file: chap5.aux
+A level-1 auxiliary file: chap6.aux
+A level-1 auxiliary file: chap7.aux
+A level-1 auxiliary file: Conclusion.aux
+A level-1 auxiliary file: Annexes.aux
+The style file: plain.bst
+Database file #1: biblio.bib
+Warning--to sort, need author or key in 3
+Warning--to sort, need author or key in 5
+Warning--to sort, need author or key in 6
+Warning--empty author in 6
+Warning--empty author in 3
+Warning--empty author in 5
+Warning--empty note in 8
+Warning--empty year in 2
+You've used 8 entries,
+            2118 wiz_defined-function locations,
+            537 strings with 5205 characters,
+and the built_in function-call counts, 1674 in all, are:
+= -- 164
+> -- 97
+< -- 0
++ -- 40
+- -- 32
+* -- 114
+:= -- 319
+add.period$ -- 22
+call.type$ -- 8
+change.case$ -- 40
+chr.to.int$ -- 0
+cite$ -- 16
+duplicate$ -- 50
+empty$ -- 95
+format.name$ -- 32
+if$ -- 314
+int.to.chr$ -- 0
+int.to.str$ -- 8
+missing$ -- 0
+newline$ -- 41
+num.names$ -- 10
+pop$ -- 31
+preamble$ -- 1
+purify$ -- 32
+quote$ -- 0
+skip$ -- 36
+stack$ -- 0
+substring$ -- 40
+swap$ -- 0
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 32
+warning$ -- 8
+while$ -- 10
+width$ -- 9
+write$ -- 73
+(There were 8 warnings)

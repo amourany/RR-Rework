@@ -1,0 +1,103 @@
+package solverAlgorithm;
+
+import game.Board;
+import game.Box;
+import game.Movement;
+import game.Robot;
+import game.Constant.BoxType;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+/**
+ * This is an event from probability theory. It contains the position of the robot at an 
+ * exact moment and the last movement.
+ * @author Dimitri
+ * @version 1
+ */
+public class Event {
+	/**
+	 * The list of the robots
+	 * @see List
+	 * @see Robot
+	 */
+	private List<Robot> mRobots;
+	/**
+	 * The last movement played
+	 * If <code>null</code> this event is the initial position of the round
+	 * @see Movement
+	 */
+	private Movement mMovement;
+	/**
+	 * 
+	 */
+	public ProbabilityTree mParent;
+
+	/**
+	 * Constructor
+	 * @param robots
+	 */
+	public Event(List<Robot> robots){
+		mParent = null;
+		mMovement = null;
+		mRobots = new ArrayList<Robot>(robots);
+	}
+
+	/**
+	 * Constructor
+	 * @param parent
+	 * @param movement
+	 * @param board
+	 */
+	public Event(ProbabilityTree parent, Movement movement, Board board) {
+		mParent = parent;
+		mMovement = movement;
+		mRobots = new ArrayList<Robot>();
+
+		Robot newRobot = board.getNewPosition(movement, mParent.getEvent().getRobots());
+		for(Robot r : parent.getEvent().getRobots()){
+			if(r.getColor() == newRobot.getColor())
+				mRobots.add(newRobot);
+			else
+				mRobots.add(r);
+		}		
+		mMovement.setRobot(newRobot);
+	}
+
+	/**
+	 * This method checks if the solution is found
+	 * @param destination the box that the player must reach
+	 * @param x
+	 * @param y
+	 * @return <code>true</code> if the destination is reached <code>false</code> otherwise
+	 */
+	public boolean reachedDestination(Box box, int x, int y){
+		if(mMovement != null){
+			Robot robot = mMovement.getRobot();
+			if(robot.getColor() == box.getColor() || box.getType() == BoxType.Multi){
+				if(robot.getX() == y && robot.getY() == x){
+					return true;
+				}					
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * The list of the robots after this event
+	 * @return a list of robots 
+	 */
+	public List<Robot> getRobots(){
+		return mRobots;
+	}
+
+	/**
+	 * To use for debugging : write witch robot must move and in witch direction
+	 */
+	public String toString(){
+		if(mMovement != null)
+			return "Move " + mMovement.getRobot().getColor() + " robot (" + mMovement.getRobot().x + "," + mMovement.getRobot().y + ") to the " + mMovement.getDirection() + " direction";
+		return null;
+	}
+}

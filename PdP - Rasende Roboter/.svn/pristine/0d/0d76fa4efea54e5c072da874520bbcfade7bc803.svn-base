@@ -1,0 +1,51 @@
+package interactions;
+
+import java.util.List;
+
+import model.Box;
+import model.Movement;
+import model.Robot;
+
+/**
+ * This is an event from probability theory. It contains the position of the robot at an 
+ * exact moment and the last movement.
+ * @author Dimitri
+ * @version 1
+ */
+public class Event {
+	/**
+	 * The list of the robots
+	 * @see List
+	 * @see Robot
+	 */
+	List<Robot> mRobots;
+	/**
+	 * The last movement played
+	 * If <code>null</code> this event is the initial position of the round
+	 * @see Movement
+	 */
+	Movement mLastMovement;
+	/**
+	 * The event before this one. If we use a tree of probability, this is useless
+	 */
+	Event mFather;	
+	
+	/**
+	 * This method checks if the solution is found
+	 * @param destination the box that the player must reach
+	 * @param x
+	 * @param y
+	 * @return <code>true</code> if the destination is reached <code>false</code> otherwise
+	 */
+	public boolean reachedDestionation(Box destination, int x, int y){
+		for (Robot robot : mRobots) {
+			if(robot.getColor() == destination.getColor()){
+				if(robot.getX() == x && robot.getY() == y)
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	
+}

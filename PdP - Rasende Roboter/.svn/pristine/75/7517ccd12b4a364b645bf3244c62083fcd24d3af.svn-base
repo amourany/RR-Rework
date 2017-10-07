@@ -1,0 +1,148 @@
+package network;
+
+import game.BoardPiece;
+import game.Game;
+import game.Robot;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Server side of the application
+ */
+public class Server {
+	private Game game;
+	private List<InetAddress> clients;
+	private DatagramSocket socket;
+	private Thread serverThread = new Thread() {
+		public void run() {
+			listen();
+		}
+	};
+	
+	public Server()
+	{
+		game = new Game();
+		clients = new ArrayList<InetAddress>();
+		
+		try {
+			socket = new DatagramSocket(3001);
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		serverThread.start();		
+	}
+	
+	private void listen() {
+		String data;
+		try {
+			byte[] buffer = new byte[1500];
+			DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+			
+			while(true) {
+				socket.receive(packet);
+				data = new String(packet.getData(), 0, packet.getLength());
+				
+				switch(data) {
+				case "connect":
+					clients.add(packet.getAddress());
+					sendBoard(packet.getAddress());
+					sendRobots(packet.getAddress());
+					sendRefresh(packet.getAddress());
+					break;
+				}
+				
+				System.out.println("Received : " + data + " from : " + packet.getAddress());
+				sendUpdates();
+			}
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void sendBoard(InetAddress ip) {
+		try {	
+			
+			for(BoardPiece bp : game.getBoard().getBoardPiece()) {
+				String boardInfo = "board&" + bp.getInitialLocation() +
+						"&" + bp.getFinalLocation() +
+						"&" + bp.getXmlFile();
+				
+				byte[] boardInfoBytes = boardInfo.getBytes();
+				DatagramPacket packet = new DatagramPacket(boardInfoBytes, boardInfoBytes.length, ip, 3002);
+				packet.setData(boardInfoBytes);
+				
+				socket.send(packet);
+			}
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void sendRobots(InetAddress ip) {
+		try {	
+			for(Robot r : game.getRobots()) {
+				String robotInfo = "robot&" + r.x +
+						"&" + r.y +
+						"&" + r.getColor() +
+						"&" + r.originX +
+						"&" + r.originY;
+				
+				byte[] robotInfoBytes = robotInfo.getBytes();
+				DatagramPacket packet = new DatagramPacket(robotInfoBytes, robotInfoBytes.length, ip, 3002);
+				packet.setData(robotInfoBytes);
+				
+				socket.send(packet);
+			}
+			
+			
+
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void sendRefresh(InetAddress ip) {
+		String data = "refresh";
+		byte[] dataBytes = data.getBytes();
+		DatagramPacket packet = new DatagramPacket(dataBytes, dataBytes.length, ip, 3002);
+		packet.setData(dataBytes);
+		
+		try {
+			socket.send(packet);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void sendUpdates() {
+
+	}
+
+	public Game getGame() {
+		return game;
+	}
+	public void setGame(Game game) {
+		this.game = game;
+	}
+}

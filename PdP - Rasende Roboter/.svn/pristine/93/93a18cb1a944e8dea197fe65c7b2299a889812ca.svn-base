@@ -1,0 +1,15 @@
+package solverAlgorithm;
+
+import game.Board;
+import game.Box;
+import game.Robot;
+
+import java.util.List;
+import java.util.Stack;
+
+
+public interface InterfaceSolver{	
+	public void startFindSolution(Board board, List<Robot> robots, Box destination);
+	public Stack<Event> getSolution();
+	public void notifyObservers();
+}

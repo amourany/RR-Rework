@@ -1,0 +1,5 @@
+package interactions;
+
+public abstract class AbstractAI implements BoardInteractions {
+
+}

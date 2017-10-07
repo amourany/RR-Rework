@@ -1,0 +1,15 @@
+package model;
+
+/**
+ * The type of a box, required for the choice of the associated image.
+ */
+public enum BoxType {
+ Start,
+ Empty,
+ Central,
+ More,
+ Sun,
+ Diamond,
+ Triangle,
+ Multi;
+}

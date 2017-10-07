@@ -1,0 +1,85 @@
+\chapter{Tests}
+Quatre types de tests ont été effectués : tests unitaires pour vérifier une fonction ou une partie du code, des tests de test de non régression, des Stress Test afin de connaitre quelques limites de notre programme et aussi des tests manuels sur l'interface graphique (boutons, menus...).
+
+Les JUnit tests (contenus dans le package test) peuvent tous être lancés à la suite grâce à la classe AllTests. Les outils de taux de couverture nous donnent un chiffre de 60,5 %.
+
+\section{JUnit tests}
+\begin{itemize}
+	\item BoxTest : ce fichier teste si une fois que la case est créée les murs sont au bon endroit et dans quelles directions peut ou non aller un robot qui la traverse.
+	\item ClientTest : un client est créé. On teste l'encodage et le décodage d'un message qui transmet la position des robots et celui qui transmet une nouvelle main.
+	\item Controllertest : teste le déplacement des robots dans une direction choisie.
+	\item CountDownTest : permet de vérifier que le compte à rebours fonctionne (initialisation, arrêt, reset, démarrage).
+	\item GameTest : Test les différents éléments à la création d'une nouvelle partie ainsi que les fonctions de sélection des robots.
+	\item NetworkTest : vérifications à la création d'un client et un serveur.
+	\item PlayerManagerTest : permet de tester le tableau qui gère la liste des joueurs d'un serveur en fonction des propositions effectuées, des suppressions de joueurs ou des changements de propositions de mouvements.
+	\item PlayerTest : permet de tester les données liées aux joueurs.
+	\item ProtocolTest : teste l'encodage et le décodage de messages. Vérifie que les données récupérées après le décodage soient les mêmes qu'avant l'envoi.
+	\item RobotTest : vérifie la position des robots après qu'ils soient placés sur un plateau
+	\item StructTreeTest : essais d'ajout d'éléments dans notre arbre de la solution du chemin.
+\end{itemize}
+
+\section{Stress Tests}
+Ils ont été réalisés afin de déterminer la robustesse du jeu dans certaines situations.
+On a donc pu ainsi déterminer que notre algorithme de résolution avait une limite à 15 dans l'arbre des solutions. C'est ce qui nous a permis d'arrêter notre recherche pour demander à l'utilisateur d'effectuer d'autres mouvements avant de la relancer.
+
+Le réseau a aussi pu être testé avec cinq machines d'un réseau local sans problèmes. Cela correspond à un joueur qui héberge le serveur et quatre clients. N'ayant pas eu l'occasion de tester à plus grande échelle, nous avons choisi de ne pas mettre de limite au nombre de connexions simultanés.
+
+
+\section{Tests manuels}
+Tous les élements graphiques ont étés testés :
+	\begin{itemize}
+	\item Les boutons.
+	\item Les menus.
+	\item Les zones de texte qui attendent des valeurs (il n'est donc pas possible de rentrer une adresse IP avec un format incorect ou de proposer un nombre de mouvement négatif).
+	\end{itemize}
+Le jeu a également été testé sur Linux et MAC comme demendé par les clients mais aussi sur Windows.
+
+
+\begin{comment}
+\section{Tests mise en place et génération de la carte}
+\begin{itemize}
+	\item[-] Vérifier qu'une carte contient les 17 cases objectif.
+	\item[-] Vérifier qu'il n'existe pas de cases objectifs identiques (couple couleur/forme)
+	\item[-] Vérifier que chacun des robots est sur la case de départ correspondant à sa couleur.
+	\item[-] Vérifier qu'une case objectif possède deux murs concomitants (pour permettre à un robot de s'y arrêter et de repartir dans une autre direction).
+	\item[-] Vérifier qu'il n'existe pas de zones fermées (hormis la zone centrale).
+	\item[-] Les compteurs de points des joueurs, du nombre de tours et de déplacements doivent tous être initialisés à 0.
+\end{itemize}
+
+\section{Tests déplacements des robots}
+\begin{itemize}
+	\item[-] Tester les déplacements dans les quatre directions possibles.
+	\item[-] Tester des déplacements avec un arrêt devant un mur, un arrêt devant un autre robot et un arrêt au bord de la carte : vérifier à chaque fois que la position du robot est bien avant l'obstacle.
+	\item[-] Tester l'arrêt sur une case objectif et vérifier que le compteur de point du joueur s'incrémente (avec un pas de 1).
+\end{itemize}
+
+\section{Tests sur l'interface graphique}
+\begin{itemize}
+	\item[-] Il faut tester chaque passage d'une fenêtre à une autre (via les boutons) et dans les deux sens. Exemple : du menu vers la partie solo et inversement.
+	\item[-] Vérifier que les images ont des noms valides.
+	\item[-] Vérifier que la couleur et le motif d'une case correspond bien à celui de l'image.
+\end{itemize}
+
+\section{Tests sur la partie réseau}
+\begin{itemize}
+	\item[-] Tester les adresses IP avec format correct et incorrect.
+	\item[-] Calculer le nombre limite de connections simultanées sur un serveur.
+	\item[-] Test sur la synchronisation des joueurs.
+	\item[-] Tester ce qui se passe en cas d’arrêt du serveur en cours de partie.
+	\item[-] Tester ce qui se passe si un joueur quitte une partie en cours.
+\end{itemize}
+
+\section{Tests sur l'algorithme (IA)}
+\begin{itemize}
+	\item[-] Tester sans se préoccuper des autres robots et inversement.
+	\item[-] Mesurer le temps d'exécution moyen.
+\end{itemize}
+
+\section{Tests sur le déroulement d'une partie}
+\begin{itemize}
+	\item[-] Vérifier qu'une partie en réseau ne peut commencer qu'avec deux joueurs minimum.
+	\item[-] Vérifier que la fin du chrono déclenche bien une des deux actions associées : soit le passage à un autre joueur qui a donné une solution avec plus de coup soit un point de plus pour le joueur qui vient de trouver le plus petit nombre de déplacements.
+		\item[-] La somme des points des joueurs ne peut jamais dépasser le nombre de case objectifs. S'il y a égalité, cela signifie que tous les objectifs ont été atteints, donc que la partie est terminée.
+\end{itemize}	
+
+\end{comment}

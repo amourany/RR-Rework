@@ -1,0 +1,343 @@
+package model;
+
+import interactions.Solver;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
+import model.Constant.Color;
+import model.Constant.BoxType;
+import model.Constant.Direction;
+
+/**
+ * The model of our architecture
+ */
+public class Model {
+	/**
+	 * @see Board
+	 */
+	private Board gameBoard;
+	/**
+	 * @see List
+	 * @see Robot
+	 */
+	private List<Robot> robots;
+	/**
+	 * @see List
+	 * @see Player
+	 */
+	private List<Player> players;
+	private int currentRound;
+	public Solver mSolver;
+	private Stack<Robot> previousMove;
+	private Stack<Robot> nextMove;
+
+	/**
+	 * Construtor of Model
+	 */
+	public Model() {
+		this.currentRound = 1;
+		this.gameBoard = new Board();
+		this.robots = new ArrayList<Robot>();
+		this.players = new ArrayList<Player>();
+		previousMove = new Stack<Robot>();
+		nextMove = new Stack<Robot>();
+		createPlayer(); //To create the first player
+	}
+
+	/**
+	 * Getter of gameBoard
+	 * @return gameBoard : Board
+	 * @see Board
+	 */
+	public Board getGameBoard() {
+		return gameBoard;
+	}
+
+	/**
+	 * Setter of gameBoard
+	 * @param gameBoard
+	 * @see Board
+	 */
+	public void setGameBoard(Board gameBoard) {
+		this.gameBoard = gameBoard;
+	}
+
+	/**
+	 * Getter of the robots' list
+	 * @return robots : the list of robots
+	 * @see Robot
+	 * @see List
+	 */
+	public List<Robot> getRobots() {
+		return robots;
+	}
+
+	/**
+	 * Return the robot with the specified Color
+	 * @param c : Color, the color of the robot asked
+	 * @return r : Robot, if the robot with this color exist, else null
+	 * @see Color
+	 * @see Robot
+	 */
+	public Robot getRobot(Color c) {
+		for(Robot r : robots) {
+			if(r.getColor() == c)
+				return r;
+		}
+		return null;
+	}
+
+	/**
+	 * Setter of the robots' list
+	 * @param robots
+	 * @see Robot
+	 * @see List
+	 */
+	public void setRobots(List<Robot> robots) {
+		this.robots = robots;
+	}
+
+	public void setRobotByColor(Color c, Robot r) {
+		for(int i = 0; i < robots.size(); i++) {
+			if(robots.get(i).getColor() == c) {
+				robots.set(i, r);
+			}
+		}
+	}
+	
+	/**
+	 * Getter of the players' list
+	 * @return players
+	 * @see Player
+	 * @see List
+	 */
+	public List<Player> getPlayers() {
+		return players;
+	}
+
+	/**
+	 * Setter of the players' list
+	 * @param players
+	 */
+	public void setPlayers(List<Player> players) {
+		this.players = players;
+	}
+
+	/**
+	 * Getter of Current Round
+	 * @return currentRound : int
+	 */
+	public int getCurrentRound() {
+		return currentRound;
+	}
+
+	/**
+	 * Setter of Current Round
+	 * @param currentRound : int
+	 */
+	public void setCurrentRound(int currentRound) {
+		this.currentRound = currentRound;
+	}
+
+	public Stack<Robot> getPreviousMove() {
+		return previousMove;
+	}
+
+	public void setPreviousMove(Stack<Robot> previousMove) {
+		this.previousMove = previousMove;
+	}
+
+	public Stack<Robot> getNextMove() {
+		return nextMove;
+	}
+
+	public void setNextMove(Stack<Robot> nextMove) {
+		this.nextMove = nextMove;
+	}
+
+	/**
+	 * Default boxes are empty. Then we change type and color of the special boxes.
+	 */
+	public void generateBoard()
+	{
+		robots = new ArrayList<Robot>();
+		gameBoard = new Board();
+		previousMove = new Stack<Robot>();
+		nextMove = new Stack<Robot>();
+
+		//Robot test
+		Robot r = new Robot(Color.Blue);
+		r = r.placeOnBoard(robots);
+		robots.add(r);
+
+		r = new Robot(Color.Green);
+		r = r.placeOnBoard(robots);
+		robots.add(r);
+
+		r = new Robot(Color.Yellow);
+		r = r.placeOnBoard(robots);
+		robots.add(r);
+
+		r = new Robot(Color.Red);
+		r = r.placeOnBoard(robots);
+		robots.add(r);
+
+		//Walls around the board
+		for (int i = 0; i < gameBoard.board_size; i++) {
+			//Walls on the top
+			gameBoard.getBox()[0][i].setWall(Direction.Up);
+			//Walls on the bottom
+			gameBoard.getBox()[gameBoard.board_size-1][i].setWall(Direction.Down);
+			//Walls ont the left
+			gameBoard.getBox()[i][0].setWall(Direction.Left);
+			//Walls ont the right
+			gameBoard.getBox()[i][gameBoard.board_size-1].setWall(Direction.Right);
+		}	
+
+		//Central Box
+		gameBoard.getBox()[7][7].setWall(Direction.Up);
+		gameBoard.getBox()[7][7].setWall(Direction.Left);
+
+		gameBoard.getBox()[7][8].setWall(Direction.Up);
+		gameBoard.getBox()[7][8].setWall(Direction.Right);
+
+		gameBoard.getBox()[8][7].setWall(Direction.Down);
+		gameBoard.getBox()[8][7].setWall(Direction.Left);
+
+		gameBoard.getBox()[8][8].setWall(Direction.Down);
+		gameBoard.getBox()[8][8].setWall(Direction.Right);
+
+		gameBoard.getBox()[7][7].setType(BoxType.Central, null);
+		gameBoard.getBox()[7][8].setType(BoxType.Central, null);
+		gameBoard.getBox()[8][7].setType(BoxType.Central, null);
+		gameBoard.getBox()[8][8].setType(BoxType.Central, null);
+
+		//Construction du plateau
+		gameBoard.getBox()[0][3].setWall(Direction.Right);
+		gameBoard.getBox()[0][11].setWall(Direction.Right);
+		gameBoard.getBox()[1][13].setWall(Direction.Left);
+		gameBoard.getBox()[1][13].setWall(Direction.Up);
+		gameBoard.getBox()[2][5].setWall(Direction.Right);
+		gameBoard.getBox()[2][5].setWall(Direction.Down);
+		gameBoard.getBox()[2][9].setWall(Direction.Right);
+		gameBoard.getBox()[2][9].setWall(Direction.Down);
+		gameBoard.getBox()[4][0].setWall(Direction.Down);
+		gameBoard.getBox()[4][2].setWall(Direction.Up);
+		gameBoard.getBox()[4][2].setWall(Direction.Right);
+		gameBoard.getBox()[4][15].setWall(Direction.Up);
+		gameBoard.getBox()[5][7].setWall(Direction.Left);
+		gameBoard.getBox()[5][7].setWall(Direction.Down);
+		gameBoard.getBox()[5][14].setWall(Direction.Left);
+		gameBoard.getBox()[5][14].setWall(Direction.Down);
+		gameBoard.getBox()[6][1].setWall(Direction.Left);
+		gameBoard.getBox()[6][1].setWall(Direction.Up);
+		gameBoard.getBox()[6][11].setWall(Direction.Right);
+		gameBoard.getBox()[6][11].setWall(Direction.Up);
+		gameBoard.getBox()[8][5].setWall(Direction.Right);
+		gameBoard.getBox()[8][5].setWall(Direction.Up);		
+		gameBoard.getBox()[9][1].setWall(Direction.Down);
+		gameBoard.getBox()[9][1].setWall(Direction.Right);
+		gameBoard.getBox()[9][12].setWall(Direction.Up);
+		gameBoard.getBox()[9][12].setWall(Direction.Right);
+		gameBoard.getBox()[9][15].setWall(Direction.Down);
+		gameBoard.getBox()[10][4].setWall(Direction.Left);
+		gameBoard.getBox()[10][4].setWall(Direction.Down);
+		gameBoard.getBox()[11][0].setWall(Direction.Down);
+		gameBoard.getBox()[12][9].setWall(Direction.Left);
+		gameBoard.getBox()[12][9].setWall(Direction.Up);
+		gameBoard.getBox()[13][5].setWall(Direction.Up);
+		gameBoard.getBox()[13][5].setWall(Direction.Right);
+		gameBoard.getBox()[13][14].setWall(Direction.Left);
+		gameBoard.getBox()[13][14].setWall(Direction.Down);
+		gameBoard.getBox()[14][3].setWall(Direction.Left);
+		gameBoard.getBox()[14][3].setWall(Direction.Up);
+		gameBoard.getBox()[14][11].setWall(Direction.Down);
+		gameBoard.getBox()[14][11].setWall(Direction.Right);
+		gameBoard.getBox()[15][6].setWall(Direction.Right);
+		gameBoard.getBox()[15][13].setWall(Direction.Right);
+		
+		gameBoard.getBox()[2][9].setType(BoxType.Triangle, Color.Blue);
+		gameBoard.getBox()[5][7].setType(BoxType.Triangle, Color.Red);
+		gameBoard.getBox()[13][14].setType(BoxType.Triangle, Color.Green);
+		gameBoard.getBox()[14][3].setType(BoxType.Triangle, Color.Yellow);
+		
+		gameBoard.getBox()[9][1].setType(BoxType.Sun, Color.Blue);
+		gameBoard.getBox()[14][11].setType(BoxType.Sun, Color.Red);
+		gameBoard.getBox()[4][2].setType(BoxType.Sun, Color.Green);
+		gameBoard.getBox()[6][11].setType(BoxType.Sun, Color.Yellow);
+		
+		gameBoard.getBox()[2][5].setType(BoxType.More, Color.Blue);
+		gameBoard.getBox()[13][5].setType(BoxType.More, Color.Red);
+		gameBoard.getBox()[5][14].setType(BoxType.More, Color.Green);
+		gameBoard.getBox()[12][9].setType(BoxType.More, Color.Yellow);
+		
+		gameBoard.getBox()[9][12].setType(BoxType.Diamond, Color.Blue);
+		gameBoard.getBox()[1][13].setType(BoxType.Diamond, Color.Red);
+		gameBoard.getBox()[10][4].setType(BoxType.Diamond, Color.Green);
+		gameBoard.getBox()[6][1].setType(BoxType.Diamond, Color.Yellow);
+		
+		gameBoard.getBox()[8][5].setType(BoxType.Multi, null);
+		
+		oppositeWall();
+	}
+
+	/**
+	 * Create a player and put it in the list
+	 */
+	public void createPlayer(){
+		Player p=new Player();
+		players.add(p);
+	}
+
+	/**
+	 * Move a robot in a direction
+	 * @param c : BoxColor, color of the robot to move
+	 * @param direction : Left, Right, Down, Up
+	 * @see Direction
+	 * @see BoxColor
+	 */
+	public void move(Robot robot, Direction direction){
+		Robot nRobot = gameBoard.getNewPosition(robot, direction, this.robots);
+		Player p=players.get(0);
+		
+		if (robot.x != nRobot.x || robot.y != nRobot.y)
+			p.setMovementsDone(p.getMovementsDone()+1); //increments the number of movements of the player
+		
+		robot.x = nRobot.x;
+		robot.y = nRobot.y;
+		
+	}
+
+	/**
+	 * Build the opposite wall
+	 * Example :If the north wall of a box exist then the south wall of the box above must be built
+	 */
+	public void oppositeWall()
+	{
+		for(int i=0;i<gameBoard.getPlateau_size();i++)
+		{
+			for(int j=0;j<gameBoard.getPlateau_size();j++)
+			{
+				if(gameBoard.getBox()[i][j].isEast() && j != gameBoard.getPlateau_size()-1)
+				{
+					gameBoard.getBox()[i][j+1].setWest(true);
+				}
+				if(gameBoard.getBox()[i][j].isWest() && j != 0)
+				{
+					gameBoard.getBox()[i][j-1].setEast(true);
+				}
+				if(gameBoard.getBox()[i][j].isNorth() && i != 0)
+				{
+					gameBoard.getBox()[i-1][j].setSouth(true);
+				}
+				if(gameBoard.getBox()[i][j].isSouth() && i != gameBoard.getPlateau_size()-1)
+				{
+					gameBoard.getBox()[i+1][j].setNorth(true);
+				}
+			}
+		}
+	}
+
+}

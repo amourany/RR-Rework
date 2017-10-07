@@ -1,0 +1,331 @@
+package view;
+
+import interactions.ClickOnBoardListener;
+import interactions.ClickOnRobotListener;
+
+import java.awt.Dimension;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.NumberFormat;
+import java.util.List;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SpringLayout;
+
+import model.Box;
+import model.Constant;
+import model.Constant.BoxType;
+import model.Constant.Color;
+import model.Player;
+import model.Robot;
+import controller.Controller;
+
+/**
+ * View of the Game (Solo)
+ */
+public class InGameView extends AbstractView{
+	List<Robot> robots;
+	
+	
+	public InGameView(Controller c, JFrame f) {
+		super(c, f);
+		robots = controller.getModel().getRobots();
+		buildContentPane();
+	}
+
+	/**
+	 * Show a dialog box want you want quit this view
+	 * @param screen redirect to Menu or Option
+	 */
+	public void dialogQuit(String screen)
+	{
+		Object[] options = {"Yes", "No"};
+		int n = JOptionPane.showOptionDialog(frame,
+				"Are you sure you want to quit?",
+				"Quit",
+				JOptionPane.YES_NO_OPTION,
+				JOptionPane.QUESTION_MESSAGE,
+					null,
+					options,
+					options[0]);
+		if (n == JOptionPane.YES_OPTION) {
+			if (screen=="menu")
+				controller.createGameMenuView();
+			else if (screen=="options")
+					controller.createOptionsView();
+			}	
+	}
+	
+	public void dialogNew()
+	{
+		Object[] options = {"Yes", "No"};
+		int k = JOptionPane.showOptionDialog(frame,
+					"SUCCESS \n Do you want a new Goal Card ?",
+					"Next Round",
+					JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE,
+					null,
+					options,
+					options[0]);
+		if (k == JOptionPane.YES_OPTION) 
+				controller.newRound();
+		
+	}
+	
+
+	@Override
+	public void buildContentPane() {
+		int size = controller.getModel().getGameBoard().getPlateau_size();
+		int currentRound = controller.getModel().getCurrentRound();
+		Box[][] board = controller.getModel().getGameBoard().getBox();
+		Player playerSolo = controller.getModel().getPlayers().get(0);
+		Robot selectedR = controller.getSelectedRobot();
+		
+		/*Goal Card */
+		Box goalCard= controller.getGoalCard();
+		if (goalCard==null){
+			goalCard = controller.initGoalCard();
+		}
+
+			
+		
+		SpringLayout layout = new SpringLayout();
+		contentPane.setLayout(layout);
+
+
+		/*GoalCard*/
+		goalCardMiddle(goalCard, layout);
+	
+		/* Loading robots */
+		loadingRobots(selectedR, layout);
+		
+		/* Loading board */
+		loadingBoard(size, board, layout);
+
+
+		/* Loading side buttons */
+		loadingSideButtons(currentRound, playerSolo, layout);
+		
+		frame.pack();
+		contentPane.requestFocusInWindow();
+	}
+
+	private void loadingSideButtons(int currentRound, Player playerSolo,
+			SpringLayout layout) {
+		JLabel labelRound = imageShow(layout, null, 644, 20, "West", "North", contentPane);
+		labelRound.setText("Current Round : "+currentRound+"/17");
+		contentPane.add(labelRound);
+
+		JLabel labelPlayer = imageShow(layout, null, 644, Constant.caseSize, "West", "North", contentPane);
+		labelPlayer.setText("Points : "+playerSolo.getPoints());
+		contentPane.add(labelPlayer);
+
+		JLabel labelTF= imageShow(layout, null, 644, 80, "West", "North", contentPane);
+		labelTF.setText("Movements' number:");
+		contentPane.add(labelTF);
+
+		JFormattedTextField TF = new JFormattedTextField(NumberFormat.getIntegerInstance());
+		layout.putConstraint(SpringLayout.WEST, TF, 670, SpringLayout.WEST, contentPane);
+		layout.putConstraint(SpringLayout.NORTH, TF, 100, SpringLayout.NORTH, contentPane);
+		TF.setPreferredSize(new Dimension(100, 20));
+		contentPane.add(TF);
+
+		JButton validateButton = positionButton(layout, "Validate", 673, 130, "West", "North", contentPane);
+		contentPane.add(validateButton);
+
+		JButton backMovement = positionButton(layout, "<", 668, 160, "West", "North", contentPane);
+		backMovement.setToolTipText("Precedent Movement");
+		contentPane.add(backMovement);
+
+		JButton nextMovement = positionButton(layout, ">", 728, 160, "West", "North", contentPane);
+		nextMovement.setToolTipText("Next Movement");
+		contentPane.add(nextMovement);
+
+		JButton solveButton = positionButton(layout, "Solution", 673, 300, "West", "North", contentPane);
+		contentPane.add(solveButton);
+
+		JButton optionButton = positionButton(layout, "Back Options", 656, 510, "West", "North", contentPane);
+		contentPane.add(optionButton);
+
+		JButton menuButton = positionButton(layout, "Back Menu", 666, 550, "West", "North", contentPane);
+		contentPane.add(menuButton);
+
+
+		validateButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+
+				/* A décomenter lorsque l'on vérifira le nombre
+				JOptionPane.showMessageDialog(frame,
+					    "Please enter a number greater than zero !",
+					    "Inane error",
+					    JOptionPane.ERROR_MESSAGE);
+				 */
+			}
+		});
+		
+		backMovement.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controller.previousMove();
+			}
+		});
+		
+		nextMovement.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				controller.nextMove();
+			}
+		});
+		
+		solveButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("Lance AI !");
+				
+				controller.launchSolver();
+				
+			}
+		});
+
+		optionButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				dialogQuit("options");
+			}
+		});
+
+		menuButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				dialogQuit("menu");
+			}
+		});
+	}
+
+	private void loadingBoard(int size, Box[][] board, SpringLayout layout) {
+		BoxType boxType;
+		Color color;
+		ImageIcon icon;
+		int i;
+		int j;
+		JPanel panelGird = new JPanel();
+		panelGird.setLayout(new GridLayout(size,size));
+		panelGird.setPreferredSize(new Dimension(Constant.caseSize*size,Constant.caseSize*size));
+		panelGird.setBackground(java.awt.Color.white);
+		for (i = 0; i < size; i++)
+		{
+			for (j = 0; j < size; j++)
+			{
+				boxType = board[i][j].getType();
+				color = board[i][j].getColor();
+
+				if(color != null)
+					icon = new ImageIcon("code/images/box/"+boxType+color+".png");
+				else
+					icon = new ImageIcon("code/images/box/"+boxType+".png");		
+
+				JLabel labelBox = new JLabel("",icon,JLabel.CENTER);
+				labelBox.addMouseListener(new ClickOnBoardListener(controller, j, i));
+
+				panelGird.add(labelBox);
+
+				/* Loading walls */
+				if(board[i][j].isNorth())
+				{
+					icon = new ImageIcon("code/images/wall_H.png");
+					JLabel north = imageShow(layout, icon, j*Constant.caseSize-4, i*Constant.caseSize-4, "West", "North", contentPane);
+					contentPane.add(north);
+				}
+
+				if(board[i][j].isSouth())
+				{
+					icon = new ImageIcon("code/images/wall_H.png");
+					JLabel south =  imageShow(layout, icon, j*Constant.caseSize-4, i*Constant.caseSize+36, "West", "North", contentPane);
+					contentPane.add(south);
+				}
+				if(board[i][j].isEast())
+				{
+					icon = new ImageIcon("code/images/wall_V.png");
+					JLabel east =  imageShow(layout, icon, j*Constant.caseSize+36, i*Constant.caseSize-4, "West", "North", contentPane);
+					contentPane.add(east);
+
+				}
+				if(board[i][j].isWest())
+				{
+					icon = new ImageIcon("code/images/wall_V.png");
+					JLabel west = imageShow(layout, icon, j*Constant.caseSize-4, i*Constant.caseSize-4, "West", "North", contentPane);
+					contentPane.add(west);
+				}
+
+			}
+		}
+		contentPane.add(panelGird);
+	}
+
+	public void newGoalCard(){
+		dialogNew();
+	
+	}
+	
+	private void goalCardMiddle(Box goalCard, SpringLayout layout) {
+		ImageIcon icon;
+		if (goalCard.getType()==BoxType.Multi)
+			icon = new ImageIcon("code/images/box/"+goalCard.getType()+".png");
+		else	
+			icon = new ImageIcon("code/images/box/"+goalCard.getType()+goalCard.getColor()+".png");
+		JLabel labelCard = imageShow(layout, icon, 7*Constant.caseSize+20, 7*Constant.caseSize+20, "West", "North", contentPane);
+		contentPane.add(labelCard);
+	}
+
+	private void loadingRobots(Robot selectedR, SpringLayout layout) {
+		Color color;
+		ImageIcon icon;
+		int x;
+		int y;
+		int originX;
+		int originY;
+
+
+		for(Robot r : robots) {
+			color = r.getColor();
+			x = r.getX();
+			y = r.getY();
+			originX = r.getOriginX();
+			originY = r.getOriginY();
+			
+			icon = new ImageIcon("code/images/robots/robot"+color+".png");
+			JLabel labelRobot = imageShow(layout, icon, x*Constant.caseSize, y*Constant.caseSize, "West", "North", contentPane);
+			contentPane.add(labelRobot);
+			
+			icon = new ImageIcon("code/images/box/Selection.png");
+			if (selectedR == r)
+			{
+				JLabel labelSelect = imageShow(layout, icon, x*Constant.caseSize, y*Constant.caseSize, "West", "North", contentPane);
+				contentPane.add(labelSelect);
+			}
+
+			labelRobot.addMouseListener(new ClickOnRobotListener(controller, r,this));
+
+			icon = new ImageIcon("code/images/box/Start"+color+".png");
+			labelRobot = imageShow(layout, icon, originX*Constant.caseSize, originY*Constant.caseSize, "West", "North", contentPane);
+			contentPane.add(labelRobot);
+		}
+	}
+
+	public void updateRobotPositions(List<Robot> r) {
+		robots = r;	
+		redrawContentPane();
+	}
+
+	public void redrawContentPane() {
+		initContentPane();
+		buildContentPane();
+
+	}
+}

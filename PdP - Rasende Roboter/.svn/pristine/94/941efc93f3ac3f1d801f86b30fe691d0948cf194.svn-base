@@ -1,0 +1,44 @@
+/**
+ * 
+ */
+package model;
+
+/**
+ * @author Dimitri
+ *
+ */
+public final class Constant {
+	
+	/**
+	 * List of possible directions.
+	 */
+	public enum Direction {
+		Up,
+		Down,
+		Left,
+		Right;
+	}
+
+	/**
+	 * The color of a box or a robot, required for the choice of the associated image.
+	 */
+	public enum Color {
+		Blue,
+		Green,
+		Red,
+		Yellow,
+	}
+
+	/**
+	 * The type of a box, required for the choice of the associated image.
+	 */
+	public enum BoxType {
+		Empty,
+		Central,
+		More,
+		Sun,
+		Diamond,
+		Triangle,
+		Multi;
+	}
+}

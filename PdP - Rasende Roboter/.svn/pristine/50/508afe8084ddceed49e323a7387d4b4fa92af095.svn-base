@@ -1,0 +1,139 @@
+package network;
+
+import game.Constant;
+import game.Constant.Color;
+import game.Constant.Direction;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import launcher.Controller;
+
+
+/**
+ * Client side of the application
+ */
+public class Client{
+	
+	private InetAddress ipServer;
+	private Controller controller;
+	DatagramSocket socket;
+	private String username;
+	
+	
+	private Thread clientThread = new Thread() {
+		public void run() {
+			listen();
+		}
+	};
+	
+	public Client(InetAddress dest, Controller controller,String pseudo) {
+		ipServer = dest;
+		this.controller = controller;
+		this.username=pseudo;
+		
+		try {
+			socket = new DatagramSocket(Constant.CLIENT_PORT);
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
+		clientThread.start();
+	}
+	
+	/**
+	 * Listen for the data from the server
+	 */
+	private void listen() {
+		String[] data;
+		byte[] buffer = new byte[15000];
+		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+		
+		while(true) {
+			try {
+				socket.receive(packet);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			data = Protocol.decodePacket(packet);
+			
+			processData(data);
+			}
+	}
+
+	/**
+	 * Connection with server
+	 */
+	public void connect() {
+		DatagramPacket packet;
+		
+		try {
+			String data = Protocol.encodeConnect(username);
+			packet = Protocol.encodePacket(data, ipServer, Constant.SERVER_PORT);
+			
+			socket.send(packet);			
+		} catch (SocketException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void processData(String[] data) {
+		
+		switch(data[0]) {
+			case Protocol.GOAL_CARDS:
+				controller.setCurrentGoal(Protocol.decodeGoalCard(data));
+				break;
+			case Protocol.BOARD_PIECE:
+				controller.setBoard(Protocol.decodeBoardPiece(data));
+				break;
+			case Protocol.ROBOT:
+				controller.setRobot(Protocol.decodeRobot(data));
+				break;
+			case Protocol.TIME:
+				controller.setCountDown(Protocol.decodeTime(data));
+				break;
+			case Protocol.MOVE:
+				Color c = Color.valueOf(data[1]);
+				Direction d = Direction.valueOf(data[2]);
+				controller.setSelectedRobot(c);
+				controller.moveRobotInDirection(d);
+				break;
+			case Protocol.CLIENT:
+				controller.refreshPlayers(Protocol.decodeClient(data));
+				break;
+			case Protocol.REFRESH:
+				controller.refreshBoard();
+				controller.refreshColumn();
+				break;
+			default:
+				System.out.println("Flag inconnu");
+				break;
+		}
+	}	
+	
+	/**
+	 * Sent a new movement to server
+	 * @param color : the color of robot to move
+	 * @param d : the direction
+	 * @see Color
+	 * @see Direction
+	 */
+	public void sendMove(Color color, Direction d) {
+		DatagramPacket packet;
+		
+			try {	
+					String robotInfo = Protocol.encodeMove(color, d);
+					
+					packet = Protocol.encodePacket(robotInfo, ipServer, Constant.SERVER_PORT);
+					socket.send(packet);		
+
+			} catch (SocketException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	}
+}

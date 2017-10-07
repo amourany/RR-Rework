@@ -1,0 +1,62 @@
+package controller;
+
+import view.AbstractView;
+import view.GameMenuView;
+import view.HelpView;
+import view.InGameView;
+import view.OptionsView;
+
+import javax.swing.JFrame;
+
+import model.Model;
+
+public class Controller {
+	private AbstractView view;
+	private Model model;
+	private JFrame frame;
+
+	public Controller(JFrame f, Model m){
+		frame = f;
+		model = m;
+		createGameMenuView();
+	}
+
+	public Model getModel() {
+		return model;
+	}
+
+	public void setView(AbstractView v) {
+		view = v;
+	}
+
+	/*
+	 * Game menu methods 
+	 */
+	
+	public void createGameMenuView() {
+		view = new GameMenuView(this, frame);
+	}
+
+	
+	/*
+	 * Options methods
+	 */
+	
+	public void createOptionsView() {
+		view = new OptionsView(this, frame);
+		model.generateBoard();
+	}
+	
+	
+	/*
+	 * In game methods
+	 */
+	
+	public void createInGameView() {
+		view = new InGameView(this, frame);
+	}
+
+	public void createHelpView() {
+		view = new HelpView(this, frame);
+	}
+}

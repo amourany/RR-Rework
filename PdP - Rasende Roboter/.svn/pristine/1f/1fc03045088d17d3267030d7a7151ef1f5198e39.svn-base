@@ -1,0 +1,73 @@
+package model;
+
+import java.util.List;
+
+import model.Constant.Direction;
+
+public class Board {
+	private Box[][] box;
+	int board_size; //Might be changed in options
+
+	public Board() {
+		board_size = 16;
+		box = new Box[board_size][board_size];
+		initbox();
+	}
+	public void initbox()
+	{
+		for (int i=0;i<board_size;i++)
+		{
+			for (int j=0;j<board_size;j++)
+			{
+				box[i][j]=new Box();
+			}
+		}
+	}
+
+	public Box[][] getBox() {
+		return box;
+	}
+
+	public void setBox(Box[][] box) {
+		this.box = box;
+	}
+
+	public int getPlateau_size() {
+		return board_size;
+	}
+
+	public void setPlateau_size(int board_size) {
+		this.board_size = board_size;
+	}
+
+	/**
+	 * Move a robot in a direction
+	 * @param robot robot that have to move
+	 * @param direction direction that the robot is following
+	 * @param robots all the robots of the game
+	 * @see Direction
+	 * @see BoxColor
+	 */
+	public Robot getNewPosition(Robot robot, Direction direction, List<Robot> robots) {
+		int x = robot.x;
+		int y = robot.y;
+		while (this.getBox()[y][x].canContinue(direction) 
+				&& !robot.robotIsHere(x, y, robots, direction)) {
+			switch (direction) {
+			case Right :
+				x++;
+				break;
+			case Left :
+				x--;
+				break;
+			case Down :
+				y++;
+				break;
+			case Up :
+				y--;
+				break;
+			}
+		}	
+		return new Robot(x, y, robot.getColor());
+	}
+}

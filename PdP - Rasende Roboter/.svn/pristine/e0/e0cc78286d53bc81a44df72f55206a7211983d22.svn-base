@@ -1,0 +1,64 @@
+package model;
+
+import model.Constant.Direction;
+
+/**
+ * Saves the direction that must be taken by a robot.
+ */
+public class Movement {
+	/**
+	 * @see Direction
+	 */
+	Direction mDirection;
+	/**
+	 * @see Robot
+	 */
+	Robot mRobot;
+	
+	/**
+	 * Constructor of the class
+	 * @param mDirection : direction that must be taken by a robot.
+	 * @param mRobot : the robot to move.
+	 * @see Robot
+	 * @see Direction
+	 */
+	public Movement(Direction mDirection, Robot mRobot) {
+		this.mDirection = mDirection;
+		this.mRobot = mRobot;
+	}
+	
+	/**
+	 * Getter of mDirection
+	 * @return Direction
+	 */
+	public Direction getmDirection() {
+		return mDirection;
+	}
+	
+	/**
+	 * Setter of mDirection
+	 * @param mDirection
+	 */
+	public void setmDirection(Direction mDirection) {
+		this.mDirection = mDirection;
+	}
+	
+	/**
+	 * Getter of mRobot
+	 * @return Robot
+	 */
+	public Robot getmRobot() {
+		return mRobot;
+	}
+	
+	/**
+	 * Setter of mRobot
+	 * @param mRobot
+	 */
+	public void setmRobot(Robot mRobot) {
+		this.mRobot = mRobot;
+	}
+	
+	
+	
+}

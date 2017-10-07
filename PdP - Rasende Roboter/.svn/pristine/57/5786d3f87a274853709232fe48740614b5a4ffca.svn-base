@@ -1,0 +1,109 @@
+package interactions;
+
+import java.util.List;
+import java.util.Observer;
+import java.util.Stack;
+
+import model.Board;
+import model.Box;
+import model.Robot;
+
+/**
+ * This is the first version of our AI. It tests all the possibility at each
+ * step and check if the {@link #mDestination} is reaches. The possibilities are 
+ * not yet optimized (all possibilities are analyzed).
+ * @author Dimitri
+ * @version 1
+ */
+public class FirstAI extends AbstractAI {
+	/**
+	 * 
+	 * @see Board
+	 */
+	private Board mBoard; // MISTAKE -- Pas forcement utile de stocker le plateau !
+	/**
+	 * 
+	 * @see Robot
+	 * @see List
+	 */
+	private List<Robot> mRobots;
+	/**
+	 * 
+	 * @see Box
+	 */
+	private Box mDestination;
+	/**
+	 * The probability tree that is constructed during analysis
+	 * @see ProbabilityTree
+	 */
+	private ProbabilityTree mProbabilityTree;
+	
+	/**
+	 * Call this method to start the method {@link #findSolution()}. All data is copied 
+	 * locally. Finally, the method {@link #findSolution()} is called in a new 
+	 * {@link Thread}.
+	 * @param board the current board of the game
+	 * @param robots a list of the current position of the robots
+	 * @param destination the box that the player must reach
+	 * @see #findSolution()
+	 * @see Board
+	 * @see Robot
+	 * @see Box
+	 * @see List
+	 * @see Thread
+	 */
+	public void startFindSolution(Board board, List<Robot> robots,
+			Box destination) {
+		this.mBoard = board;
+		this.mRobots = robots;
+		this.mDestination = destination;
+		
+		Thread thread = new Thread() {
+			public void run() {
+				findSolution();
+			}
+		};
+		thread.start();
+	}
+
+	/**
+	 * Call this method when the IA notify to the observer that he find a solution
+	 * @return a Stack of the solution that the IA find
+	 * @see model.Event
+	 * @see Stack
+	 * @see Stack#peek() 
+	 */
+	public Stack<Event> getSolution() {
+		Stack<Event> solution = new Stack<Event>();
+		solution.push(getLastMovement());
+		while(solution.peek().mFather != null){
+			solution.push(solution.peek().mFather);
+		}
+		return solution;
+	}
+	
+	/**
+	 * Called to start building the solution
+	 * @return the event that has reached the solution 
+	 */
+	private Event getLastMovement() {
+		return null;
+	}
+
+	/**
+	 * This method is the heart of the IA. It tests all the possibility at each
+	 * step and check if the {@link #mDestination} is reaches.
+	 * When the {@link #mDestination} is reached, all {@link Observer} are notify.
+	 * @exception OutOfMemoryError if the probability tree is too large
+	 * @see Observer#notifyAll()
+	 */
+	protected void findSolution() throws OutOfMemoryError{
+		this.mProbabilityTree = new ProbabilityTree(null);
+		/*
+		while(this.mProbabilityTree.getLastFeuille() != m)
+		
+		*/
+		
+		notifyAll();
+	}
+}

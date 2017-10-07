@@ -1,0 +1,39 @@
+package model;
+
+public class Board {
+	private Box[][] box;
+	int board_size; //Might be changed in options
+	
+	public Board() {
+		board_size = 16;
+		box = new Box[board_size][board_size];
+		initbox();
+	}
+	public void initbox()
+	{
+        for (int i=0;i<board_size;i++)
+		{
+			for (int j=0;j<board_size;j++)
+			{
+				box[i][j]=new Box();
+			}
+		}
+	}
+	
+	public Box[][] getBox() {
+		return box;
+	}
+
+	public void setBox(Box[][] box) {
+		this.box = box;
+	}
+
+	public int getPlateau_size() {
+		return board_size;
+	}
+
+	public void setPlateau_size(int board_size) {
+		this.board_size = board_size;
+	}
+
+}

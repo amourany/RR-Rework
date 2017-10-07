@@ -1,0 +1,189 @@
+package solver;
+
+import game.Constant;
+import game.Constant.Direction;
+import game.Game;
+import game.Robot;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class Solver {
+	
+	private StructTree tree;
+	private String root;
+	private String leaf;
+	private Game game;
+	private int depth;
+	private int cut;
+	
+	public Solver() {
+		tree = new StructTree();
+	}
+	
+	public void initSolver(Game g) {
+		root = "";
+		leaf = "";
+		game = g;
+		tree.clear();
+		depth = 0;
+		cut = 0;
+	}
+	
+	public void solve(Game g){
+		boolean solved = false;
+		
+		initSolver(g);
+		createRoot();
+		
+		while(!solved){
+			depth++;
+			System.out.println("Depth : " + depth + " | " + tree.possibilities.size() + " possibilities (" + cut + " cuts)");
+			solved = buildPossibilities();
+		}
+		System.out.println("Solution found, depth : " + depth);
+		buildStack();
+	}
+	
+	
+	public void createRoot() {
+		root = createKey(game.getRobots());
+		tree.possibilities.put(root, depth);
+	}
+	
+	/**
+	 * This function create all the possible moves
+	 */
+	private boolean buildPossibilities() {
+		boolean moved;
+		boolean solved = false;
+		String[] node = new String[Constant.NB_ROBOT];
+		String[] robotInfo = new String[3];
+		String toAdd;
+		Robot rob;
+		List<Robot> robots = new ArrayList<Robot>();
+		List<Robot> copyRobot = new ArrayList<Robot>();
+		Map<String, Integer> copyTree = new HashMap<String, Integer>();
+		
+		copyTree.putAll(tree.possibilities);
+		
+		for(String s : copyTree.keySet()) {
+			if(copyTree.get(s) == depth-1) { // For all keys from the previous depth
+				robots.clear();
+				copyRobot.clear();
+				node = s.split("&");
+				
+				for(int i = 0; i < Constant.NB_ROBOT; i++){
+					robotInfo = node[i].split(";"); // We split the keys in order to get the four robots
+					rob = new Robot(Integer.parseInt(robotInfo[0]), Integer.parseInt(robotInfo[1]), Constant.Color.valueOf(robotInfo[2]));
+					robots.add(rob);
+				}
+				
+				for(Robot r : robots) {
+					for(Direction d : Constant.Direction.values()) { // Then for each robot we move them in all directions
+						copyRobot.clear();
+						copyRobot.addAll(robots);
+						Robot rCopy = new Robot(r);
+						moved = game.getBoard().getNewPosition(rCopy, d, copyRobot);
+						for(int i = 0; i < copyRobot.size(); i++) {
+				            if(copyRobot.get(i).getColor() == rCopy.getColor()) {
+				            	copyRobot.set(i, rCopy);
+				            }
+						}
+						if(moved) { // And then we add the key made by the move of each robot to the hashmap
+							if(!solved) {
+								if(game.isWin(r)){ 
+									toAdd = createKey(copyRobot);
+									if(!tree.possibilities.containsKey(toAdd)) {
+										leaf = toAdd;
+										tree.parent.put(toAdd, s);
+										solved = true;
+									}
+								}
+								else {
+									toAdd = createKey(copyRobot);
+									if(!tree.possibilities.containsKey(toAdd)) { // Except if the key is already in the hashmap
+										tree.possibilities.put(toAdd, depth);
+										tree.parent.put(toAdd, s);
+									}
+									else
+										cut++;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return solved;
+	}
+	
+	private String createKey(List<Robot> robots) {
+		String s = "";
+		for(Robot r : robots) {
+			s += r.toString() + "&";
+		}
+		return s;
+	}
+	
+private void buildStack() {
+		
+		String next;
+
+		next = tree.parent.get(leaf);
+		tree.roughStack.push(next);		
+		
+		while(!next.equals(root)) {
+			next = tree.parent.get(next);
+			tree.roughStack.push(next);
+		}
+		
+		String after = tree.roughStack.pop();
+		String before;
+		
+		final int max = tree.roughStack.size();
+		for(int i = 0; i < max; i++) {
+			before = tree.roughStack.pop();
+			tree.invertStack.push(findDirection(after, before));
+			after = before;
+		}
+		
+		for(String s : tree.invertStack){
+			System.out.println(s);
+		}		
+	}
+
+	private String findDirection(String after, String before) {
+		String[] nodeBefore;
+		String[] nodeAfter;
+		String[] robotInfoBefore;
+		String[] robotInfoAfter;
+		String res = "Move the ";
+		Direction d = null;
+		
+		nodeBefore = before.split("&");
+		nodeAfter = after.split("&");
+		
+		for(int i = 0; i < Constant.NB_ROBOT; i++) {
+			if(!nodeBefore[i].equals(nodeAfter[i])) {
+				robotInfoBefore = nodeBefore[i].split(";");
+				robotInfoAfter = nodeAfter[i].split(";");
+				
+				res += Constant.Color.valueOf(robotInfoBefore[2]) + " robot in the ";
+				
+				if(Integer.parseInt(robotInfoBefore[0]) > Integer.parseInt(robotInfoAfter[0]))
+						d = Direction.Right;
+				else if(Integer.parseInt(robotInfoBefore[0]) < Integer.parseInt(robotInfoAfter[0]))
+						d = Direction.Left;
+				else if(Integer.parseInt(robotInfoBefore[1]) > Integer.parseInt(robotInfoAfter[1]))
+						d = Direction.Down;
+				else if(Integer.parseInt(robotInfoBefore[1]) < Integer.parseInt(robotInfoAfter[1]))
+						d = Direction.Up;
+			}
+		}
+		res += d + " direction.";
+		return res;
+	}
+}

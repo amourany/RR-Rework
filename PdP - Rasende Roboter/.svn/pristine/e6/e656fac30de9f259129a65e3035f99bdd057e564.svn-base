@@ -1,0 +1,279 @@
+package controller;
+
+import interactions.Solver;
+import view.AbstractView;
+
+import view.GameMenuView;
+import view.HelpView;
+import view.InGameView;
+import view.OptionsView;
+import view.StartMultiView;
+
+import javax.swing.JFrame;
+
+import model.Box;
+import model.Constant.Direction;
+import model.Model;
+import model.Robot;
+import model.Constant.Color;
+import model.Constant.BoxType;
+
+public class Controller {
+	private AbstractView view;
+	private Model model;
+	private JFrame frame;
+
+	private Robot selectedRobot;
+
+	/* Carte objectif */
+	private Box goalCardUsed;
+
+	public Controller(JFrame f, Model m) {
+		frame = f;
+		model = m;
+		createGameMenuView();
+	}
+
+	public Model getModel() {
+		return model;
+	}
+
+	public void setView(AbstractView v) {
+		view = v;
+	}
+
+	/**
+	 * Game menu methods
+	 */
+	public void createGameMenuView() {
+		view = new GameMenuView(this, frame);
+	}
+
+	/**
+	 * Options methods
+	 */
+	public void createOptionsView() {
+		view = new OptionsView(this, frame);
+		model.generateBoard();
+	}
+	
+	public void startMultiView() {
+		view = new StartMultiView(this, frame);
+	}
+
+	/**
+	 * 
+	 */
+	public void launchSolver() {
+		if (model.mSolver == null)
+			model.mSolver = new Solver();
+		model.mSolver.startFindSolution(model.getGameBoard(),
+				model.getRobots(), goalCardUsed);
+	}
+
+	/**
+	 * In game methods
+	 */
+	public void createInGameView() {
+		selectedRobot = null;
+		goalCardUsed = null;
+		view = new InGameView(this, frame);
+	}
+
+	/**
+	 * Method called when the user click on a robot
+	 */
+	public void setSelectedRobot(Robot robot) {
+		selectedRobot = robot;
+	}
+
+	/**
+	 * 
+	 * @return The robot selected by the player
+	 */
+	public Robot getSelectedRobot() {
+		return selectedRobot;
+	}
+
+	/**
+	 * Method called when the user click on the board It moves the robot and
+	 * update the view
+	 * 
+	 * @param x
+	 *            , y : coordinates of the box clicked
+	 */
+	public void moveRobot(int x, int y) {
+		if (selectedRobot != null) {
+			model.getPreviousMove().push(new Robot(selectedRobot));
+			if ((selectedRobot.x < x) && (selectedRobot.y == y))
+				model.move(selectedRobot, Direction.Right);
+			else if ((selectedRobot.x > x) && (selectedRobot.y == y))
+				model.move(selectedRobot, Direction.Left);
+			else if ((selectedRobot.x == x) && (selectedRobot.y < y))
+				model.move(selectedRobot, Direction.Down);
+			else if ((selectedRobot.x == x) && (selectedRobot.y > y))
+				model.move(selectedRobot, Direction.Up);
+
+
+			if (goalCardDone())
+				((InGameView) view).newGoalCard();
+				//newRound();	
+			else	
+				((InGameView) view).updateRobotPositions(model.getRobots());
+		}
+	}
+
+	public void moveRobotInDirection(Direction d) {
+		if (selectedRobot != null) {
+			model.getPreviousMove().push(new Robot(selectedRobot));
+			model.move(selectedRobot, d);
+			
+			if (goalCardDone()){
+				((InGameView) view).newGoalCard();
+				//newRound();	
+			}
+				
+			else	
+				((InGameView) view).updateRobotPositions(model.getRobots());
+		}
+	}
+	
+	/**
+	 * Start a new Round if goalCaseDone and check if GameOver
+	 */
+	public void newRound()
+	{
+		goalCardUsed = initGoalCard();
+		
+		if(model.getCurrentRound()+1 != 17)
+		{
+			model.setCurrentRound(model.getCurrentRound()+1);
+		}
+		else
+		{
+			//GAME OVER
+		}
+		
+		((InGameView) view).redrawContentPane();
+	}
+	
+	/**
+	 * Select a Robot with his color
+	 * @param c : Color of the robot
+	 */
+	public void keySelectedRobot(Color c)
+	{
+		switch(c)
+		{
+		case Red:
+			selectedRobot = getModel().getRobot(Color.Red);
+			break;
+		case Green:
+			selectedRobot = getModel().getRobot(Color.Green);
+			break;
+		case Blue:
+			selectedRobot = getModel().getRobot(Color.Blue);
+			break;
+		case Yellow:
+			selectedRobot = getModel().getRobot(Color.Yellow);
+			break;
+		}
+
+		((InGameView) view).redrawContentPane();
+	}
+
+	/**
+	 * Help methods
+	 */
+	public void createHelpView() {
+		view = new HelpView(this, frame);
+	}
+
+	public BoxType initType() {
+		int x = ((int) ((Math.random()) * 100)) % 5;
+		switch (x) {
+		case 0:
+			return BoxType.Sun;
+		case 1:
+			return BoxType.Diamond;
+		case 2:
+			return BoxType.More;
+		case 3:
+			return BoxType.Triangle;
+		case 4:
+			return BoxType.Multi;
+		}
+		return null;
+	}
+
+	public Color initColor() {
+		int x = ((int) ((Math.random()) * 100)) % 4;
+		switch (x) {
+		case 0:
+			return Color.Blue;
+		case 1:
+			return Color.Yellow;
+		case 2:
+			return Color.Red;
+		case 3:
+			return Color.Green;
+		}
+		return null;
+	}
+
+	public Box initGoalCard() {
+		goalCardUsed = new Box();
+		goalCardUsed.setType(initType(), initColor());
+		return goalCardUsed;
+	}
+
+	public void setGoalCard(Box card) {
+		goalCardUsed = card;
+	}
+
+	public Box getGoalCard() {
+		return goalCardUsed;
+	}
+
+	/**
+	 * To derminate if a robot is on a goalCard
+	 * @return Boolean
+	 */
+	public Boolean goalCardDone() {
+		Box boxRobot = model.getGameBoard().getBox()[selectedRobot.getY()][selectedRobot
+				.getX()];
+		BoxType goalType = goalCardUsed.getType();
+		if (goalType == BoxType.Multi) {
+			if (boxRobot.getType() == goalType)
+				return true;
+		}
+
+		else {
+			Color goalColor = goalCardUsed.getColor();
+			if (boxRobot.getType() == goalType
+					&& boxRobot.getColor() == goalColor
+					&& selectedRobot.getColor() == goalColor)
+				return true;
+		}
+		return false;
+
+	}
+
+	public void previousMove() {
+		if(!model.getPreviousMove().isEmpty()) {
+			Robot r = model.getPreviousMove().pop();
+			model.getNextMove().push(new Robot(r));
+			model.setRobotByColor(r.getColor(), r);
+			((InGameView) view).updateRobotPositions(model.getRobots());
+		}
+	}
+
+	public void nextMove() {
+		if(!model.getNextMove().isEmpty()) {
+			Robot r = model.getNextMove().pop();
+			model.getPreviousMove().push(new Robot(r));
+			model.setRobotByColor(r.getColor(), r);
+			((InGameView) view).updateRobotPositions(model.getRobots());
+		}
+	}
+}

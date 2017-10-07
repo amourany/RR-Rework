@@ -1,0 +1,212 @@
+package game;
+
+import game.Constant.BoxType;
+import game.Constant.Color;
+import game.Constant.Direction;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SpringLayout;
+
+
+/**
+ * Class containing the data of a box (walls, color and type)
+ */
+public class Box {
+
+	private boolean north; // Is there a wall on the north of the box ?
+	private boolean east;
+	private boolean south;
+	private boolean west;
+	/**
+	 * @see Color
+	 */
+	private Color color;
+	/**
+	 * @see BoxType
+	 */
+	private BoxType type;
+
+	/**
+	 * Default Constructor
+	 */
+	public Box() {
+		this.north=false;
+		this.south=false;
+		this.east=false;
+		this.west=false;
+		this.type = BoxType.Empty;
+		this.color=null;
+	}
+	
+	public Box(BoxType t, Color c){
+		this();
+		this.type = t;
+		this.color = c;
+	}
+
+	public Box(boolean north, boolean east, boolean south, boolean west,
+			Color color, Color start, BoxType type) {
+		this.north = north;
+		this.east = east;
+		this.south = south;
+		this.west = west;
+		this.color = color;
+		this.type = type;
+	}
+
+	public boolean isNorth() {
+		return north;
+	}
+
+	public void setNorth(boolean north) {
+		this.north = north;
+	}
+
+	public boolean isEast() {
+		return east;
+	}
+
+	public void setEast(boolean east) {
+		this.east = east;
+	}
+
+	public boolean isSouth() {
+		return south;
+	}
+
+	/**
+	 * Put the wall according to the direction
+	 * @param direction : north, south, west or east
+	 * @see Direction
+	 */
+	public void setWall(Direction direction){
+		switch (direction) {
+		case Up:
+			this.north = true;
+			break;
+		case Down:
+			this.south = true;
+			break;
+		case Left:
+			this.west = true;
+			break;
+		case Right:
+			this.east = true;
+			break;
+		default:
+
+			break;
+		}
+	}
+
+
+	/**
+	 * To know if a robot can cross the box our if it is stopped by a wall
+	 * @param direction the direction that the robot is following
+	 * @return <code>true</code> if the robot can continue its course
+	 */
+	public boolean canContinue(Direction direction){
+		switch (direction) {
+		case Up:
+			return !this.north;
+		case Down:
+			return !this.south;
+		case Left:
+			return !this.west;
+		case Right:
+			return !this.east;
+		}
+		return false;
+	}
+
+	public void setSouth(boolean south) {
+		this.south = south;
+	}
+
+	public boolean isWest() {
+		return west;
+	}
+
+	public void setWest(boolean west) {
+		this.west = west;
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+	public BoxType getType() {
+		return type;
+	}
+
+	public void setType(BoxType type, Color color) {
+		this.type = type;
+		this.color = color;
+	}	
+
+	private ImageIcon getImageIcon(){
+		if(this.type != BoxType.Empty && this.type != BoxType.Multi)
+			return new ImageIcon(Constant.imagesPath + "box/" + type + color + ".png");
+		else
+			return new ImageIcon(Constant.imagesPath + "box/" + type + ".png");
+	}
+	
+	public JPanel getJPanel(Robot rCurrent, Boolean isSelected, Robot rOrigin, Box bObjectif){
+		JPanel jp = new JPanel();
+		jp.setLayout(new SpringLayout());
+		ImageIcon icon;
+
+		if(rCurrent != null)
+			if(isSelected){
+				icon = new ImageIcon(Constant.imagesPath+"box/Selection.png");
+				jp.add(new JLabel("", icon, JLabel.CENTER));
+			}
+
+		if(isNorth()){
+			icon = new ImageIcon(Constant.imagesPath + "wall_north.png");
+			JLabel north = new JLabel("", icon, JLabel.CENTER);
+			jp.add(north);
+		}
+
+		if(isSouth()){
+			icon = new ImageIcon(Constant.imagesPath + "wall_south.png");
+			JLabel south =  new JLabel("", icon, JLabel.CENTER);
+			jp.add(south);
+		}
+		if(isEast()){
+			icon = new ImageIcon(Constant.imagesPath + "wall_east.png");
+			JLabel east =  new JLabel("", icon, JLabel.CENTER);
+			jp.add(east);
+
+		}
+		if(isWest()){
+			icon = new ImageIcon(Constant.imagesPath + "/wall_west.png");
+			JLabel west = new JLabel("", icon, JLabel.CENTER);
+			jp.add(west);
+		}
+
+		if(this.type == BoxType.Central){
+			jp.add(new JLabel("", bObjectif.getImageIcon(), JLabel.CENTER));
+		}
+
+		if(rCurrent != null){
+			icon = new ImageIcon(Constant.imagesPath + "robots/robot" + rCurrent.getColor() + ".png");
+			jp.add(new JLabel("", icon, JLabel.CENTER));
+		}	
+		
+		if(rOrigin != null){
+			icon = new ImageIcon(Constant.imagesPath + "box/Start" + rOrigin.getColor() + ".png");
+			jp.add(new JLabel("", icon, JLabel.CENTER));
+		}
+
+		jp.add(new JLabel("", this.getImageIcon(), JLabel.CENTER));
+		
+		return jp;
+	}
+}

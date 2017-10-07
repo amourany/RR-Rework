@@ -1,0 +1,351 @@
+package game;
+
+import game.Constant.BoxType;
+import game.Constant.Color;
+import game.Constant.Direction;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+
+import solverAlgorithm.Solver;
+
+
+/**
+ * The model of our architecture
+ */
+public class Game {
+	private Board mBoard;
+	private List<Robot> mRobots;
+	private int mCounterLap;
+	private Stack<List<Robot>> mPreviousPosition;
+	private Stack<List<Robot>> mNextPosition;
+	private Robot mSelectedRobot;
+	private Stack<Box> mGoalCard;
+	private Solver mSolver;
+
+	/**
+	 * Construtor of Model
+	 */
+	public Game() {
+		this.generateBoard();
+	}
+
+	public void startNewGame(){
+		this.mRobots = new ArrayList<Robot>();
+		for(Color c : Constant.Color.values()){
+			Robot r = new Robot(c);
+			r = r.placeOnBoard(this.mRobots);
+			this.mRobots.add(r);
+		}	
+
+		this.mGoalCard = new Stack<Box>();
+
+		// TODO METTRE DE L'ALEATOIRE !
+		for(Color c : Color.values())
+			for(BoxType bt : BoxType.values()){
+				if(bt != BoxType.Central && bt != BoxType.Empty && bt != BoxType.Multi)
+					this.mGoalCard.push(new Box(bt, c));
+			}
+
+		this.mGoalCard.push(new Box(BoxType.Multi, null));
+		// TODO METTRE UNE CASE EMPTY AU DEBUT EN BOUT DE PILE !
+		this.mGoalCard.push(new Box(BoxType.Empty, null));
+
+		startNewLap();
+	}
+
+	private void startNewLap(){
+		if(!this.mGoalCard.empty()){
+			this.mCounterLap = 0;
+
+			this.mPreviousPosition = new Stack<List<Robot>>();
+			this.mNextPosition = new Stack<List<Robot>>();
+
+			this.mGoalCard.pop();
+		}
+		else{
+			System.out.println("Parti termin�e !!!");
+		}
+	}
+
+	/**
+	 * Getter of gameBoard
+	 * @return gameBoard : Board
+	 * @see Board
+	 */
+	public Board getGameBoard() {
+		return mBoard;
+	}
+
+	/**
+	 * Getter of the robots' list
+	 * @return robots : the list of robots
+	 * @see Robot
+	 * @see List
+	 */
+	public List<Robot> getRobots() {
+		return mRobots;
+	}
+
+	/**
+	 * Return the robot with the specified Color
+	 * @param c : Color, the color of the robot asked
+	 * @return r : Robot, if the robot with this color exist, else null
+	 * @see Color
+	 * @see Robot
+	 */
+	public Robot getRobot(Color c) {
+		for(Robot r : mRobots) {
+			if(r.getColor() == c)
+				return r;
+		}
+		return null;
+	}
+
+	/**
+	 * Setter of the robots' list
+	 * @param robots
+	 * @see Robot
+	 * @see List
+	 */
+	public void setRobots(List<Robot> robots) {
+		this.mRobots = robots;
+	}
+
+	/**
+	 * Getter of Current Round
+	 * @return currentRound : int
+	 */
+	public int getCurrentRound(){
+		return 17 - this.mGoalCard.size();
+	}
+
+	public void loadPreviousPosition(){
+		if(this.mPreviousPosition == null)
+			this.mPreviousPosition = new Stack<List<Robot>>();
+
+		if(!this.mPreviousPosition.empty()){
+			List<Robot> robot = new ArrayList<Robot>(this.mPreviousPosition.pop());
+
+			this.mRobots = robot;
+
+			if(this.mNextPosition == null)
+				this.mNextPosition = new Stack<List<Robot>>();
+
+			this.mNextPosition.push(new ArrayList<Robot>(robot));
+
+			this.mCounterLap--;
+		}
+	}
+
+	private void saveCurrentPosition(){
+		if(this.mPreviousPosition == null)
+			this.mPreviousPosition = new Stack<List<Robot>>();
+
+		this.mPreviousPosition.push(new ArrayList<Robot>(this.mRobots));
+
+		this.mCounterLap++;
+	}
+
+	public void loadNextPosition(){
+		if(this.mNextPosition == null)
+			this.mNextPosition = new Stack<List<Robot>>();
+
+		if(!this.mNextPosition.empty()){
+			List<Robot> robot = new ArrayList<Robot>(this.mNextPosition.pop());
+			this.mRobots = new ArrayList<Robot>(robot);
+
+			if(this.mPreviousPosition == null)
+				this.mPreviousPosition = new Stack<List<Robot>>();
+
+			this.mPreviousPosition.push(new ArrayList<Robot>(robot));
+
+			this.mCounterLap++;
+		}
+	}
+
+	/**
+	 * Default boxes are empty. Then we change type and color of the special boxes.
+	 */
+	private void generateBoard(){
+		this.mBoard = new Board();
+
+		//Walls around the board
+		for (int i = 0; i < Constant.numberOfcase; i++) {
+			//Walls on the top
+			this.mBoard.getBox()[0][i].setWall(Direction.Up);
+			//Walls on the bottom
+			this.mBoard.getBox()[Constant.numberOfcase-1][i].setWall(Direction.Down);
+			//Walls ont the left
+			this.mBoard.getBox()[i][0].setWall(Direction.Left);
+			//Walls ont the right
+			this.mBoard.getBox()[i][Constant.numberOfcase-1].setWall(Direction.Right);
+		}	
+
+		//Central Box
+		this.mBoard.getBox()[7][7].setWall(Direction.Up);
+		this.mBoard.getBox()[7][7].setWall(Direction.Left);
+
+		this.mBoard.getBox()[7][8].setWall(Direction.Up);
+		this.mBoard.getBox()[7][8].setWall(Direction.Right);
+
+		this.mBoard.getBox()[8][7].setWall(Direction.Down);
+		this.mBoard.getBox()[8][7].setWall(Direction.Left);
+
+		this.mBoard.getBox()[8][8].setWall(Direction.Down);
+		this.mBoard.getBox()[8][8].setWall(Direction.Right);
+
+		this.mBoard.getBox()[7][7].setType(BoxType.Central, null);
+		this.mBoard.getBox()[7][8].setType(BoxType.Central, null);
+		this.mBoard.getBox()[8][7].setType(BoxType.Central, null);
+		this.mBoard.getBox()[8][8].setType(BoxType.Central, null);
+
+		//Construction du plateau
+		this.mBoard.getBox()[0][3].setWall(Direction.Right);
+		this.mBoard.getBox()[0][11].setWall(Direction.Right);
+		this.mBoard.getBox()[1][13].setWall(Direction.Left);
+		this.mBoard.getBox()[1][13].setWall(Direction.Up);
+		this.mBoard.getBox()[2][5].setWall(Direction.Right);
+		this.mBoard.getBox()[2][5].setWall(Direction.Down);
+		this.mBoard.getBox()[2][9].setWall(Direction.Right);
+		this.mBoard.getBox()[2][9].setWall(Direction.Down);
+		this.mBoard.getBox()[4][0].setWall(Direction.Down);
+		this.mBoard.getBox()[4][2].setWall(Direction.Up);
+		this.mBoard.getBox()[4][2].setWall(Direction.Right);
+		this.mBoard.getBox()[4][15].setWall(Direction.Up);
+		this.mBoard.getBox()[5][7].setWall(Direction.Left);
+		this.mBoard.getBox()[5][7].setWall(Direction.Down);
+		this.mBoard.getBox()[5][14].setWall(Direction.Left);
+		this.mBoard.getBox()[5][14].setWall(Direction.Down);
+		this.mBoard.getBox()[6][1].setWall(Direction.Left);
+		this.mBoard.getBox()[6][1].setWall(Direction.Up);
+		this.mBoard.getBox()[6][11].setWall(Direction.Right);
+		this.mBoard.getBox()[6][11].setWall(Direction.Up);
+		this.mBoard.getBox()[8][5].setWall(Direction.Right);
+		this.mBoard.getBox()[8][5].setWall(Direction.Up);		
+		this.mBoard.getBox()[9][1].setWall(Direction.Down);
+		this.mBoard.getBox()[9][1].setWall(Direction.Right);
+		this.mBoard.getBox()[9][12].setWall(Direction.Up);
+		this.mBoard.getBox()[9][12].setWall(Direction.Right);
+		this.mBoard.getBox()[9][15].setWall(Direction.Down);
+		this.mBoard.getBox()[10][4].setWall(Direction.Left);
+		this.mBoard.getBox()[10][4].setWall(Direction.Down);
+		this.mBoard.getBox()[11][0].setWall(Direction.Down);
+		this.mBoard.getBox()[12][9].setWall(Direction.Left);
+		this.mBoard.getBox()[12][9].setWall(Direction.Up);
+		this.mBoard.getBox()[13][5].setWall(Direction.Up);
+		this.mBoard.getBox()[13][5].setWall(Direction.Right);
+		this.mBoard.getBox()[13][14].setWall(Direction.Left);
+		this.mBoard.getBox()[13][14].setWall(Direction.Down);
+		this.mBoard.getBox()[14][3].setWall(Direction.Left);
+		this.mBoard.getBox()[14][3].setWall(Direction.Up);
+		this.mBoard.getBox()[14][11].setWall(Direction.Down);
+		this.mBoard.getBox()[14][11].setWall(Direction.Right);
+		this.mBoard.getBox()[15][6].setWall(Direction.Right);
+		this.mBoard.getBox()[15][13].setWall(Direction.Right);
+
+		this.mBoard.getBox()[2][9].setType(BoxType.Triangle, Color.Blue);
+		this.mBoard.getBox()[5][7].setType(BoxType.Triangle, Color.Red);
+		this.mBoard.getBox()[13][14].setType(BoxType.Triangle, Color.Green);
+		this.mBoard.getBox()[14][3].setType(BoxType.Triangle, Color.Yellow);
+
+		this.mBoard.getBox()[9][1].setType(BoxType.Sun, Color.Blue);
+		this.mBoard.getBox()[14][11].setType(BoxType.Sun, Color.Red);
+		this.mBoard.getBox()[4][2].setType(BoxType.Sun, Color.Green);
+		this.mBoard.getBox()[6][11].setType(BoxType.Sun, Color.Yellow);
+
+		this.mBoard.getBox()[2][5].setType(BoxType.More, Color.Blue);
+		this.mBoard.getBox()[13][5].setType(BoxType.More, Color.Red);
+		this.mBoard.getBox()[5][14].setType(BoxType.More, Color.Green);
+		this.mBoard.getBox()[12][9].setType(BoxType.More, Color.Yellow);
+
+		this.mBoard.getBox()[9][12].setType(BoxType.Diamond, Color.Blue);
+		this.mBoard.getBox()[1][13].setType(BoxType.Diamond, Color.Red);
+		this.mBoard.getBox()[10][4].setType(BoxType.Diamond, Color.Green);
+		this.mBoard.getBox()[6][1].setType(BoxType.Diamond, Color.Yellow);
+
+		this.mBoard.getBox()[8][5].setType(BoxType.Multi, null);
+
+		oppositeWall();
+	}
+
+	/**
+	 * Move a robot in a direction
+	 * @param robot : the robot to move
+	 * @param direction : Left, Right, Down, Up
+	 * @see Direction
+	 * @see Robot
+	 */
+	public void moveSelectedRobot(Direction direction){
+		this.saveCurrentPosition();
+
+		Robot robot = this.mBoard.getNewPosition(this.mSelectedRobot, direction, this.mRobots);
+
+		for(Robot r : this.mRobots){
+			if(r.getColor() == this.mSelectedRobot.getColor()){
+				r.x = robot.x;
+				r.y = robot.y;
+
+				this.mSelectedRobot = r;
+			}
+			if(this.mBoard.getBox()[r.y][r.x].getType() == this.getGoalCard().getType()){
+				// TODO Ajouter un point !!!
+				this.startNewLap();
+			}
+		}
+	}
+
+	/**
+	 * Build the opposite wall
+	 * Example :If the north wall of a box exist then the south wall of the box above must be built
+	 */
+	public void oppositeWall(){
+		for(int i=0 ; i<Constant.numberOfcase ; i++){
+			for(int j=0 ; j<Constant.numberOfcase ; j++){
+				if(this.mBoard.getBox()[i][j].isEast() && j != Constant.numberOfcase-1){
+					this.mBoard.getBox()[i][j+1].setWest(true);
+				}
+				if(this.mBoard.getBox()[i][j].isWest() && j != 0){
+					this.mBoard.getBox()[i][j-1].setEast(true);
+				}
+				if(this.mBoard.getBox()[i][j].isNorth() && i != 0){
+					this.mBoard.getBox()[i-1][j].setSouth(true);
+				}
+				if(this.mBoard.getBox()[i][j].isSouth() && i != Constant.numberOfcase-1){
+					this.mBoard.getBox()[i+1][j].setNorth(true);
+				}
+			}
+		}
+	}
+
+	public Box getGoalCard() {
+		if(!this.mGoalCard.empty())
+			return this.mGoalCard.peek();
+		return null;
+	}
+
+	public Robot getSelectedRobot() {
+		return this.mSelectedRobot;
+	}
+
+	public void setSelectedRobot(Robot selectedRobot) {
+		this.mSelectedRobot = selectedRobot;
+	}
+
+	public void setSelectedRobot(Color color){
+		for(Robot r : this.mRobots)
+			if(r.getColor() == color)
+				this.mSelectedRobot = r;
+	}
+
+	public int getCounterLap(){
+		return mCounterLap;
+	}
+
+	public void startSolver(){
+		if (this.mSolver == null)
+			this.mSolver = new Solver();
+		this.mSolver.startFindSolution(this.mBoard, this.mRobots, this.getGoalCard());
+	}
+}

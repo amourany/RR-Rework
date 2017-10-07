@@ -1,0 +1,44 @@
+package test;
+
+import static org.junit.Assert.*;
+import launcher.Controller;
+import game.Game;
+import game.Constant.Color;
+import game.Constant.Direction;
+import game.Robot;
+
+import org.junit.Test;
+
+public class GameTest {
+
+	@Test
+	public void NewGame() {
+		Game g=new Game();
+		g.startNewGame();
+		
+		assertTrue(g.getRobots().size()==4);
+		assertNull(g.getSelectedRobot());
+		assertEquals(g.getCounterLap(),0);
+		assertEquals(g.getCurrentRound(),1);
+	}
+	
+	@Test
+	public void SelectARobot(){
+		Game g=new Game();
+		g.startNewGame();
+		
+		g.setSelectedRobot(Color.Blue);
+		assertNotNull(g.getSelectedRobot());
+		assertEquals(g.getSelectedRobot().getColor(),Color.Blue);
+		
+		g.setSelectedRobot(Color.Green);
+		assertEquals(g.getSelectedRobot().getColor(),Color.Green);
+		
+		g.setSelectedRobot(Color.Yellow);
+		assertEquals(g.getSelectedRobot().getColor(),Color.Yellow);
+		
+		g.setSelectedRobot(Color.Green);
+		assertEquals(g.getSelectedRobot().getColor(),Color.Green);
+	}
+
+}

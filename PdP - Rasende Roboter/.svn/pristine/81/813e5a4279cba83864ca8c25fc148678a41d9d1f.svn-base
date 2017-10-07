@@ -1,0 +1,85 @@
+package network;
+
+import java.io.File;
+import java.util.Stack;
+
+import game.BoardPiece;
+import game.Box;
+import game.Constant;
+import game.Countdown;
+import game.Robot;
+import game.Constant.Color;
+
+public class Protocol {
+
+	public static String encodeRobot(Robot r) {
+		String robotInfo = "robot&" + r.x +
+					"&" + r.y +
+					"&" + r.getColor() +
+					"&" + r.originX +
+					"&" + r.originY;
+		return robotInfo;
+	}
+	
+	public static Robot decodeRobot(String[] s) {
+		
+		int x = Integer.parseInt(s[1]);
+		int y = Integer.parseInt(s[2]);
+		int originX = Integer.parseInt(s[4]);
+		int originY = Integer.parseInt(s[5]);
+		return new Robot(x, y, Color.valueOf(s[3]), originX, originY);
+	}
+	
+	public static String encodeBoard(BoardPiece bp){
+			String boardInfo = "board&" + bp.getInitialLocation() +
+					"&" + bp.getFinalLocation() +
+					"&" + bp.getXmlFile();
+			return boardInfo;
+	}
+	
+	public static BoardPiece decodeBoard(String[] s) {
+		int initialLocation = Integer.parseInt(s[1]);
+		int finalLocation = Integer.parseInt(s[2]);
+		return new BoardPiece(new File(s[3]), initialLocation, finalLocation);
+	}
+	
+	public static String encodeGoalCard(Stack<Box> goal, Box currentGoal) {
+		String s = "card&" + currentGoal.getType() + ";" + currentGoal.getColor();
+		
+		for(Box b : goal) {
+			s += "&"+b.getType() + ";" + b.getColor();
+		}
+		return s;
+	}
+	
+	public static Stack<Box> decodeGoalCard(String[] s) {
+		Stack<Box> sb = new Stack<Box>();
+		String info[];
+		
+		for(String card : s) {
+			if(!card.equals("card")) {
+				info = card.split(";");
+				if(info[1].equals("null")){
+					sb.push(new Box(Constant.BoxType.valueOf(info[0]), null));
+				}
+				else
+					sb.push(new Box(Constant.BoxType.valueOf(info[0]), Constant.Color.valueOf(info[1])));
+			}
+		}
+		
+		
+		
+		return sb;
+	}
+
+	public static String encodeTime(Countdown count) {
+		String msg = "time&" + count.getTime();
+		return msg;
+	}
+
+	public static int decodeTime(String[] msg) {
+		int time=Integer.parseInt(msg[1]);
+		
+		return time;
+	}
+}

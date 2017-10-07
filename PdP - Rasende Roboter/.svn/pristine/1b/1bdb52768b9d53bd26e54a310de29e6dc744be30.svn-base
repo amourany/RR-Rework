@@ -1,0 +1,96 @@
+package solverAlgorithm;
+
+import game.Board;
+import game.Box;
+import game.Constant;
+import game.Movement;
+import game.Robot;
+import game.Constant.Direction;
+
+import java.util.ArrayList;
+
+
+/****
+ * Represent the probability tree used to solve the problem. It represents every
+ * possibilities on the board. At the root of this tree, there is the initial position 
+ * of the robots. Next, each children is a possibility with one more step after its parent. 
+ * @author Dimitri
+ * @version 1
+ */
+
+public class ProbabilityTree {
+	/**
+	 * The {@link Event}
+	 */
+	private Event mEvent;
+	private ArrayList<ProbabilityTree> mChildren;
+
+	/**
+	 * Constructor
+	 * @param event The event that led to this probability
+	 */
+	public ProbabilityTree(Event event){
+		this.mChildren = new ArrayList<ProbabilityTree>();
+		this.mEvent = event;
+	}
+
+	/**
+	 * Spread the tree. 16 more analysis option if it is not already done.
+	 * @param currentBoard The board of the game
+	 */
+	
+	public void spread(Board currentBoard){
+		if(mChildren.isEmpty()){
+			for(Robot robot :  mEvent.getRobots()){					
+				for(Direction direction : Constant.Direction.values()){
+					if (currentBoard.getGameBoard()[robot.getY()][robot.getX()].canContinue(direction)){
+						
+						Event event = new Event(this, new Movement(direction, robot), currentBoard);
+						add(new ProbabilityTree(event));
+					}
+				}
+			}
+		}
+		else{
+			for(ProbabilityTree pt : mChildren){
+				pt.spread(currentBoard);
+			}
+		}	
+		Solver.cptCalc++;
+	}
+
+	public Event getEvent(){
+		return mEvent;
+	}
+
+	/**
+	 * Checks whether the destination is reached
+	 * @param box The destination
+	 * @param x The position of the destination
+	 * @param y The position of the destination
+	 * @return
+	 */
+	public boolean finish(Box box, int x, int y){
+		for(ProbabilityTree pt : mChildren)
+			if(pt.finish(box, x, y)){
+				System.out.println(pt.getEvent());
+				return true;
+			}
+		return mEvent.reachedDestination(box, x, y);
+	}
+
+	public String toString(){
+		String tmp = mEvent.toString() + "\n";
+		for(ProbabilityTree pt : mChildren)
+			tmp += pt.toString() + "\n";
+		return tmp;
+	}
+
+	/**
+	 * Add a child to this leaf
+	 * @param pt
+	 */
+	private void add(ProbabilityTree pt){
+		mChildren.add(pt);
+	}
+}
