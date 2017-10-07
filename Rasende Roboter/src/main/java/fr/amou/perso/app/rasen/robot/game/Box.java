@@ -8,10 +8,12 @@ import javax.swing.SpringLayout;
 import fr.amou.perso.app.rasen.robot.game.Constant.BoxType;
 import fr.amou.perso.app.rasen.robot.game.Constant.Color;
 import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
+import lombok.Data;
 
 /**
  * Class containing the data of a box (walls, color and type)
  */
+@Data
 public class Box {
 
     private boolean north; // Is there a wall on the north of the box ?
@@ -56,26 +58,6 @@ public class Box {
         this.west = west;
         this.color = color;
         this.type = type;
-    }
-
-    public boolean isNorth() {
-        return this.north;
-    }
-
-    public void setNorth(final boolean north) {
-        this.north = north;
-    }
-
-    public boolean isEast() {
-        return this.east;
-    }
-
-    public void setEast(final boolean east) {
-        this.east = east;
-    }
-
-    public boolean isSouth() {
-        return this.south;
     }
 
     /**
@@ -135,49 +117,9 @@ public class Box {
         return res;
     }
 
-    public void setSouth(final boolean south) {
-        this.south = south;
-    }
-
-    public boolean isWest() {
-        return this.west;
-    }
-
-    public void setWest(final boolean west) {
-        this.west = west;
-    }
-
-    public Color getColor() {
-        return this.color;
-    }
-
-    public void setColor(final Color color) {
-        this.color = color;
-    }
-
-    public BoxType getType() {
-        return this.type;
-    }
-
     public void setType(final BoxType type, final Color color) {
         this.type = type;
         this.color = color;
-    }
-
-    public int getX() {
-        return this.x;
-    }
-
-    public void setX(final int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return this.y;
-    }
-
-    public void setY(final int y) {
-        this.y = y;
     }
 
     private ImageIcon getImageIcon(Game game) {

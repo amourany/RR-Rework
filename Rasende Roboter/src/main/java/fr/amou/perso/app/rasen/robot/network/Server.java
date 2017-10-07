@@ -12,10 +12,10 @@ import java.util.Stack;
 import fr.amou.perso.app.rasen.robot.controller.Controller;
 import fr.amou.perso.app.rasen.robot.game.BoardPiece;
 import fr.amou.perso.app.rasen.robot.game.Constant;
+import fr.amou.perso.app.rasen.robot.game.Constant.Color;
 import fr.amou.perso.app.rasen.robot.game.Game;
 import fr.amou.perso.app.rasen.robot.game.Player;
 import fr.amou.perso.app.rasen.robot.game.Robot;
-import fr.amou.perso.app.rasen.robot.game.Constant.Color;
 
 /**
  * Server side of the application
@@ -83,8 +83,8 @@ public class Server {
             p.setHost(true);
             this.manager.addPlayer(p);
             this.sendMessage("The server is launched! ");
-            this.controller.refreshPlayers(
-                    p.getPseudo() + "(" + p.getPoints() + "pts) : " + p.getNbMoveProposed() + " movements proposed\n");
+            this.controller.refreshPlayers(p.getPseudo() + "(" + p.getPoints() + "pts) : " + p.getNbMoveProposed()
+                    + " movements proposed\n");
             this.controller.refreshColumn();
         } catch (SocketException e) {
             e.printStackTrace();
@@ -268,7 +268,7 @@ public class Server {
         String boardInfo;
         DatagramPacket packet;
         try {
-            for (BoardPiece bp : this.game.getBoard().getBoardPiece()) {
+            for (BoardPiece bp : this.game.getBoard().getBoardPieces()) {
                 boardInfo = Protocol.encodeBoardPiece(bp);
 
                 packet = Protocol.encodePacket(boardInfo, ip, Constant.CLIENT_PORT);

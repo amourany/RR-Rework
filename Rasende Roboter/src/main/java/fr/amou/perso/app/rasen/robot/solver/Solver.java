@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import fr.amou.perso.app.rasen.robot.game.Constant;
+import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
 import fr.amou.perso.app.rasen.robot.game.Game;
 import fr.amou.perso.app.rasen.robot.game.Robot;
-import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
+import lombok.Data;
 
+@Data
 public class Solver {
 
     private StructTree tree;
@@ -129,8 +131,8 @@ public class Solver {
 
         for (int i = 0; i < Constant.NB_ROBOT; i++) {
             robotInfo = subKey[i].split(";"); // We split the keys in order to get the four robots
-            rob = new Robot(Integer.parseInt(robotInfo[0]), Integer.parseInt(robotInfo[1]),
-                    Constant.Color.valueOf(robotInfo[2]));
+            rob = new Robot(Integer.parseInt(robotInfo[0]), Integer.parseInt(robotInfo[1]), Constant.Color.valueOf(
+                    robotInfo[2]));
             robots.add(rob);
         }
 

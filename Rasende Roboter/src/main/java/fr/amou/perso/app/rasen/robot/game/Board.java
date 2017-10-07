@@ -7,10 +7,12 @@ import java.util.List;
 
 import fr.amou.perso.app.rasen.robot.game.Constant.BoxType;
 import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
+import lombok.Data;
 
 /**
  * Class containing the Board
  */
+@Data
 public class Board {
     /**
      * @see Box
@@ -54,10 +56,6 @@ public class Board {
         BoardPiece bp;
 
         for (int i = 0; i < Constant.NB_BOARD_PIECES; i++) {
-            // InputStream is = ClassLoader.getSystemResourceAsStream(Constant.MAP_PATH +
-            // "boardpiece"
-            // + this.numBoardPieces.get(i) + this.boardPiecesSide[i] + ".xml");
-            // File f = FileUtils
             mapPath = Constant.MAP_PATH + "boardpiece" + this.numBoardPieces.get(i) + this.boardPiecesSide[i] + ".xml";
             initialLocation = this.numBoardPieces.get(i);
             finalLocation = i + 1;
@@ -220,38 +218,14 @@ public class Board {
         return this.gameBoard[x][y];
     }
 
-    /**
-     * Setter of GameBoard
-     *
-     * @param gameBoard
-     */
-    public void setGameBoard(Box[][] gameBoard) {
-        this.gameBoard = gameBoard;
-    }
 
-    public List<Integer> getNumBoardPieces() {
-        return this.numBoardPieces;
-    }
 
-    public void setNumBoardPieces(List<Integer> numBoardPieces) {
-        this.numBoardPieces = numBoardPieces;
-    }
 
-    public char[] getBoardPiecesSide() {
-        return this.boardPiecesSide;
-    }
-
-    public void setBoardPiecesSide(char boardPiecesSide[]) {
-        this.boardPiecesSide = boardPiecesSide;
-    }
 
     public BoardPiece getBoardPiece(int i) {
         return this.boardPieces[i];
     }
 
-    public BoardPiece[] getBoardPiece() {
-        return this.boardPieces;
-    }
 
     public void setBoardPiece(BoardPiece boardPiece) {
         this.boardPieces[boardPiece.getFinalLocation() - 1] = boardPiece;

@@ -4,10 +4,12 @@ import java.util.List;
 
 import fr.amou.perso.app.rasen.robot.game.Constant.Color;
 import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
+import lombok.Data;
 
 /**
  * Class containing the data of a robot (positions, color)
  */
+@Data
 public class Robot {
     public int x;
     public int y;
@@ -74,46 +76,6 @@ public class Robot {
 
         this.originX = this.x;
         this.originY = this.y;
-    }
-
-    public int getX() {
-        return this.x;
-    }
-
-    public void setX(final int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return this.y;
-    }
-
-    public void setY(final int y) {
-        this.y = y;
-    }
-
-    public Color getColor() {
-        return this.color;
-    }
-
-    public void setColor(final Color color) {
-        this.color = color;
-    }
-
-    public int getOriginX() {
-        return this.originX;
-    }
-
-    public void setOriginX(final int originX) {
-        this.originX = originX;
-    }
-
-    public int getOriginY() {
-        return this.originY;
-    }
-
-    public void setOriginY(final int originY) {
-        this.originY = originY;
     }
 
     public boolean robotIsHere(final List<Robot> robots, final Direction dir) {

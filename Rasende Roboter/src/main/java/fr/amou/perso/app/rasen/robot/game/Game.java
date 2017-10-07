@@ -9,10 +9,12 @@ import fr.amou.perso.app.rasen.robot.game.Constant.BoxType;
 import fr.amou.perso.app.rasen.robot.game.Constant.Color;
 import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
 import fr.amou.perso.app.rasen.robot.solver.Solver;
+import lombok.Data;
 
 /**
  * The model of our architecture
  */
+@Data
 public class Game {
     private Board mBoard;
     private List<Robot> mRobots;
@@ -240,13 +242,13 @@ public class Game {
         boolean win = false;
 
         if (rob.getColor() == this.currentGoal.getColor()) {
-            if (this.mBoard.getGameBoard()[rob.y][rob.x].getType() == this.currentGoal.getType()
-                    && this.mBoard.getGameBoard()[rob.y][rob.x].getColor() == this.currentGoal.getColor()) {
+            if (this.mBoard.getGameBoard()[rob.y][rob.x].getType() == this.currentGoal.getType() && this.mBoard
+                    .getGameBoard()[rob.y][rob.x].getColor() == this.currentGoal.getColor()) {
                 win = true;
             }
         } else {
-            if (this.mBoard.getGameBoard()[rob.y][rob.x].getType() == this.currentGoal.getType()
-                    && this.currentGoal.getType() == BoxType.Multi) {
+            if (this.mBoard.getGameBoard()[rob.y][rob.x].getType() == this.currentGoal.getType() && this.currentGoal
+                    .getType() == BoxType.Multi) {
                 win = true;
             }
         }
@@ -287,32 +289,12 @@ public class Game {
         }
     }
 
-    public Box getCurrentGoal() {
-        return this.currentGoal;
-    }
-
-    public void setCurrentGoal(Box goal) {
-        this.currentGoal = goal;
-    }
-
-    public boolean isOver() {
-        return this.isOver;
-    }
-
     public Stack<Box> getmGoalCards() {
         return this.mGoalCards;
     }
 
     public void setmGoalCards(Stack<Box> mGoalCards) {
         this.mGoalCards = mGoalCards;
-    }
-
-    public String getTheme() {
-        return this.theme;
-    }
-
-    public void setTheme(String theme) {
-        this.theme = theme;
     }
 
     public Boolean hasPreviousPosition() {

@@ -16,7 +16,7 @@ public class GameTest {
     @Test
     public void NewGame() {
         Controller c = new Controller();
-        Game g = c.getgame();
+        Game g = c.getGame();
 
         assertTrue(g.getRobots().size() == 4);
         assertNull(g.getSelectedRobot());
@@ -27,7 +27,7 @@ public class GameTest {
     @Test
     public void SelectARobot() {
         Controller c = new Controller();
-        Game g = c.getgame();
+        Game g = c.getGame();
 
         g.setSelectedRobot(Color.Blue);
         assertNotNull(g.getSelectedRobot());

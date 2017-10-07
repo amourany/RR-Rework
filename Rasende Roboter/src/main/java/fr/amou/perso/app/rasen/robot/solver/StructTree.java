@@ -6,7 +6,9 @@ import java.util.Stack;
 
 import fr.amou.perso.app.rasen.robot.game.Constant;
 import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
+import lombok.Data;
 
+@Data
 public class StructTree {
     public Map<String, Integer> possibilities;
     public Map<String, String> parent;
@@ -108,7 +110,4 @@ public class StructTree {
         return res;
     }
 
-    public String getSolution() {
-        return this.solution;
-    }
 }

@@ -18,16 +18,18 @@ import java.util.Stack;
 import fr.amou.perso.app.rasen.robot.game.BoardPiece;
 import fr.amou.perso.app.rasen.robot.game.Box;
 import fr.amou.perso.app.rasen.robot.game.Constant;
-import fr.amou.perso.app.rasen.robot.game.Game;
-import fr.amou.perso.app.rasen.robot.game.Robot;
 import fr.amou.perso.app.rasen.robot.game.Constant.Color;
 import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
+import fr.amou.perso.app.rasen.robot.game.Game;
+import fr.amou.perso.app.rasen.robot.game.Robot;
 import fr.amou.perso.app.rasen.robot.network.Client;
 import fr.amou.perso.app.rasen.robot.network.Countdown;
 import fr.amou.perso.app.rasen.robot.network.Server;
 import fr.amou.perso.app.rasen.robot.userInterface.RasendeFrame;
 import fr.amou.perso.app.rasen.robot.userInterface.RasendeViewInterface;
+import lombok.Data;
 
+@Data
 public class Controller extends OutputStream implements ActionListener, MouseListener, KeyListener, WindowListener {
     public final static String ACTION_PREVIOUS = "ACTION_PREVIOUS";
     public final static String ACTION_NEXT = "ACTION_NEXT";
@@ -60,10 +62,6 @@ public class Controller extends OutputStream implements ActionListener, MouseLis
         this.frame.setOnlinePerspective(false);
     }
 
-    public Game getgame() {
-        return this.game;
-    }
-
     public void moveRobotInDirection(final Direction dir) {
         int x = -1, y = -1;
 
@@ -71,10 +69,9 @@ public class Controller extends OutputStream implements ActionListener, MouseLis
 
             // if it is a network game and the player will reach its maximum number of
             // allowed movements
-            if ((this.server != null
-                    && this.game.getmPreviousPosition().size() + 1 == this.server.getBestProposition() + 1)
-                    || (this.client != null
-                            && this.game.getmPreviousPosition().size() + 1 == this.client.getBestProposition() + 1)) {
+            if ((this.server != null && this.game.getmPreviousPosition().size() + 1 == this.server.getBestProposition()
+                    + 1) || (this.client != null && this.game.getmPreviousPosition().size() + 1 == this.client
+                            .getBestProposition() + 1)) {
                 this.moveLimit();
             } else {
 
@@ -89,11 +86,11 @@ public class Controller extends OutputStream implements ActionListener, MouseLis
                 this.frame.displayDataInfo(this.game, this);
 
                 // if client, send movement to server (only if there is a new location)
-                if (this.client != null
-                        && (this.game.getSelectedRobot().x != x || this.game.getSelectedRobot().y != y)) {
+                if (this.client != null && (this.game.getSelectedRobot().x != x || this.game
+                        .getSelectedRobot().y != y)) {
                     this.client.sendMove(this.game.getCurrentRound());
-                } else if (this.server != null
-                        && (this.game.getSelectedRobot().x != x || this.game.getSelectedRobot().y != y)) {
+                } else if (this.server != null && (this.game.getSelectedRobot().x != x || this.game
+                        .getSelectedRobot().y != y)) {
                     this.server.sendUpdates();
                 }
 
@@ -465,14 +462,6 @@ public class Controller extends OutputStream implements ActionListener, MouseLis
 
     public void refreshColumn() {
         this.frame.displayDataInfo(this.game, this);
-    }
-
-    public Server getServer() {
-        return this.server;
-    }
-
-    public Client getClient() {
-        return this.client;
     }
 
     public void refreshPlayers(String user) {

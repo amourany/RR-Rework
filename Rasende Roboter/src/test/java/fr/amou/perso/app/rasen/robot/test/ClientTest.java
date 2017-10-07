@@ -25,7 +25,7 @@ public class ClientTest extends TestCase {
             Robot r = Protocol.decodeRobot(data);
 
             client.processData(data);
-            assertTrue(r.equals(controller.getgame().getRobot(Color.Green)));
+            assertTrue(r.equals(controller.getGame().getRobot(Color.Green)));
 
             data = new String[] { "hand", "true" };
 

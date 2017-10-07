@@ -93,7 +93,7 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
 
         this.pack();
 
-        this.display(controller.getgame(), controller);
+        this.display(controller.getGame(), controller);
         this.setVisible(true);
     }
 
@@ -184,7 +184,7 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
      * @see Controller
      */
     private void buildColumn(final Controller controller) {
-        this.mLabelRound = new JLabel("Current Round: " + controller.getgame().getCurrentRound() + "/17");
+        this.mLabelRound = new JLabel("Current Round: " + controller.getGame().getCurrentRound() + "/17");
         this.mLabelRound.setAlignmentX(Component.CENTER_ALIGNMENT);
         this.mColumnPanel.add(this.mLabelRound);
 
@@ -467,8 +467,8 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
     public void displayMoveLimit() {
         JOptionPane.showMessageDialog(this,
                 "The movement that you want to does not respect the constraint that you set for the goal.\n"
-                        + "Please cancel some of them to choose another path.",
-                "MoveLimit!", JOptionPane.INFORMATION_MESSAGE);
+                        + "Please cancel some of them to choose another path.", "MoveLimit!",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
@@ -485,11 +485,9 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
      */
     @Override
     public void displayLicense() {
-        JOptionPane
-                .showMessageDialog(
-                        this, "License : GNU GPL v3\n\n" + "Olivier Braik\n" + "Alexandre Delesse\n"
-                                + "Gaetan Lussagnet\n" + "Alexandre Mourany\n" + "Dimitri Ranc",
-                        "v. 1.0", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "License : GNU GPL v3\n\n" + "Olivier Braik\n" + "Alexandre Delesse\n"
+                + "Gaetan Lussagnet\n" + "Alexandre Mourany\n" + "Dimitri Ranc", "v. 1.0",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**

@@ -10,9 +10,12 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
+import lombok.Data;
+
 /**
  * Class containing a quarter of the Board
  */
+@Data
 public class BoardPiece {
     /**
      * @see Box
@@ -182,10 +185,6 @@ public class BoardPiece {
         }
     }
 
-    public List<Box> getBoxes() {
-        return this.boxes;
-    }
-
     /**
      * Extracts the data of the board piece from the xml file
      *
@@ -254,34 +253,6 @@ public class BoardPiece {
             this.boxes.add(realBox);
         }
 
-    }
-
-    public SAXBuilder getSxb() {
-        return this.sxb;
-    }
-
-    public File getXmlFile() {
-        return this.xmlFile;
-    }
-
-    public void setXmlFile(final File xmlFile) {
-        this.xmlFile = xmlFile;
-    }
-
-    public int getInitialLocation() {
-        return this.initialLocation;
-    }
-
-    public void setInitialLocation(final int initialLocation) {
-        this.initialLocation = initialLocation;
-    }
-
-    public int getFinalLocation() {
-        return this.finalLocation;
-    }
-
-    public void setFinalLocation(final int finalLocation) {
-        this.finalLocation = finalLocation;
     }
 
 }

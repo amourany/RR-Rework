@@ -10,8 +10,8 @@ import java.util.Stack;
 
 import fr.amou.perso.app.rasen.robot.controller.Controller;
 import fr.amou.perso.app.rasen.robot.game.Constant;
-import fr.amou.perso.app.rasen.robot.game.Robot;
 import fr.amou.perso.app.rasen.robot.game.Constant.Color;
+import fr.amou.perso.app.rasen.robot.game.Robot;
 
 /**
  * Client side of the application
@@ -151,11 +151,11 @@ public class Client {
             int y = Integer.parseInt(data[2]);
             Color c = Color.valueOf(data[3]);
 
-            this.controller.getgame().getRobot(c).setX(x);
-            this.controller.getgame().getRobot(c).setY(y);
+            this.controller.getGame().getRobot(c).setX(x);
+            this.controller.getGame().getRobot(c).setY(y);
 
-            if (this.controller.getgame().isWin(this.controller.getgame().getRobot(c))) {
-                this.controller.getgame().startNewLap();
+            if (this.controller.getGame().isWin(this.controller.getGame().getRobot(c))) {
+                this.controller.getGame().startNewLap();
             }
 
             break;
@@ -205,7 +205,7 @@ public class Client {
 
         try {
 
-            for (Robot r : this.controller.getgame().getRobots()) {
+            for (Robot r : this.controller.getGame().getRobots()) {
                 String robotInfo = Protocol.encodeMove(r, newRound);
 
                 packet = Protocol.encodePacket(robotInfo, this.ipServer, Constant.SERVER_PORT);
@@ -242,8 +242,8 @@ public class Client {
      * Asks the server to the next player
      */
     public void askNextProposition() {
-        this.controller.getgame().setmNextPosition(new Stack<List<Robot>>());
-        this.controller.getgame().setmPreviousPosition(new Stack<List<Robot>>());
+        this.controller.getGame().setmNextPosition(new Stack<List<Robot>>());
+        this.controller.getGame().setmPreviousPosition(new Stack<List<Robot>>());
 
         String proposition = Protocol.encodeAskNextProposition();
         DatagramPacket packet = Protocol.encodePacket(proposition, this.ipServer, Constant.SERVER_PORT);

@@ -14,11 +14,11 @@ public class ControllerTest extends TestCase {
         Controller c = new Controller();
         c.setSelectedRobot(Color.Green);
 
-        int oldX = c.getgame().getSelectedRobot().x;
+        int oldX = c.getGame().getSelectedRobot().x;
 
         c.moveRobotInDirection(Direction.Right);
 
-        assertNotSame(oldX, c.getgame().getSelectedRobot().x);
+        assertNotSame(oldX, c.getGame().getSelectedRobot().x);
     }
 
 }
