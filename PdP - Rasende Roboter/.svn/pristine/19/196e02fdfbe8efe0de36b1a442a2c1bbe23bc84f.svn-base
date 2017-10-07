@@ -1,9 +1,0 @@
-\chapter*{Conclusion}
-\addcontentsline{toc}{chapter}{Conclusion}
-
-	Globalement, les trois principales priorités ont été réalisées, le solo est entièrement fonctionnel et permet au joueur de faire les 17 niveaux du jeu à son rythme. Dans le cas où il ne trouve pas la solution par lui-même, il peut faire intervenir le solver qui va lui donner les mouvements à effectuer via la console latérale. Cette solution est optimale dans le sens où il s'agit de l'un des meilleurs chemins possibles pour le robot. Une solution est trouvée pour tous les cas inférieurs ou égaux à 15 mouvements. Au-delà, on ne peut pas encore trouver de solution. Des possibilités d'améliorations via une heuristique qui relancerait notre algorithme sont possibles. 
-
-	Le jeu fonctionne aussi en réseau local, cependant des problèmes de gestion en cas de déconnexion de clients par exemple n'ont pas été gérés. Même si d'autres cas ont été traités (par exemple déconnexion du serveur), il reste encore cette partie sécurité à améliorer.
-
-	Afin d'améliorer l'esprit jeu de ce Ricochet Robots, il pourrait être intéressant de permettre à l'utilisateur une plus grande personnalisation. C'est déjà le cas avec la possibilité d'un thème différant mais d'autres options peuvent être envisagées : autres couleurs pour les robots, plus ou moins de symbole, cartes supplémentaires...
-

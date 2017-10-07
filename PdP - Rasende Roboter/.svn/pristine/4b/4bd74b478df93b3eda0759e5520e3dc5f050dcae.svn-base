@@ -1,7 +1,0 @@
-package interactions;
-
-import java.util.Observable;
-
-public abstract class AbstractAI extends Observable implements BoardInteractions, InterfaceAI {
-	protected abstract void findSolution();
-}

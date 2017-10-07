@@ -1,5 +1,0 @@
-package interactions;
-
-public class FirstAI extends AbstractAI {
-
-}
