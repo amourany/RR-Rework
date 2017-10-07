@@ -34,10 +34,9 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
 
     private JPanel contentPane, mBoardPanel, mColumnPanel, moveNB, userPanel;
     private JLabel mLabelRound, mLabelMove, mLabelTime;
-    private JButton bSolution, bValidate, bPrevious, bNext, bForfeit;
+    private JButton bSolution, bValidate, bPrevious, bNext;
     private JTextField tSuggestion;
     private JTextArea mConsoleText, user;
-    private JMenuItem mJoinItem, mStartItem, mDisconnectItem;
 
     /**
      * Constructor of the class
@@ -126,36 +125,12 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
         menuItem.addActionListener(controller);
         menu.add(menuItem);
 
-        menuItem = new JMenuItem("License");
-        menuItem.setActionCommand(Controller.ACTION_LICENSE);
-        menuItem.addActionListener(controller);
-        menu.add(menuItem);
-
         menu.addSeparator();
 
         menuItem = new JMenuItem("Quit");
         menuItem.setActionCommand(Controller.ACTION_QUIT);
         menuItem.addActionListener(controller);
         menu.add(menuItem);
-
-        menu = new JMenu("Online");
-        menuBar.add(menu);
-
-        this.mJoinItem = new JMenuItem("Join Server");
-        this.mJoinItem.setActionCommand(Controller.ACTION_JOIN_SERVER);
-        this.mJoinItem.addActionListener(controller);
-        menu.add(this.mJoinItem);
-
-        this.mStartItem = new JMenuItem("Start Server");
-        this.mStartItem.setActionCommand(Controller.ACTION_START_SERVER);
-        this.mStartItem.addActionListener(controller);
-        menu.add(this.mStartItem);
-
-        this.mDisconnectItem = new JMenuItem("Disconnect");
-        this.mDisconnectItem.setActionCommand(Controller.DISCONNECT);
-        this.mDisconnectItem.addActionListener(controller);
-        this.mDisconnectItem.setVisible(false);
-        menu.add(this.mDisconnectItem);
 
         menu = new JMenu("Theme");
         menuBar.add(menu);
@@ -164,12 +139,6 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
         JRadioButtonMenuItem rbMenuItem = new JRadioButtonMenuItem("Default");
         rbMenuItem.setSelected(true);
         rbMenuItem.setActionCommand(Controller.ACTION_THEME_DEFAULT);
-        rbMenuItem.addActionListener(controller);
-        group.add(rbMenuItem);
-        menu.add(rbMenuItem);
-
-        rbMenuItem = new JRadioButtonMenuItem("Pokemon");
-        rbMenuItem.setActionCommand(Controller.ACTION_THEME_POKEMON);
         rbMenuItem.addActionListener(controller);
         group.add(rbMenuItem);
         menu.add(rbMenuItem);
@@ -215,7 +184,6 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
 
         this.bValidate = new JButton("Validate");
         this.bValidate.setAlignmentX(Component.CENTER_ALIGNMENT);
-        this.bValidate.setActionCommand(Controller.ACTION_VALIDATE);
         this.bValidate.addActionListener(controller);
         this.bValidate.setVisible(false);
         this.mColumnPanel.add(this.bValidate);
@@ -237,15 +205,6 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
         this.bNext.addActionListener(controller);
         jp.add(this.bNext);
         this.mColumnPanel.add(jp);
-
-        // -------------------------------------------------------------
-        // Forfeit
-        // -------------------------------------------------------------
-        this.bForfeit = new JButton("Forfeit");
-        this.bForfeit.setAlignmentX(Component.CENTER_ALIGNMENT);
-        this.bForfeit.setActionCommand(Controller.ACTION_FORFEIT);
-        this.bForfeit.addActionListener(controller);
-        this.mColumnPanel.add(this.bForfeit);
 
         // -------------------------------------------------------------
         // Solution
@@ -326,7 +285,6 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
     public void displayDataInfo(final Game g, final Controller c) {
         this.mLabelRound.setText("Current Round: " + g.getCurrentRound() + "/17");
         this.mLabelMove.setText("Movements: " + g.getmPreviousPosition().size());
-        this.mLabelTime.setText("Countdown: " + c.getCount().getTime() + " sec");
 
         this.bPrevious.setEnabled(g.hasPreviousPosition());
         this.bNext.setEnabled(g.hasNextPosition());
@@ -401,37 +359,6 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
     }
 
     /**
-     * Change the perspective according if the game is online or not
-     *
-     * @param online
-     *            <code>true</code> if the game is online
-     */
-    @Override
-    public void setOnlinePerspective(Boolean online) {
-        this.moveNB.setVisible(online);
-        this.userPanel.setVisible(online);
-        this.bValidate.setVisible(online);
-        this.bForfeit.setVisible(online);
-        this.mDisconnectItem.setVisible(online);
-        this.mLabelTime.setVisible(online);
-        this.mStartItem.setVisible(!online);
-        this.mJoinItem.setVisible(!online);
-        this.bSolution.setVisible(!online);
-    }
-
-    /**
-     * Change the button forfeit according if the player has the hand
-     *
-     * @param enable
-     *            <code>true</code> if the player has the hand else
-     *            <code>false</code>
-     */
-    @Override
-    public void setEnabledForfeit(Boolean enable) {
-        this.bForfeit.setEnabled(enable);
-    }
-
-    /**
      * Change the button validate if someone play
      *
      * @param enable
@@ -477,16 +404,6 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
     @Override
     public void displayWin() {
         JOptionPane.showMessageDialog(this, "Congratulations!! You beat the game!", "Congratulations",
-                JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    /**
-     * ShowMessageDialog for the License
-     */
-    @Override
-    public void displayLicense() {
-        JOptionPane.showMessageDialog(this, "License : GNU GPL v3\n\n" + "Olivier Braik\n" + "Alexandre Delesse\n"
-                + "Gaetan Lussagnet\n" + "Alexandre Mourany\n" + "Dimitri Ranc", "v. 1.0",
                 JOptionPane.INFORMATION_MESSAGE);
     }
 

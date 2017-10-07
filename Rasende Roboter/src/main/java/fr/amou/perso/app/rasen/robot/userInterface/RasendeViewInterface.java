@@ -18,8 +18,6 @@ public interface RasendeViewInterface {
 
     public void displayMoveLimit();
 
-    public void displayLicense();
-
     public void displayConnectionLost();
 
     public String displayStartServer();
@@ -29,10 +27,6 @@ public interface RasendeViewInterface {
     public void setFocusOnBoard();
 
     public void println(final String string);
-
-    public void setOnlinePerspective(Boolean online);
-
-    public void setEnabledForfeit(Boolean enabled);
 
     public void setEnabledValidate(Boolean enabled);
 
