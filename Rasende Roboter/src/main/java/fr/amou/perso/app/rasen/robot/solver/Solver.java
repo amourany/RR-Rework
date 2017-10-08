@@ -12,9 +12,7 @@ import fr.amou.perso.app.rasen.robot.game.Constant;
 import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
 import fr.amou.perso.app.rasen.robot.game.Game;
 import fr.amou.perso.app.rasen.robot.game.Robot;
-import lombok.Data;
 
-@Data
 @Component
 public class Solver {
 

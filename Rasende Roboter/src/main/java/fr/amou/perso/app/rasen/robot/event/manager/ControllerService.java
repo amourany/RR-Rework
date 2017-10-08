@@ -39,4 +39,6 @@ public interface ControllerService {
 
     void handleMouseAction(int line, int column);
 
+    void println(String valueOf);
+
 }

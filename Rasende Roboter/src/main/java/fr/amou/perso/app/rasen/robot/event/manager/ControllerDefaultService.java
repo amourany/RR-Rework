@@ -1,8 +1,5 @@
 package fr.amou.perso.app.rasen.robot.event.manager;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.Stack;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +12,9 @@ import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
 import fr.amou.perso.app.rasen.robot.game.Game;
 import fr.amou.perso.app.rasen.robot.game.Robot;
 import fr.amou.perso.app.rasen.robot.userInterface.RasendeViewInterface;
-import lombok.Data;
 
-@Data
 @Service
-public class ControllerDefaultService extends OutputStream implements ControllerService {
+public class ControllerDefaultService implements ControllerService {
 
     @Autowired
     private Game game;
@@ -29,9 +24,6 @@ public class ControllerDefaultService extends OutputStream implements Controller
 
     @Override
     public void run() throws Exception {
-        final PrintStream out = new PrintStream(this);
-        System.setOut(out);
-
         this.game.startNewGame();
         this.frame.buildFrame();
     }
@@ -75,8 +67,8 @@ public class ControllerDefaultService extends OutputStream implements Controller
      * Redirect System.out to the Frame
      */
     @Override
-    public void write(int arg0) throws IOException {
-        this.frame.println(String.valueOf((char) arg0));
+    public void println(String message) {
+        this.frame.println(String.valueOf(message));
     }
 
     @Override
