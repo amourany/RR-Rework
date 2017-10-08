@@ -1,10 +1,14 @@
 package fr.amou.perso.app.rasen.robot.userInterface;
 
-import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.MouseAdapter;
+import java.awt.event.WindowAdapter;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -21,7 +25,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import fr.amou.perso.app.rasen.robot.controller.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
+
+import fr.amou.perso.app.rasen.robot.enums.ActionPossibleEnum;
 import fr.amou.perso.app.rasen.robot.game.Box;
 import fr.amou.perso.app.rasen.robot.game.Constant;
 import fr.amou.perso.app.rasen.robot.game.Game;
@@ -29,14 +37,31 @@ import fr.amou.perso.app.rasen.robot.game.Game;
 /**
  * The window of the application with all its components and views
  */
-public class RasendeFrame extends JFrame implements RasendeViewInterface {
-    private static final long serialVersionUID = 4716072661083101699L;
+@Component
+public class RasendeFrame implements RasendeViewInterface {
 
-    private JPanel contentPane, mBoardPanel, mColumnPanel, moveNB, userPanel;
+    private JPanel mBoardPanel, mColumnPanel, moveNB;
     private JLabel mLabelRound, mLabelMove, mLabelTime;
     private JButton bSolution, bValidate, bPrevious, bNext;
     private JTextField tSuggestion;
-    private JTextArea mConsoleText, user;
+    private JTextArea mConsoleText;
+
+    private JFrame jFrame;
+
+    @Autowired
+    private ActionListener actionListener;
+
+    @Autowired
+    private KeyAdapter keyAdapter;
+
+    @Autowired
+    private MouseAdapter mouseAdapter;
+
+    @Autowired
+    private WindowAdapter windowAdapter;
+
+    @Autowired
+    private Game game;
 
     /**
      * Constructor of the class
@@ -44,20 +69,21 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
      * @param controller
      *            : Controller
      */
-    public RasendeFrame(final Controller controller) {
-        super();
+    public RasendeFrame() {
 
-        this.setSize(Constant.FRAME_WIDTH, Constant.FRAME_HEIGHT);
-        this.setTitle(Constant.FRAME_TITLE);
+        this.jFrame = new JFrame();
+        this.jFrame.setSize(Constant.FRAME_WIDTH, Constant.FRAME_HEIGHT);
+        this.jFrame.setTitle(Constant.FRAME_TITLE);
 
-        this.setResizable(false);
-        this.setLocationRelativeTo(null);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setIconImage(Toolkit.getDefaultToolkit().getImage(Constant.THEME_PATH + "default/robots/robotRed.png"));
+        this.jFrame.setResizable(false);
+        this.jFrame.setLocationRelativeTo(null);
+        this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.jFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(Constant.THEME_PATH
+                + "default/robots/robotRed.png"));
 
-        this.addWindowListener(controller);
+        this.jFrame.addWindowListener(this.windowAdapter);
 
-        this.buildFrame(controller);
+        // this.buildFrame();
     }
 
     /**
@@ -65,40 +91,41 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
      *
      * @param controller
      */
-    public void buildFrame(final Controller controller) {
-        this.contentPane = new JPanel();
-        this.contentPane.setLayout(new BoxLayout(this.contentPane, BoxLayout.LINE_AXIS));
+    @Override
+    public void buildFrame() {
+        Container contentPane = this.jFrame.getContentPane();
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.LINE_AXIS));
 
         this.mColumnPanel = new JPanel();
         this.mColumnPanel.setBackground(java.awt.Color.WHITE);
         this.mColumnPanel.setLayout(new BoxLayout(this.mColumnPanel, BoxLayout.Y_AXIS));
         this.mColumnPanel.setPreferredSize(new Dimension(Constant.COLUMN_WIDTH, Constant.BOARD_SIZE));
-        this.contentPane.add(this.mColumnPanel);
+        contentPane.add(this.mColumnPanel);
 
         this.mBoardPanel = new JPanel();
         this.mBoardPanel.setBackground(java.awt.Color.WHITE);
         this.mBoardPanel.setLayout(new GridLayout(Constant.NB_BOXES, Constant.NB_BOXES));
         this.mBoardPanel.setPreferredSize(new Dimension(Constant.BOARD_SIZE, Constant.BOARD_SIZE));
-        this.mBoardPanel.addMouseListener(controller);
-        this.contentPane.add(this.mBoardPanel);
-        this.contentPane.addKeyListener(controller);
-        this.contentPane.setFocusable(true);
+        this.mBoardPanel.addMouseListener(this.mouseAdapter);
+        contentPane.add(this.mBoardPanel);
+        contentPane.addKeyListener(this.keyAdapter);
+        contentPane.setFocusable(true);
         this.setFocusOnBoard();
 
-        this.buildJMenu(controller);
-        this.buildColumn(controller);
+        this.buildJMenu();
+        this.buildColumn();
 
-        this.setContentPane(this.contentPane);
+        this.jFrame.setContentPane(contentPane);
 
-        this.pack();
+        this.jFrame.pack();
 
-        this.display(controller.getGame(), controller);
-        this.setVisible(true);
+        this.display();
+        this.jFrame.setVisible(true);
     }
 
     @Override
     public void setFocusOnBoard() {
-        this.contentPane.requestFocusInWindow();
+        this.jFrame.getContentPane().requestFocusInWindow();
     }
 
     /**
@@ -107,7 +134,7 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
      * @param controller
      * @see Controller
      */
-    private void buildJMenu(final Controller controller) {
+    private void buildJMenu() {
         JMenuBar menuBar = new JMenuBar();
         JMenu menu;
         JMenuItem menuItem;
@@ -116,20 +143,20 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
         menuBar.add(menu);
 
         menuItem = new JMenuItem("New Game");
-        menuItem.setActionCommand(Controller.ACTION_NEW_GAME);
-        menuItem.addActionListener(controller);
+        menuItem.setActionCommand(ActionPossibleEnum.ACTION_NEW_GAME.name());
+        menuItem.addActionListener(this.actionListener);
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Help");
-        menuItem.setActionCommand(Controller.ACTION_HELP);
-        menuItem.addActionListener(controller);
+        menuItem.setActionCommand(ActionPossibleEnum.ACTION_HELP.name());
+        menuItem.addActionListener(this.actionListener);
         menu.add(menuItem);
 
         menu.addSeparator();
 
         menuItem = new JMenuItem("Quit");
-        menuItem.setActionCommand(Controller.ACTION_QUIT);
-        menuItem.addActionListener(controller);
+        menuItem.setActionCommand(ActionPossibleEnum.ACTION_QUIT.name());
+        menuItem.addActionListener(this.actionListener);
         menu.add(menuItem);
 
         menu = new JMenu("Theme");
@@ -138,12 +165,12 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
         ButtonGroup group = new ButtonGroup();
         JRadioButtonMenuItem rbMenuItem = new JRadioButtonMenuItem("Default");
         rbMenuItem.setSelected(true);
-        rbMenuItem.setActionCommand(Controller.ACTION_THEME_DEFAULT);
-        rbMenuItem.addActionListener(controller);
+        rbMenuItem.setActionCommand(ActionPossibleEnum.ACTION_THEME_DEFAULT.name());
+        rbMenuItem.addActionListener(this.actionListener);
         group.add(rbMenuItem);
         menu.add(rbMenuItem);
 
-        this.setJMenuBar(menuBar);
+        this.jFrame.setJMenuBar(menuBar);
     }
 
     /**
@@ -152,17 +179,17 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
      * @param controller
      * @see Controller
      */
-    private void buildColumn(final Controller controller) {
-        this.mLabelRound = new JLabel("Current Round: " + controller.getGame().getCurrentRound() + "/17");
-        this.mLabelRound.setAlignmentX(Component.CENTER_ALIGNMENT);
+    private void buildColumn() {
+        this.mLabelRound = new JLabel("Current Round: " + this.game.getCurrentRound() + "/17");
+        this.mLabelRound.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         this.mColumnPanel.add(this.mLabelRound);
 
         this.mLabelMove = new JLabel("Movements: " + 0);
-        this.mLabelMove.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.mLabelMove.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         this.mColumnPanel.add(this.mLabelMove);
 
         this.mLabelTime = new JLabel("Countdown: " + Constant.TIMER + " sec");
-        this.mLabelTime.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.mLabelTime.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         this.mLabelTime.setVisible(false);
         this.mColumnPanel.add(this.mLabelTime);
 
@@ -183,8 +210,8 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
         this.mColumnPanel.add(this.moveNB);
 
         this.bValidate = new JButton("Validate");
-        this.bValidate.setAlignmentX(Component.CENTER_ALIGNMENT);
-        this.bValidate.addActionListener(controller);
+        this.bValidate.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        this.bValidate.addActionListener(this.actionListener);
         this.bValidate.setVisible(false);
         this.mColumnPanel.add(this.bValidate);
 
@@ -196,13 +223,13 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
         jp.setLayout(new FlowLayout());
         this.bPrevious = new JButton("<");
         this.bPrevious.setEnabled(false);
-        this.bPrevious.setActionCommand(Controller.ACTION_PREVIOUS);
-        this.bPrevious.addActionListener(controller);
+        this.bPrevious.setActionCommand(ActionPossibleEnum.ACTION_PREVIOUS.name());
+        this.bPrevious.addActionListener(this.actionListener);
         jp.add(this.bPrevious);
         this.bNext = new JButton(">");
         this.bNext.setEnabled(false);
-        this.bNext.setActionCommand(Controller.ACTION_NEXT);
-        this.bNext.addActionListener(controller);
+        this.bNext.setActionCommand(ActionPossibleEnum.ACTION_NEXT.name());
+        this.bNext.addActionListener(this.actionListener);
         jp.add(this.bNext);
         this.mColumnPanel.add(jp);
 
@@ -210,30 +237,10 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
         // Solution
         // -------------------------------------------------------------
         this.bSolution = new JButton("Solution");
-        this.bSolution.setAlignmentX(Component.CENTER_ALIGNMENT);
-        this.bSolution.setActionCommand(Controller.ACTION_SOLVE);
-        this.bSolution.addActionListener(controller);
+        this.bSolution.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
+        this.bSolution.setActionCommand(ActionPossibleEnum.ACTION_SOLVE.name());
+        this.bSolution.addActionListener(this.actionListener);
         this.mColumnPanel.add(this.bSolution);
-
-        // -------------------------------------------------------------
-        // Users
-        // -------------------------------------------------------------
-        this.userPanel = new JPanel();
-        this.userPanel.setBackground(java.awt.Color.WHITE);
-        this.userPanel.setLayout(new BoxLayout(this.userPanel, BoxLayout.PAGE_AXIS));
-        this.userPanel.add(new JLabel("Users"));
-        this.userPanel.setVisible(false);
-
-        this.user = new JTextArea();
-        this.user.setEditable(false);
-        this.user.setLineWrap(true);
-
-        JScrollPane scrollPane = new JScrollPane(this.user);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-        this.userPanel.add(scrollPane);
-        this.user.setRows(10);
-        this.mColumnPanel.add(this.userPanel);
 
         // -------------------------------------------------------------
         // Console
@@ -260,15 +267,13 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
      *
      * @param game
      *            : current game
-     * @param c
-     *            : Controller
      * @see Game
-     * @see Controller
      */
     @Override
-    public void display(final Game g, final Controller c) {
-        this.displayBoard(g);
-        this.displayDataInfo(g, c);
+    public void display() {
+        this.displayBoard();
+        this.displayDataInfo();
+        this.setFocusOnBoard();
     }
 
     /**
@@ -276,29 +281,15 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
      *
      * @param g
      *            : Game
-     * @param c
-     *            : Controller
      * @see Game
-     * @see Controller
      */
     @Override
-    public void displayDataInfo(final Game g, final Controller c) {
-        this.mLabelRound.setText("Current Round: " + g.getCurrentRound() + "/17");
-        this.mLabelMove.setText("Movements: " + g.getmPreviousPosition().size());
+    public void displayDataInfo() {
+        this.mLabelRound.setText("Current Round: " + this.game.getCurrentRound() + "/17");
+        this.mLabelMove.setText("Movements: " + this.game.getmPreviousPosition().size());
 
-        this.bPrevious.setEnabled(g.hasPreviousPosition());
-        this.bNext.setEnabled(g.hasNextPosition());
-    }
-
-    /**
-     * Add the player list and points
-     *
-     * @param data
-     *            : String containing the list of players
-     */
-    @Override
-    public void displayPlayers(final String data) {
-        this.user.setText(data);
+        this.bPrevious.setEnabled(this.game.hasPreviousPosition());
+        this.bNext.setEnabled(this.game.hasNextPosition());
     }
 
     /**
@@ -309,14 +300,14 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
      * @see Game
      */
     @Override
-    public void displayBoard(final Game game) {
+    public void displayBoard() {
         this.mBoardPanel.removeAll();
 
-        Box[][] board = game.getBoard().getGameBoard();
+        Box[][] board = this.game.getBoard().getGameBoard();
 
         for (int i = 0; i < Constant.NB_BOXES; i++) {
             for (int j = 0; j < Constant.NB_BOXES; j++) {
-                this.mBoardPanel.add(board[i][j].getJPanel(game, i, j));
+                this.mBoardPanel.add(board[i][j].getJPanel(this.game, i, j));
             }
         }
         this.mBoardPanel.validate();
@@ -327,7 +318,7 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
      */
     @Override
     public void displayHelp() {
-        JOptionPane.showMessageDialog(this, "I) General Principle\n"
+        JOptionPane.showMessageDialog(this.jFrame, "I) General Principle\n"
                 + "The game consists of a board of 16 * 16 boxes and four robots of different colors (red, green, blue, yellow).\n"
                 + "Some boxes have a type corresponding to the different objectives with robots.\n"
                 + "There are four types of patterns, each time declined in the four colors for each of the robots.\n"
@@ -359,97 +350,17 @@ public class RasendeFrame extends JFrame implements RasendeViewInterface {
     }
 
     /**
-     * Change the button validate if someone play
-     *
-     * @param enable
-     *            <code>true</code> if the player has the hand else
-     *            <code>false</code>
-     */
-    @Override
-    public void setEnabledValidate(Boolean enable) {
-        this.bValidate.setEnabled(enable);
-    }
-
-    /**
-     * The suggestion that the player submit
-     *
-     * @return the suggestion if it is correct, <code>-1</code> otherwise
-     */
-    @Override
-    public int getSuggestion() {
-        try {
-            return Integer.parseInt(this.tSuggestion.getText());
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "This is not a correct number format!", "Number",
-                    JOptionPane.ERROR_MESSAGE);
-            return -1;
-        }
-    }
-
-    /**
-     * ShowMessageDialog warning users that reached their maximum number of
-     * movements
-     */
-    @Override
-    public void displayMoveLimit() {
-        JOptionPane.showMessageDialog(this,
-                "The movement that you want to does not respect the constraint that you set for the goal.\n"
-                        + "Please cancel some of them to choose another path.", "MoveLimit!",
-                JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    /**
      * ShowMessageDialog warning users that win the game
      */
     @Override
     public void displayWin() {
-        JOptionPane.showMessageDialog(this, "Congratulations!! You beat the game!", "Congratulations",
+        JOptionPane.showMessageDialog(this.jFrame, "Congratulations!! You beat the game!", "Congratulations",
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
-    /**
-     * ShowMessageDialog to start a server and ask a username
-     *
-     * @return the username of the player who starts the server
-     */
     @Override
-    public String displayStartServer() {
-        String userName = (String) JOptionPane.showInputDialog(this, "Your username :", "Start Server",
-                JOptionPane.WARNING_MESSAGE, null, null, "Anonymous Server");
-        return userName;
+    public void dispose() {
+        this.jFrame.dispose();
     }
 
-    /**
-     * ShowMessageDialog to join a server
-     *
-     * @return table of string <code>[0]</code> is the pseudo of the player
-     *         <code>[1]</code> is the IP that the player wants to join
-     */
-    @Override
-    public String[] displayJoinServer() {
-        String[] infos = new String[2];
-
-        JTextField pseudo = new JTextField("Anonymous Client");
-        JTextField ip = new JTextField("127.0.0.1");
-
-        Object[] message = { "Username:", pseudo, "Ip Server:", ip };
-
-        int option = JOptionPane.showConfirmDialog(this, message, "Join Server", JOptionPane.WARNING_MESSAGE);
-
-        if (option == JOptionPane.OK_OPTION) {
-            infos[0] = pseudo.getText();
-            infos[1] = ip.getText();
-        }
-
-        return infos;
-    }
-
-    /**
-     *
-     */
-    @Override
-    public void displayConnectionLost() {
-        // TODO Auto-generated method stub
-
-    }
 }

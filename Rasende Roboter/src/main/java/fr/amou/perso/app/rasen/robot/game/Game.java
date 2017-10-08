@@ -33,6 +33,7 @@ public class Game {
     private boolean isOver;
     private String theme = "default/";
 
+    // @PostConstruct
     public void startNewGame() {
         this.generateBoard();
         this.isOver = false;
