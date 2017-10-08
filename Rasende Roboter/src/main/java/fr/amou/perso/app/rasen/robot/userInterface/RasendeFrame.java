@@ -23,7 +23,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,10 +39,9 @@ import fr.amou.perso.app.rasen.robot.game.Game;
 @Component
 public class RasendeFrame implements RasendeViewInterface {
 
-    private JPanel mBoardPanel, mColumnPanel, moveNB;
-    private JLabel mLabelRound, mLabelMove, mLabelTime;
-    private JButton bSolution, bValidate, bPrevious, bNext;
-    private JTextField tSuggestion;
+    private JPanel mBoardPanel, mColumnPanel;
+    private JLabel mLabelRound, mLabelMove;
+    private JButton bSolution, bPrevious, bNext;
     private JTextArea mConsoleText;
 
     private JFrame jFrame;
@@ -187,33 +185,6 @@ public class RasendeFrame implements RasendeViewInterface {
         this.mLabelMove = new JLabel("Movements: " + 0);
         this.mLabelMove.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
         this.mColumnPanel.add(this.mLabelMove);
-
-        this.mLabelTime = new JLabel("Countdown: " + Constant.TIMER + " sec");
-        this.mLabelTime.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-        this.mLabelTime.setVisible(false);
-        this.mColumnPanel.add(this.mLabelTime);
-
-        // -------------------------------------------------------------
-        // Number of movement proposed
-        // -------------------------------------------------------------
-        this.moveNB = new JPanel();
-        this.moveNB.setVisible(false);
-        this.moveNB.setBackground(java.awt.Color.WHITE);
-        this.moveNB.setLayout(new FlowLayout());
-
-        JLabel labelTF = new JLabel("Number of moves:");
-        this.moveNB.add(labelTF);
-
-        this.tSuggestion = new JTextField();
-        this.tSuggestion.setPreferredSize(new Dimension(60, 30));
-        this.moveNB.add(this.tSuggestion);
-        this.mColumnPanel.add(this.moveNB);
-
-        this.bValidate = new JButton("Validate");
-        this.bValidate.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
-        this.bValidate.addActionListener(this.actionListener);
-        this.bValidate.setVisible(false);
-        this.mColumnPanel.add(this.bValidate);
 
         // -------------------------------------------------------------
         // Previous - Next Movement

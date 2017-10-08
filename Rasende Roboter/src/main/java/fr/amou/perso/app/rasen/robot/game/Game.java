@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fr.amou.perso.app.rasen.robot.game.Constant.BoxType;
-import fr.amou.perso.app.rasen.robot.game.Constant.Color;
-import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
-import fr.amou.perso.app.rasen.robot.solver.Solver;
+import fr.amou.perso.app.rasen.robot.enums.BoxTypeEnum;
+import fr.amou.perso.app.rasen.robot.enums.ColorRobotEnum;
+import fr.amou.perso.app.rasen.robot.enums.DirectionDeplacementEnum;
 import lombok.Data;
 
 /**
@@ -19,9 +17,6 @@ import lombok.Data;
 @Data
 @Component
 public class Game {
-
-    @Autowired
-    private Solver mSolver;
 
     private Board mBoard;
     private List<Robot> mRobots;
@@ -33,7 +28,6 @@ public class Game {
     private boolean isOver;
     private String theme = "default/";
 
-    // @PostConstruct
     public void startNewGame() {
         this.generateBoard();
         this.isOver = false;
@@ -43,15 +37,15 @@ public class Game {
         // Cr�ation d'un tableau qui contient toutes les cartes possibles
         int i = 0;
         Box[] goalCardTab = new Box[17];
-        for (Color c : Color.values()) {
-            for (BoxType bt : BoxType.values()) {
-                if (bt != BoxType.Central && bt != BoxType.Empty && bt != BoxType.Multi) {
+        for (ColorRobotEnum c : ColorRobotEnum.values()) {
+            for (BoxTypeEnum bt : BoxTypeEnum.values()) {
+                if (bt != BoxTypeEnum.Central && bt != BoxTypeEnum.Empty && bt != BoxTypeEnum.Multi) {
                     goalCardTab[i] = new Box(bt, c);
                     i++;
                 }
             }
         }
-        goalCardTab[i] = new Box(BoxType.Multi, null);
+        goalCardTab[i] = new Box(BoxTypeEnum.Multi, null);
 
         // Ajout al�atoire des cartes dans la pile
         for (int j = 17; j > 0; j--) {
@@ -70,10 +64,10 @@ public class Game {
         this.mRobots = new ArrayList<>();
         Robot rob;
 
-        for (Color c : Constant.Color.values()) {
+        for (ColorRobotEnum c : ColorRobotEnum.values()) {
             rob = new Robot(c);
             rob.placeOnBoard(this.mRobots);
-            while (this.mBoard.getBox(rob.originY, rob.originX).getType() != Constant.BoxType.Empty) {
+            while (this.mBoard.getBox(rob.originY, rob.originX).getType() != BoxTypeEnum.Empty) {
                 rob.placeOnBoard(this.mRobots);
             }
             this.mRobots.add(rob);
@@ -134,10 +128,10 @@ public class Game {
      * @param c
      *            : Color, the color of the robot asked
      * @return r : Robot, if the robot with this color exist, else null
-     * @see Color
+     * @see ColorRobotEnum
      * @see Robot
      */
-    public Robot getRobot(final Color col) {
+    public Robot getRobot(final ColorRobotEnum col) {
         Robot result = null;
 
         for (Robot r : this.mRobots) {
@@ -168,7 +162,7 @@ public class Game {
         return 17 - this.mGoalCards.size();
     }
 
-    public void setRobotByColor(final Color color, final Robot rob) {
+    public void setRobotByColor(final ColorRobotEnum color, final Robot rob) {
         for (int i = 0; i < this.mRobots.size(); i++) {
             if (this.mRobots.get(i).getColor() == color) {
                 this.mRobots.set(i, rob);
@@ -227,10 +221,10 @@ public class Game {
      *            : the robot to move
      * @param direction
      *            : Left, Right, Down, Up
-     * @see Direction
+     * @see DirectionDeplacementEnum
      * @see Robot
      */
-    public void moveSelectedRobot(final Direction dir) {
+    public void moveSelectedRobot(final DirectionDeplacementEnum dir) {
         this.saveCurrentPosition();
 
         this.mBoard.getNewPosition(this.mSelectedRobot, dir, this.mRobots);
@@ -249,7 +243,7 @@ public class Game {
             }
         } else {
             if (this.mBoard.getGameBoard()[rob.y][rob.x].getType() == this.currentGoal.getType() && this.currentGoal
-                    .getType() == BoxType.Multi) {
+                    .getType() == BoxTypeEnum.Multi) {
                 win = true;
             }
         }
@@ -264,7 +258,7 @@ public class Game {
         this.mSelectedRobot = selectedRobot;
     }
 
-    public void setSelectedRobot(final Color color) {
+    public void setSelectedRobot(final ColorRobotEnum color) {
         for (Robot r : this.mRobots) {
             if (r.getColor() == color) {
                 this.mSelectedRobot = r;
@@ -274,10 +268,6 @@ public class Game {
 
     public int getCounterLap() {
         return this.mPreviousPosition.size();
-    }
-
-    public void startSolver() {
-        this.mSolver.solve(this);
     }
 
     public Stack<Box> getStack() {

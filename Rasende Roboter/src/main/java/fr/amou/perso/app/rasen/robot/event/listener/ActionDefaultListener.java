@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fr.amou.perso.app.rasen.robot.enums.ActionPossibleEnum;
-import fr.amou.perso.app.rasen.robot.event.manager.ControllerService;
+import fr.amou.perso.app.rasen.robot.event.manager.EventManager;
 
 @Component
 public class ActionDefaultListener implements ActionListener {
 
     @Autowired
-    private ControllerService controller;
+    private EventManager eventManager;
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -23,22 +23,22 @@ public class ActionDefaultListener implements ActionListener {
 
         switch (action) {
         case ACTION_PREVIOUS:
-            this.controller.loadPreviousPosition();
+            this.eventManager.loadPreviousPosition();
             break;
         case ACTION_NEXT:
-            this.controller.loadNextPosition();
+            this.eventManager.loadNextPosition();
             break;
         case ACTION_QUIT:
-            this.controller.askToQuit();
+            this.eventManager.askToQuit();
             break;
         case ACTION_NEW_GAME:
-            this.controller.startNewGame();
+            this.eventManager.startNewGame();
             break;
         case ACTION_HELP:
-            this.controller.displayHelp();
+            this.eventManager.displayHelp();
             break;
         case ACTION_SOLVE:
-            this.controller.startSolver();
+            this.eventManager.startSolver();
             break;
         case ACTION_THEME_DEFAULT:
             // this.game.setTheme("default/");

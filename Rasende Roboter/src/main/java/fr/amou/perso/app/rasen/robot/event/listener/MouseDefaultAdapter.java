@@ -6,7 +6,7 @@ import java.awt.event.MouseEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fr.amou.perso.app.rasen.robot.event.manager.ControllerService;
+import fr.amou.perso.app.rasen.robot.event.manager.EventManager;
 import fr.amou.perso.app.rasen.robot.game.Constant;
 
 /**
@@ -19,14 +19,14 @@ import fr.amou.perso.app.rasen.robot.game.Constant;
 public class MouseDefaultAdapter extends MouseAdapter {
 
     @Autowired
-    private ControllerService controller;
+    private EventManager eventManager;
 
     @Override
     public void mouseClicked(final MouseEvent e) {
         int line = e.getY() / Constant.CASE_SIZE;
         int column = e.getX() / Constant.CASE_SIZE;
 
-        this.controller.handleMouseAction(line, column);
+        this.eventManager.handleMouseAction(line, column);
 
     }
 }

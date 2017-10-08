@@ -5,9 +5,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
-import fr.amou.perso.app.rasen.robot.game.Constant.BoxType;
-import fr.amou.perso.app.rasen.robot.game.Constant.Color;
-import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
+import fr.amou.perso.app.rasen.robot.enums.BoxTypeEnum;
+import fr.amou.perso.app.rasen.robot.enums.ColorRobotEnum;
+import fr.amou.perso.app.rasen.robot.enums.DirectionDeplacementEnum;
 import lombok.Data;
 
 /**
@@ -24,13 +24,13 @@ public class Box {
     private int x, y;
 
     /**
-     * @see Color
+     * @see ColorRobotEnum
      */
-    private Color color;
+    private ColorRobotEnum color;
     /**
-     * @see BoxType
+     * @see BoxTypeEnum
      */
-    private BoxType type;
+    private BoxTypeEnum type;
 
     /**
      * Default Constructor
@@ -40,18 +40,18 @@ public class Box {
         this.south = false;
         this.east = false;
         this.west = false;
-        this.type = BoxType.Empty;
+        this.type = BoxTypeEnum.Empty;
         this.color = null;
     }
 
-    public Box(final BoxType boxT, final Color boxC) {
+    public Box(final BoxTypeEnum boxT, final ColorRobotEnum boxC) {
         this();
         this.type = boxT;
         this.color = boxC;
     }
 
-    public Box(final boolean north, final boolean east, final boolean south, final boolean west, final Color color,
-            final BoxType type) {
+    public Box(final boolean north, final boolean east, final boolean south, final boolean west, final ColorRobotEnum color,
+            final BoxTypeEnum type) {
         this.north = north;
         this.east = east;
         this.south = south;
@@ -65,9 +65,9 @@ public class Box {
      *
      * @param direction
      *            : north, south, west or east
-     * @see Direction
+     * @see DirectionDeplacementEnum
      */
-    public void setWall(final Direction dir) {
+    public void setWall(final DirectionDeplacementEnum dir) {
         switch (dir) {
         case Up:
             this.north = true;
@@ -94,7 +94,7 @@ public class Box {
      *            the direction that the robot is following
      * @return <code>true</code> if the robot can continue its course
      */
-    public boolean canContinue(final Direction dir) {
+    public boolean canContinue(final DirectionDeplacementEnum dir) {
         Boolean res;
         res = true;
 
@@ -117,7 +117,7 @@ public class Box {
         return res;
     }
 
-    public void setType(final BoxType type, final Color color) {
+    public void setType(final BoxTypeEnum type, final ColorRobotEnum color) {
         this.type = type;
         this.color = color;
     }
@@ -125,7 +125,7 @@ public class Box {
     private ImageIcon getImageIcon(Game game) {
         ImageIcon icon;
 
-        if (this.type == BoxType.Empty || this.type == BoxType.Multi) {
+        if (this.type == BoxTypeEnum.Empty || this.type == BoxTypeEnum.Multi) {
             icon = new ImageIcon(Constant.THEME_PATH + game.getTheme() + "box/" + this.type + ".png");
         } else {
             icon = new ImageIcon(Constant.THEME_PATH + game.getTheme() + "box/" + this.type + this.color + ".png");
@@ -185,7 +185,7 @@ public class Box {
             panel.add(west);
         }
 
-        if (this.type == BoxType.Central) {
+        if (this.type == BoxTypeEnum.Central) {
             panel.add(new JLabel("", bObjectif.getImageIcon(game), JLabel.CENTER));
         }
 

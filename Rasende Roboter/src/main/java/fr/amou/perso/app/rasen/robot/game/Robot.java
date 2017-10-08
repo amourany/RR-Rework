@@ -2,8 +2,8 @@ package fr.amou.perso.app.rasen.robot.game;
 
 import java.util.List;
 
-import fr.amou.perso.app.rasen.robot.game.Constant.Color;
-import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
+import fr.amou.perso.app.rasen.robot.enums.ColorRobotEnum;
+import fr.amou.perso.app.rasen.robot.enums.DirectionDeplacementEnum;
 import lombok.Data;
 
 /**
@@ -16,15 +16,15 @@ public class Robot {
     public int originX;
     public int originY;
     /**
-     * @see Color
+     * @see ColorRobotEnum
      */
-    private Color color;
+    private ColorRobotEnum color;
 
-    public Robot(final Color col) {
+    public Robot(final ColorRobotEnum col) {
         this.color = col;
     }
 
-    public Robot(final int x, final int y, final Color color) {
+    public Robot(final int x, final int y, final ColorRobotEnum color) {
         this.x = x;
         this.y = y;
         this.originX = x;
@@ -39,7 +39,7 @@ public class Robot {
 
     }
 
-    public Robot(final int x, final int y, final Color c, final int originX, final int originY) {
+    public Robot(final int x, final int y, final ColorRobotEnum c, final int originX, final int originY) {
         this(x, y, c);
         this.originX = originX;
         this.originY = originY;
@@ -78,7 +78,7 @@ public class Robot {
         this.originY = this.y;
     }
 
-    public boolean robotIsHere(final List<Robot> robots, final Direction dir) {
+    public boolean robotIsHere(final List<Robot> robots, final DirectionDeplacementEnum dir) {
         boolean res = false;
 
         for (Robot r : robots) {

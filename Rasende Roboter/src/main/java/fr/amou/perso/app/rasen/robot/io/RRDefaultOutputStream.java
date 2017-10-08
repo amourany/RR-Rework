@@ -7,13 +7,13 @@ import java.io.PrintStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fr.amou.perso.app.rasen.robot.event.manager.ControllerService;
+import fr.amou.perso.app.rasen.robot.event.manager.EventManager;
 
 @Component
 public class RRDefaultOutputStream extends OutputStream {
 
     @Autowired
-    private ControllerService controller;
+    private EventManager controller;
 
     public RRDefaultOutputStream() {
         super();

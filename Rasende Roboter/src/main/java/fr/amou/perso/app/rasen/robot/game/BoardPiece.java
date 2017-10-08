@@ -10,6 +10,9 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
+import fr.amou.perso.app.rasen.robot.enums.BoxTypeEnum;
+import fr.amou.perso.app.rasen.robot.enums.ColorRobotEnum;
+import fr.amou.perso.app.rasen.robot.enums.DirectionDeplacementEnum;
 import lombok.Data;
 
 /**
@@ -203,8 +206,8 @@ public class BoardPiece {
         Element xmlColor;
         Element xmlType;
 
-        Constant.BoxType boxType;
-        Constant.Color boxColor;
+        BoxTypeEnum boxType;
+        ColorRobotEnum boxColor;
 
         Box realBox;
         int iBox, jBox;
@@ -224,13 +227,13 @@ public class BoardPiece {
             for (Element wall : walls) {
 
                 if (wall.getText().equals("Top")) {
-                    realBox.setWall(Constant.Direction.Up);
+                    realBox.setWall(DirectionDeplacementEnum.Up);
                 } else if (wall.getText().equals("Right")) {
-                    realBox.setWall(Constant.Direction.Right);
+                    realBox.setWall(DirectionDeplacementEnum.Right);
                 } else if (wall.getText().equals("Bottom")) {
-                    realBox.setWall(Constant.Direction.Down);
+                    realBox.setWall(DirectionDeplacementEnum.Down);
                 } else if (wall.getText().equals("Left")) {
-                    realBox.setWall(Constant.Direction.Left);
+                    realBox.setWall(DirectionDeplacementEnum.Left);
                 }
             }
 
@@ -240,11 +243,11 @@ public class BoardPiece {
                 xmlColor = box.getChild("Goal").getChild("color");
                 xmlType = box.getChild("Goal").getChild("type");
 
-                boxType = Constant.BoxType.valueOf(xmlType.getText());
-                if (boxType == Constant.BoxType.Multi) {
+                boxType = BoxTypeEnum.valueOf(xmlType.getText());
+                if (boxType == BoxTypeEnum.Multi) {
                     boxColor = null;
                 } else {
-                    boxColor = Constant.Color.valueOf(xmlColor.getText());
+                    boxColor = ColorRobotEnum.valueOf(xmlColor.getText());
                 }
 
                 realBox.setType(boxType, boxColor);

@@ -8,8 +8,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import fr.amou.perso.app.rasen.robot.enums.ColorRobotEnum;
+import fr.amou.perso.app.rasen.robot.enums.DirectionDeplacementEnum;
 import fr.amou.perso.app.rasen.robot.game.Constant;
-import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
 import fr.amou.perso.app.rasen.robot.game.Game;
 import fr.amou.perso.app.rasen.robot.game.Robot;
 
@@ -19,25 +20,24 @@ public class Solver {
     @Autowired
     private StructTree tree;
 
+    @Autowired
+    private Game game;
+
     private String root;
     private String leaf;
-    private Game game;
     private int depth;
-    private int cut;
     private boolean solved;
 
-    public void initSolver(Game g) {
+    public void initSolver() {
         this.root = "";
         this.leaf = "";
-        this.game = g;
         this.tree.clear();
         this.depth = 0;
-        this.cut = 0;
         this.solved = false;
     }
 
-    public void solve(Game g) {
-        this.initSolver(g);
+    public void solve() {
+        this.initSolver();
         this.createRoot();
 
         while (!this.solved && this.depth < 13) {
@@ -75,7 +75,8 @@ public class Solver {
             robots = this.decodeKey(s);
 
             for (Robot r : robots) {
-                for (Direction d : Constant.Direction.values()) { // Then for each robot we move them in all directions
+                for (DirectionDeplacementEnum d : DirectionDeplacementEnum.values()) { // Then for each robot we move
+                                                                                       // them in all directions
                     copyRobot.clear();
                     copyRobot.addAll(robots);
                     Robot rCopy = new Robot(r);
@@ -101,8 +102,6 @@ public class Solver {
                                 if (!this.tree.containsKey(toAdd)) {
                                     this.tree.addPossibility(toAdd, this.depth);
                                     this.tree.addParent(toAdd, s);
-                                } else {
-                                    this.cut++;
                                 }
                             }
                         }
@@ -131,7 +130,7 @@ public class Solver {
 
         for (int i = 0; i < Constant.NB_ROBOT; i++) {
             robotInfo = subKey[i].split(";"); // We split the keys in order to get the four robots
-            rob = new Robot(Integer.parseInt(robotInfo[0]), Integer.parseInt(robotInfo[1]), Constant.Color.valueOf(
+            rob = new Robot(Integer.parseInt(robotInfo[0]), Integer.parseInt(robotInfo[1]), ColorRobotEnum.valueOf(
                     robotInfo[2]));
             robots.add(rob);
         }

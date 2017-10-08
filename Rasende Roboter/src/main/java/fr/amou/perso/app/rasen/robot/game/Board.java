@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import fr.amou.perso.app.rasen.robot.game.Constant.BoxType;
-import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
+import fr.amou.perso.app.rasen.robot.enums.BoxTypeEnum;
+import fr.amou.perso.app.rasen.robot.enums.DirectionDeplacementEnum;
 import lombok.Data;
 
 /**
@@ -117,10 +117,10 @@ public class Board {
      */
     private void putSurroundingWalls() {
         for (int i = 0; i < Constant.NB_BOXES; i++) {
-            this.gameBoard[i][0].setWall(Constant.Direction.Left);
-            this.gameBoard[i][Constant.NB_BOXES - 1].setWall(Constant.Direction.Right);
-            this.gameBoard[0][i].setWall(Constant.Direction.Up);
-            this.gameBoard[Constant.NB_BOXES - 1][i].setWall(Constant.Direction.Down);
+            this.gameBoard[i][0].setWall(DirectionDeplacementEnum.Left);
+            this.gameBoard[i][Constant.NB_BOXES - 1].setWall(DirectionDeplacementEnum.Right);
+            this.gameBoard[0][i].setWall(DirectionDeplacementEnum.Up);
+            this.gameBoard[Constant.NB_BOXES - 1][i].setWall(DirectionDeplacementEnum.Down);
         }
     }
 
@@ -128,22 +128,22 @@ public class Board {
      * Put central boxes of the board with a wall around this area
      */
     private void putCentralBoxes() {
-        this.gameBoard[7][7].setWall(Direction.Up);
-        this.gameBoard[7][7].setWall(Direction.Left);
+        this.gameBoard[7][7].setWall(DirectionDeplacementEnum.Up);
+        this.gameBoard[7][7].setWall(DirectionDeplacementEnum.Left);
 
-        this.gameBoard[7][8].setWall(Direction.Up);
-        this.gameBoard[7][8].setWall(Direction.Right);
+        this.gameBoard[7][8].setWall(DirectionDeplacementEnum.Up);
+        this.gameBoard[7][8].setWall(DirectionDeplacementEnum.Right);
 
-        this.gameBoard[8][7].setWall(Direction.Down);
-        this.gameBoard[8][7].setWall(Direction.Left);
+        this.gameBoard[8][7].setWall(DirectionDeplacementEnum.Down);
+        this.gameBoard[8][7].setWall(DirectionDeplacementEnum.Left);
 
-        this.gameBoard[8][8].setWall(Direction.Down);
-        this.gameBoard[8][8].setWall(Direction.Right);
+        this.gameBoard[8][8].setWall(DirectionDeplacementEnum.Down);
+        this.gameBoard[8][8].setWall(DirectionDeplacementEnum.Right);
 
-        this.gameBoard[7][7].setType(BoxType.Central, null);
-        this.gameBoard[7][8].setType(BoxType.Central, null);
-        this.gameBoard[8][7].setType(BoxType.Central, null);
-        this.gameBoard[8][8].setType(BoxType.Central, null);
+        this.gameBoard[7][7].setType(BoxTypeEnum.Central, null);
+        this.gameBoard[7][8].setType(BoxTypeEnum.Central, null);
+        this.gameBoard[8][7].setType(BoxTypeEnum.Central, null);
+        this.gameBoard[8][8].setType(BoxTypeEnum.Central, null);
     }
 
     /**
@@ -178,10 +178,10 @@ public class Board {
      *            direction that the robot is following
      * @param robots
      *            all the robots of the game
-     * @see Direction
+     * @see DirectionDeplacementEnum
      * @see Robot
      */
-    public boolean getNewPosition(Robot robot, Direction direction, List<Robot> robots) {
+    public boolean getNewPosition(Robot robot, DirectionDeplacementEnum direction, List<Robot> robots) {
         boolean moved = false;
         while (this.gameBoard[robot.y][robot.x].canContinue(direction) && !robot.robotIsHere(robots, direction)) {
             switch (direction) {

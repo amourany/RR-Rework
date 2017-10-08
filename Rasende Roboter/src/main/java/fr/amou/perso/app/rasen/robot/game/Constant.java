@@ -28,33 +28,6 @@ public final class Constant {
 
     public static final int NB_ROBOT = 4;
 
-    public static final int SERVER_PORT = 3001;
-    public static final int CLIENT_PORT = 3002;
-
-    public static final int TIMER = 120; // In seconds
-
-    /**
-     * List of possible directions.
-     */
-    public enum Direction {
-        Up, Down, Left, Right;
-    }
-
-    /**
-     * The color of a box or a robot, required for the choice of the associated
-     * image.
-     */
-    public enum Color {
-        Blue, Green, Red, Yellow
-    }
-
-    /**
-     * The type of a box, required for the choice of the associated image.
-     */
-    public enum BoxType {
-        Empty, Central, More, Sun, Diamond, Triangle, Multi;
-    }
-
     private Constant() {
 
     }

@@ -7,8 +7,9 @@ import java.util.Stack;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import fr.amou.perso.app.rasen.robot.enums.ColorRobotEnum;
+import fr.amou.perso.app.rasen.robot.enums.DirectionDeplacementEnum;
 import fr.amou.perso.app.rasen.robot.game.Constant;
-import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
 import lombok.Data;
 
 @Data
@@ -80,7 +81,7 @@ public class StructTree {
         String[] robotInfoBefore;
         String[] robotInfoAfter;
         String res = "Move the ";
-        Direction d = null;
+        DirectionDeplacementEnum d = null;
 
         nodeBefore = before.split("&");
         nodeAfter = after.split("&");
@@ -90,16 +91,16 @@ public class StructTree {
                 robotInfoBefore = nodeBefore[i].split(";");
                 robotInfoAfter = nodeAfter[i].split(";");
 
-                res += Constant.Color.valueOf(robotInfoBefore[2]) + " robot in the ";
+                res += ColorRobotEnum.valueOf(robotInfoBefore[2]) + " robot in the ";
 
                 if (Integer.parseInt(robotInfoBefore[0]) > Integer.parseInt(robotInfoAfter[0])) {
-                    d = Direction.Right;
+                    d = DirectionDeplacementEnum.Right;
                 } else if (Integer.parseInt(robotInfoBefore[0]) < Integer.parseInt(robotInfoAfter[0])) {
-                    d = Direction.Left;
+                    d = DirectionDeplacementEnum.Left;
                 } else if (Integer.parseInt(robotInfoBefore[1]) > Integer.parseInt(robotInfoAfter[1])) {
-                    d = Direction.Down;
+                    d = DirectionDeplacementEnum.Down;
                 } else if (Integer.parseInt(robotInfoBefore[1]) < Integer.parseInt(robotInfoAfter[1])) {
-                    d = Direction.Up;
+                    d = DirectionDeplacementEnum.Up;
                 }
             }
         }
