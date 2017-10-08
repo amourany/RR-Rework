@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import fr.amou.perso.app.rasen.robot.controller.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import fr.amou.perso.app.rasen.robot.game.Constant.BoxType;
 import fr.amou.perso.app.rasen.robot.game.Constant.Color;
 import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
@@ -15,7 +17,12 @@ import lombok.Data;
  * The model of our architecture
  */
 @Data
+@Component
 public class Game {
+
+    @Autowired
+    private Solver mSolver;
+
     private Board mBoard;
     private List<Robot> mRobots;
     private Stack<List<Robot>> mPreviousPosition;
@@ -23,15 +30,8 @@ public class Game {
     private Robot mSelectedRobot;
     private Stack<Box> mGoalCards;
     private Box currentGoal;
-    private Solver mSolver;
     private boolean isOver;
     private String theme = "default/";
-
-    public Game(Controller controller) {
-        this.mSolver = new Solver();
-
-        this.startNewGame();
-    }
 
     public void startNewGame() {
         this.generateBoard();

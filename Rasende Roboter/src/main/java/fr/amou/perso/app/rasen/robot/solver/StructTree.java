@@ -4,23 +4,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+
 import fr.amou.perso.app.rasen.robot.game.Constant;
 import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
 import lombok.Data;
 
 @Data
+@Component
 public class StructTree {
-    public Map<String, Integer> possibilities;
-    public Map<String, String> parent;
-    public Stack<String> solutionStack;
-    public String solution;
-
-    public StructTree() {
-        this.possibilities = new HashMap<>();
-        this.parent = new HashMap<>();
-        this.solutionStack = new Stack<>();
-        this.solution = "";
-    }
+    public Map<String, Integer> possibilities = new HashMap<>();
+    public Map<String, String> parent = new HashMap<>();
+    public Stack<String> solutionStack = new Stack<>();
+    public String solution = StringUtils.EMPTY;
 
     public void clear() {
         this.possibilities.clear();

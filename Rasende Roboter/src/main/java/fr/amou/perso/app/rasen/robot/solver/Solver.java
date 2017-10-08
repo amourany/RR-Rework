@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import fr.amou.perso.app.rasen.robot.game.Constant;
 import fr.amou.perso.app.rasen.robot.game.Constant.Direction;
 import fr.amou.perso.app.rasen.robot.game.Game;
@@ -12,19 +15,18 @@ import fr.amou.perso.app.rasen.robot.game.Robot;
 import lombok.Data;
 
 @Data
+@Component
 public class Solver {
 
+    @Autowired
     private StructTree tree;
+
     private String root;
     private String leaf;
     private Game game;
     private int depth;
     private int cut;
     private boolean solved;
-
-    public Solver() {
-        this.tree = new StructTree();
-    }
 
     public void initSolver(Game g) {
         this.root = "";

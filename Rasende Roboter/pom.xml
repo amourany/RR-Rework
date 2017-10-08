@@ -13,9 +13,24 @@
 		<junit.version>4.11</junit.version>
 
 		<java.version>1.8</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
 	<dependencies>
+
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>5.0.0.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.6</version>
+		</dependency>
 
 		<!-- JDom -->
 		<dependency>
@@ -66,6 +81,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.20.1</version>
 			</plugin>
+
 		</plugins>
 	</build>
 </project>

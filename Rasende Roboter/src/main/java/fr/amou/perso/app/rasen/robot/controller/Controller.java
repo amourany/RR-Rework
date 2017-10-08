@@ -13,6 +13,9 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Stack;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import fr.amou.perso.app.rasen.robot.game.BoardPiece;
 import fr.amou.perso.app.rasen.robot.game.Box;
 import fr.amou.perso.app.rasen.robot.game.Constant;
@@ -25,6 +28,7 @@ import fr.amou.perso.app.rasen.robot.userInterface.RasendeViewInterface;
 import lombok.Data;
 
 @Data
+@Component
 public class Controller extends OutputStream implements ActionListener, MouseListener, KeyListener, WindowListener {
     public final static String ACTION_PREVIOUS = "ACTION_PREVIOUS";
     public final static String ACTION_NEXT = "ACTION_NEXT";
@@ -34,17 +38,22 @@ public class Controller extends OutputStream implements ActionListener, MouseLis
     public final static String ACTION_SOLVE = "ACTION_SOLVE";
     public final static String ACTION_THEME_DEFAULT = "ACTION_THEME_DEFAULT";
 
+    @Autowired
     private Game game;
-    private final RasendeViewInterface frame;
+
+    private RasendeViewInterface frame;
 
     public Controller() {
         super();
+    }
 
+    public void run() throws Exception {
         final PrintStream out = new PrintStream(this);
         System.setOut(out);
 
-        this.game = new Game(this);
+        this.game.startNewGame();
         this.frame = new RasendeFrame(this);
+
     }
 
     public void moveRobotInDirection(final Direction dir) {
