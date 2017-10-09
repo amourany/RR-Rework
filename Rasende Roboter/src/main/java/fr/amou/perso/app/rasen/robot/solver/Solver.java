@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 import fr.amou.perso.app.rasen.robot.enums.ColorRobotEnum;
 import fr.amou.perso.app.rasen.robot.enums.DirectionDeplacementEnum;
 import fr.amou.perso.app.rasen.robot.game.Constant;
-import fr.amou.perso.app.rasen.robot.game.Game;
 import fr.amou.perso.app.rasen.robot.game.Robot;
+import fr.amou.perso.app.rasen.robot.game.data.GameModel;
 
 @Component
 public class Solver {
@@ -20,24 +20,24 @@ public class Solver {
     @Autowired
     private StructTree tree;
 
-    @Autowired
-    private Game game;
+    private GameModel game;
 
     private String root;
     private String leaf;
     private int depth;
     private boolean solved;
 
-    public void initSolver() {
+    public void initSolver(GameModel game) {
         this.root = "";
         this.leaf = "";
         this.tree.clear();
         this.depth = 0;
         this.solved = false;
+        this.game = game;
     }
 
-    public void solve() {
-        this.initSolver();
+    public void solve(GameModel game) {
+        this.initSolver(game);
         this.createRoot();
 
         while (!this.solved && this.depth < 13) {
@@ -54,7 +54,7 @@ public class Solver {
     }
 
     public void createRoot() {
-        this.root = this.encodeKey(this.game.getRobots());
+        this.root = this.encodeKey(this.game.getRobotList());
         this.tree.addPossibility(this.root, this.depth);
     }
 
@@ -75,8 +75,12 @@ public class Solver {
             robots = this.decodeKey(s);
 
             for (Robot r : robots) {
-                for (DirectionDeplacementEnum d : DirectionDeplacementEnum.values()) { // Then for each robot we move
-                                                                                       // them in all directions
+                for (DirectionDeplacementEnum d : DirectionDeplacementEnum.values()) { // Then for
+                                                                                       // each robot
+                                                                                       // we move
+                                                                                       // them in
+                                                                                       // all
+                                                                                       // directions
                     copyRobot.clear();
                     copyRobot.addAll(robots);
                     Robot rCopy = new Robot(r);
@@ -88,7 +92,8 @@ public class Solver {
                             copyRobot.set(i, rCopy);
                         }
                     }
-                    if (moved) { // And then we add the key made by the move of each robot to the hashmap
+                    if (moved) { // And then we add the key made by the move of each robot to the
+                                 // hashmap
                         if (!this.solved) {
                             if (this.game.isWin(r)) {
                                 toAdd = this.encodeKey(copyRobot);
@@ -130,8 +135,8 @@ public class Solver {
 
         for (int i = 0; i < Constant.NB_ROBOT; i++) {
             robotInfo = subKey[i].split(";"); // We split the keys in order to get the four robots
-            rob = new Robot(Integer.parseInt(robotInfo[0]), Integer.parseInt(robotInfo[1]), ColorRobotEnum.valueOf(
-                    robotInfo[2]));
+            rob = new Robot(Integer.parseInt(robotInfo[0]), Integer.parseInt(robotInfo[1]),
+                    ColorRobotEnum.valueOf(robotInfo[2]));
             robots.add(rob);
         }
 

@@ -218,14 +218,9 @@ public class Board {
         return this.gameBoard[x][y];
     }
 
-
-
-
-
     public BoardPiece getBoardPiece(int i) {
         return this.boardPieces[i];
     }
-
 
     public void setBoardPiece(BoardPiece boardPiece) {
         this.boardPieces[boardPiece.getFinalLocation() - 1] = boardPiece;

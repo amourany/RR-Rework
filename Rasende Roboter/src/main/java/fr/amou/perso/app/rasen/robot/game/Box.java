@@ -8,6 +8,7 @@ import javax.swing.SpringLayout;
 import fr.amou.perso.app.rasen.robot.enums.BoxTypeEnum;
 import fr.amou.perso.app.rasen.robot.enums.ColorRobotEnum;
 import fr.amou.perso.app.rasen.robot.enums.DirectionDeplacementEnum;
+import fr.amou.perso.app.rasen.robot.game.data.GameModel;
 import lombok.Data;
 
 /**
@@ -50,8 +51,8 @@ public class Box {
         this.color = boxC;
     }
 
-    public Box(final boolean north, final boolean east, final boolean south, final boolean west, final ColorRobotEnum color,
-            final BoxTypeEnum type) {
+    public Box(final boolean north, final boolean east, final boolean south, final boolean west,
+            final ColorRobotEnum color, final BoxTypeEnum type) {
         this.north = north;
         this.east = east;
         this.south = south;
@@ -122,23 +123,25 @@ public class Box {
         this.color = color;
     }
 
-    private ImageIcon getImageIcon(Game game) {
+    private ImageIcon getImageIcon(GameModel game) {
         ImageIcon icon;
 
         if (this.type == BoxTypeEnum.Empty || this.type == BoxTypeEnum.Multi) {
-            icon = new ImageIcon(Constant.THEME_PATH + game.getTheme() + "box/" + this.type + ".png");
+            icon = new ImageIcon(Constant.THEME_PATH + game.getTheme() + "box/" + this.type
+                    + ".png");
         } else {
-            icon = new ImageIcon(Constant.THEME_PATH + game.getTheme() + "box/" + this.type + this.color + ".png");
+            icon = new ImageIcon(Constant.THEME_PATH + game.getTheme() + "box/" + this.type
+                    + this.color + ".png");
         }
 
         return icon;
     }
 
-    public JPanel getJPanel(Game game, int i, int j) {
+    public JPanel getJPanel(GameModel game, int i, int j) {
         Robot rCurrent = null, rOrigin = null;
         Box bObjectif = game.getCurrentGoal();
 
-        for (Robot r : game.getRobots()) {
+        for (Robot r : game.getRobotList()) {
             if (r.getX() == j && r.getY() == i) {
                 rCurrent = r;
             }
@@ -158,7 +161,8 @@ public class Box {
                 icon = new ImageIcon(Constant.IMAGE_PATH + "selection.png");
                 panel.add(new JLabel("", icon, JLabel.CENTER));
             }
-            icon = new ImageIcon(Constant.THEME_PATH + game.getTheme() + "robots/robot" + rCurrent.getColor() + ".png");
+            icon = new ImageIcon(Constant.THEME_PATH + game.getTheme() + "robots/robot" + rCurrent
+                    .getColor() + ".png");
             panel.add(new JLabel("", icon, JLabel.CENTER));
         }
 
@@ -190,7 +194,8 @@ public class Box {
         }
 
         if (rOrigin != null) {
-            icon = new ImageIcon(Constant.THEME_PATH + game.getTheme() + "box/Start" + rOrigin.getColor() + ".png");
+            icon = new ImageIcon(Constant.THEME_PATH + game.getTheme() + "box/Start" + rOrigin
+                    .getColor() + ".png");
             panel.add(new JLabel("", icon, JLabel.CENTER));
         }
 

@@ -31,7 +31,7 @@ import org.springframework.stereotype.Controller;
 import fr.amou.perso.app.rasen.robot.enums.ActionPossibleEnum;
 import fr.amou.perso.app.rasen.robot.game.Box;
 import fr.amou.perso.app.rasen.robot.game.Constant;
-import fr.amou.perso.app.rasen.robot.game.Game;
+import fr.amou.perso.app.rasen.robot.game.data.GameModel;
 
 /**
  * The window of the application with all its components and views
@@ -59,7 +59,7 @@ public class RasendeFrame implements RasendeViewInterface {
     private WindowAdapter windowAdapter;
 
     @Autowired
-    private Game game;
+    private GameModel game;
 
     /**
      * Constructor of the class
@@ -97,7 +97,8 @@ public class RasendeFrame implements RasendeViewInterface {
         this.mColumnPanel = new JPanel();
         this.mColumnPanel.setBackground(java.awt.Color.WHITE);
         this.mColumnPanel.setLayout(new BoxLayout(this.mColumnPanel, BoxLayout.Y_AXIS));
-        this.mColumnPanel.setPreferredSize(new Dimension(Constant.COLUMN_WIDTH, Constant.BOARD_SIZE));
+        this.mColumnPanel.setPreferredSize(new Dimension(Constant.COLUMN_WIDTH,
+                Constant.BOARD_SIZE));
         contentPane.add(this.mColumnPanel);
 
         this.mBoardPanel = new JPanel();
@@ -238,7 +239,7 @@ public class RasendeFrame implements RasendeViewInterface {
      *
      * @param game
      *            : current game
-     * @see Game
+     * @see GameModel
      */
     @Override
     public void display() {
@@ -252,12 +253,12 @@ public class RasendeFrame implements RasendeViewInterface {
      *
      * @param g
      *            : Game
-     * @see Game
+     * @see GameModel
      */
     @Override
     public void displayDataInfo() {
         this.mLabelRound.setText("Current Round: " + this.game.getCurrentRound() + "/17");
-        this.mLabelMove.setText("Movements: " + this.game.getmPreviousPosition().size());
+        this.mLabelMove.setText("Movements: " + this.game.getPreviousPositionStack().size());
 
         this.bPrevious.setEnabled(this.game.hasPreviousPosition());
         this.bNext.setEnabled(this.game.hasNextPosition());
@@ -268,7 +269,7 @@ public class RasendeFrame implements RasendeViewInterface {
      *
      * @param game
      *            : current game
-     * @see Game
+     * @see GameModel
      */
     @Override
     public void displayBoard() {
@@ -325,8 +326,8 @@ public class RasendeFrame implements RasendeViewInterface {
      */
     @Override
     public void displayWin() {
-        JOptionPane.showMessageDialog(this.jFrame, "Congratulations!! You beat the game!", "Congratulations",
-                JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this.jFrame, "Congratulations!! You beat the game!",
+                "Congratulations", JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
