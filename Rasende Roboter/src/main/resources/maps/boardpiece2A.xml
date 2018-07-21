@@ -13,56 +13,56 @@
 			<i>5</i>
 			<j>1</j>
 			<walls>
-				<wall>Top</wall>
+				<wall>Up</wall>
 				<wall>Left</wall>
 			</walls>
-			<Goal>
+			<goal>
 				<color>Red</color>
 				<type>Sun</type>
-			</Goal>
+			</goal>
 		</box>
 		<box>
 			<i>1</i>
 			<j>2</j>
 			<walls>
 				<wall>Right</wall>
-				<wall>Bottom</wall>
+				<wall>Down</wall>
 			</walls>
-			<Goal>
+			<goal>
 				<color>Blue</color>
 				<type>Triangle</type>
-			</Goal>
+			</goal>
 		</box>
 		<box>
 			<i>7</i>
 			<j>3</j>
 			<walls>
-				<wall>Bottom</wall>
+				<wall>Down</wall>
 			</walls>
 		</box>
 		<box>
 			<i>6</i>
 			<j>5</j>
 			<walls>
-				<wall>Bottom</wall>
+				<wall>Down</wall>
 				<wall>Left</wall>
 			</walls>
-			<Goal>
+			<goal>
 				<color>Green</color>
 				<type>More</type>
-			</Goal>
+			</goal>
 		</box>
 		<box>
 			<i>3</i>
 			<j>6</j>
 			<walls>
-				<wall>Top</wall>
+				<wall>Up</wall>
 				<wall>Right</wall>
 			</walls>
-			<Goal>
+			<goal>
 				<color>Yellow</color>
 				<type>Diamond</type>
-			</Goal>
+			</goal>
 		</box>
 	</boxes>
 </boardpiece>

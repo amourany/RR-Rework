@@ -94,13 +94,13 @@ public class StructTree {
                 res += ColorRobotEnum.valueOf(robotInfoBefore[2]) + " robot in the ";
 
                 if (Integer.parseInt(robotInfoBefore[0]) > Integer.parseInt(robotInfoAfter[0])) {
-                    d = DirectionDeplacementEnum.Right;
+                    d = DirectionDeplacementEnum.RIGHT;
                 } else if (Integer.parseInt(robotInfoBefore[0]) < Integer.parseInt(robotInfoAfter[0])) {
-                    d = DirectionDeplacementEnum.Left;
+                    d = DirectionDeplacementEnum.LEFT;
                 } else if (Integer.parseInt(robotInfoBefore[1]) > Integer.parseInt(robotInfoAfter[1])) {
-                    d = DirectionDeplacementEnum.Down;
+                    d = DirectionDeplacementEnum.DOWN;
                 } else if (Integer.parseInt(robotInfoBefore[1]) < Integer.parseInt(robotInfoAfter[1])) {
-                    d = DirectionDeplacementEnum.Up;
+                    d = DirectionDeplacementEnum.UP;
                 }
             }
         }

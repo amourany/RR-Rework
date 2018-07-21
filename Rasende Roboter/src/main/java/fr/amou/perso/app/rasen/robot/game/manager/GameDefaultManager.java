@@ -91,15 +91,15 @@ public class GameDefaultManager implements GameManager {
 
 			if (robot.x == column) {
 				if (robot.y > line) {
-					this.moveRobotInDirection(DirectionDeplacementEnum.Up);
+					this.moveRobotInDirection(DirectionDeplacementEnum.UP);
 				} else {
-					this.moveRobotInDirection(DirectionDeplacementEnum.Down);
+					this.moveRobotInDirection(DirectionDeplacementEnum.DOWN);
 				}
 			} else if (robot.y == line) {
 				if (robot.x > column) {
-					this.moveRobotInDirection(DirectionDeplacementEnum.Left);
+					this.moveRobotInDirection(DirectionDeplacementEnum.LEFT);
 				} else {
-					this.moveRobotInDirection(DirectionDeplacementEnum.Right);
+					this.moveRobotInDirection(DirectionDeplacementEnum.RIGHT);
 				}
 			}
 		}
@@ -126,13 +126,13 @@ public class GameDefaultManager implements GameManager {
 		Box[] goalCardTab = new Box[17];
 		for (ColorRobotEnum c : ColorRobotEnum.values()) {
 			for (BoxTypeEnum bt : BoxTypeEnum.values()) {
-				if (bt != BoxTypeEnum.Central && bt != BoxTypeEnum.Empty && bt != BoxTypeEnum.Multi) {
+				if (bt != BoxTypeEnum.CENTRAL && bt != BoxTypeEnum.EMPTY && bt != BoxTypeEnum.MULTI) {
 					goalCardTab[i] = new Box(bt, c);
 					i++;
 				}
 			}
 		}
-		goalCardTab[i] = new Box(BoxTypeEnum.Multi, null);
+		goalCardTab[i] = new Box(BoxTypeEnum.MULTI, null);
 
 		// Ajout al�atoire des cartes dans la pile
 		for (int j = 17; j > 0; j--) {
@@ -159,7 +159,7 @@ public class GameDefaultManager implements GameManager {
 		for (ColorRobotEnum c : ColorRobotEnum.values()) {
 			Robot rob = new Robot(c);
 			rob.placeOnBoard(robotList);
-			while (board.getBox(rob.originY, rob.originX).getType() != BoxTypeEnum.Empty) {
+			while (board.getBox(rob.originY, rob.originX).getType() != BoxTypeEnum.EMPTY) {
 				rob.placeOnBoard(robotList);
 			}
 			robotList.add(rob);

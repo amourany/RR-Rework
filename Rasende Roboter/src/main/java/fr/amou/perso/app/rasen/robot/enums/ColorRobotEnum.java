@@ -5,5 +5,5 @@ package fr.amou.perso.app.rasen.robot.enums;
  * image.
  */
 public enum ColorRobotEnum {
-    Blue, Green, Red, Yellow
+	BLUE, GREEN, RED, YELLOW
 }

@@ -41,7 +41,7 @@ public class Box {
 		this.south = false;
 		this.east = false;
 		this.west = false;
-		this.type = BoxTypeEnum.Empty;
+		this.type = BoxTypeEnum.EMPTY;
 		this.color = null;
 	}
 
@@ -69,16 +69,16 @@ public class Box {
 	 */
 	public void setWall(final DirectionDeplacementEnum dir) {
 		switch (dir) {
-		case Up:
+		case UP:
 			this.north = true;
 			break;
-		case Down:
+		case DOWN:
 			this.south = true;
 			break;
-		case Left:
+		case LEFT:
 			this.west = true;
 			break;
-		case Right:
+		case RIGHT:
 			this.east = true;
 			break;
 		default:
@@ -98,16 +98,16 @@ public class Box {
 		res = true;
 
 		switch (dir) {
-		case Up:
+		case UP:
 			res ^= this.north;
 			break;
-		case Down:
+		case DOWN:
 			res ^= this.south;
 			break;
-		case Left:
+		case LEFT:
 			res ^= this.west;
 			break;
-		case Right:
+		case RIGHT:
 			res ^= this.east;
 			break;
 		default:
@@ -124,7 +124,7 @@ public class Box {
 	private ImageIcon getImageIcon(GameModel game) {
 		ImageIcon icon;
 
-		if (this.type == BoxTypeEnum.Empty || this.type == BoxTypeEnum.Multi) {
+		if (this.type == BoxTypeEnum.EMPTY || this.type == BoxTypeEnum.MULTI) {
 			icon = new ImageIcon(Constant.THEME_PATH + game.getTheme() + "box/" + this.type + ".png");
 		} else {
 			icon = new ImageIcon(Constant.THEME_PATH + game.getTheme() + "box/" + this.type + this.color + ".png");
@@ -188,7 +188,7 @@ public class Box {
 			panel.add(west);
 		}
 
-		if (this.type == BoxTypeEnum.Central) {
+		if (this.type == BoxTypeEnum.CENTRAL) {
 			panel.add(new JLabel("", bObjectif.getImageIcon(game), JLabel.CENTER));
 		}
 

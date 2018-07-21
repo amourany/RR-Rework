@@ -83,22 +83,22 @@ public class Robot {
 
         for (Robot r : robots) {
             switch (dir) {
-            case Right:
+            case RIGHT:
                 if (r.getX() == this.x + 1 && r.getY() == this.y) {
                     res = true;
                 }
                 break;
-            case Left:
+            case LEFT:
                 if (r.getX() == this.x - 1 && r.getY() == this.y) {
                     res = true;
                 }
                 break;
-            case Down:
+            case DOWN:
                 if (r.getY() == this.y + 1 && r.getX() == this.x) {
                     res = true;
                 }
                 break;
-            case Up:
+            case UP:
                 if (r.getY() == this.y - 1 && r.getX() == this.x) {
                     res = true;
                 }

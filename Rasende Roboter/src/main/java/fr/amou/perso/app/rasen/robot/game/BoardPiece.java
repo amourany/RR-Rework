@@ -1,18 +1,23 @@
 package fr.amou.perso.app.rasen.robot.game;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 import fr.amou.perso.app.rasen.robot.enums.BoxTypeEnum;
 import fr.amou.perso.app.rasen.robot.enums.ColorRobotEnum;
 import fr.amou.perso.app.rasen.robot.enums.DirectionDeplacementEnum;
+import fr.amou.perso.app.rasen.robot.xsd.Boardpiece;
+import fr.amou.perso.app.rasen.robot.xsd.Boardpiece.Boxes;
+import fr.amou.perso.app.rasen.robot.xsd.Boardpiece.Boxes.Box.Goal;
+import fr.amou.perso.app.rasen.robot.xsd.Boardpiece.Boxes.Box.Walls;
+import fr.amou.perso.app.rasen.robot.xsd.ColorObjectifEnum;
+import fr.amou.perso.app.rasen.robot.xsd.PositionMurEnum;
+import fr.amou.perso.app.rasen.robot.xsd.TypeObjectifEnum;
 import lombok.Data;
 
 /**
@@ -20,242 +25,219 @@ import lombok.Data;
  */
 @Data
 public class BoardPiece {
-    /**
-     * @see Box
-     */
+	/**
+	 * @see Box
+	 */
 
-    private File xmlFile;
-    private final transient SAXBuilder sxb;
+	private File xmlFile;
 
-    private int initialLocation;
-    private int finalLocation;
+	private int initialLocation;
+	private int finalLocation;
 
-    private final transient List<Box> boxes;
+	private final transient List<Box> boxes;
 
-    public BoardPiece(final File xmlFile, final int initialLocation, final int finalLocation) {
-        this.initialLocation = initialLocation;
-        this.finalLocation = finalLocation;
+	public BoardPiece(final File xmlFile, final int initialLocation, final int finalLocation) {
+		this.initialLocation = initialLocation;
+		this.finalLocation = finalLocation;
 
-        this.xmlFile = xmlFile;
-        this.sxb = new SAXBuilder();
+		this.xmlFile = xmlFile;
 
-        this.boxes = new ArrayList<>();
-    }
+		this.boxes = new ArrayList<>();
+	}
 
-    public void initBoardPiece() {
-        Document xmlDoc = new Document();
+	public void initBoardPiece() {
 
-        try {
-            xmlDoc = this.sxb.build(this.xmlFile);
-        } catch (JDOMException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance("fr.amou.perso.app.rasen.robot.xsd");
+			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
-        this.extractBoxInfo(xmlDoc.getRootElement());
-        this.rotateBoxes();
-        this.adjustBoxes();
-    }
+			Boardpiece boardPiece = (Boardpiece) unmarshaller.unmarshal(this.xmlFile);
 
-    /**
-     * Calculates the number of rotations that are necessary and rotates the boxes
-     */
-    private void rotateBoxes() {
-        final int difference = this.initialLocation - this.finalLocation;
+			this.extractBoxInfo(boardPiece);
+			this.rotateBoxes();
+			this.adjustBoxes();
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
 
-        if (Math.abs(difference) == 2) {
-            this.rotateRight();
-            this.rotateRight();
-        }
+	}
 
-        else if (difference == -1 || difference == 3) {
-            this.rotateRight();
-        } else if (difference == -3 || difference == 1) {
-            this.rotateLeft();
-        }
+	/**
+	 * Extracts the data of the board piece from the xml file
+	 *
+	 * @param boardPiece
+	 */
+	private void extractBoxInfo(Boardpiece boardPiece) {
 
-    }
+		final Boxes xmlBoxes = boardPiece.getBoxes();
+		final List<Boardpiece.Boxes.Box> boxList = xmlBoxes.getBox();
 
-    /**
-     * Rotates the boxes 90 degrees on the right
-     */
-    public void rotateRight() {
-        int oldX;
-        int oldY;
+		for (Boardpiece.Boxes.Box box : boxList) {
 
-        for (Box b : this.boxes) {
-            oldX = b.getX();
-            oldY = b.getY();
+			Integer iBox = box.getI();
+			Integer jBox = box.getJ();
 
-            b.setX(Constant.NB_BOXES_PER_PIECE - oldY - 1);
-            b.setY(oldX);
-            this.rotateWallsRight(b);
-        }
-    }
+			Box realBox = new Box();
+			realBox.setX(iBox);
+			realBox.setY(jBox);
 
-    /**
-     * Rotates the boxes 90 degrees on the left
-     */
-    public void rotateLeft() {
-        int oldX;
-        int oldY;
+			Walls xmlWalls = box.getWalls();
+			List<PositionMurEnum> wallList = xmlWalls.getWall();
 
-        for (Box b : this.boxes) {
-            oldX = b.getX();
-            oldY = b.getY();
+			for (PositionMurEnum wall : wallList) {
 
-            b.setX(oldY);
-            b.setY(Constant.NB_BOXES_PER_PIECE - oldX - 1);
-            this.rotateWallsLeft(b);
-        }
-    }
+				DirectionDeplacementEnum direction = DirectionDeplacementEnum.valueOf(wall.name());
+				realBox.setWall(direction);
 
-    /**
-     * Rotates the walls 90 degrees on the right
-     *
-     * @param box
-     *            the box of which the walls have to be rotated
-     */
-    private void rotateWallsRight(final Box box) {
+			}
 
-        final boolean oldSouth = box.isSouth();
-        final boolean oldEast = box.isEast();
-        final boolean oldNorth = box.isNorth();
-        final boolean oldWest = box.isWest();
+			Goal xmlGoal = box.getGoal();
 
-        box.setWest(oldSouth);
-        box.setNorth(oldWest);
-        box.setEast(oldNorth);
-        box.setSouth(oldEast);
-    }
+			if (xmlGoal != null) {
+				ColorObjectifEnum xmlColor = xmlGoal.getColor();
+				TypeObjectifEnum xmlType = xmlGoal.getType();
 
-    /**
-     * Rotates the walls 90 degrees on the left
-     *
-     * @param box
-     *            the box of which the walls have to be rotated
-     */
-    private void rotateWallsLeft(final Box box) {
+				BoxTypeEnum boxType = BoxTypeEnum.valueOf(xmlType.name());
+				ColorRobotEnum boxColor = null;
 
-        final boolean oldSouth = box.isSouth();
-        final boolean oldEast = box.isEast();
-        final boolean oldNorth = box.isNorth();
-        final boolean oldWest = box.isWest();
+				if (boxType != BoxTypeEnum.MULTI) {
+					boxColor = ColorRobotEnum.valueOf(xmlColor.name());
+				}
 
-        box.setWest(oldNorth);
-        box.setNorth(oldEast);
-        box.setEast(oldSouth);
-        box.setSouth(oldWest);
-    }
+				realBox.setType(boxType, boxColor);
 
-    /**
-     * Adjust the coordinates of the boxes in function of the final location of the
-     * board piece
-     */
-    private void adjustBoxes() {
+			}
+			this.boxes.add(realBox);
+		}
 
-        if (this.finalLocation == 2) {
-            this.adjustX();
-        }
+	}
 
-        else if (this.finalLocation == 3) {
-            this.adjustX();
-            this.adjustY();
-        }
+	/**
+	 * Calculates the number of rotations that are necessary and rotates the boxes
+	 */
+	private void rotateBoxes() {
+		final int difference = this.initialLocation - this.finalLocation;
 
-        else if (this.finalLocation == 4) {
-            this.adjustY();
-        }
+		if (Math.abs(difference) == 2) {
+			this.rotateRight();
+			this.rotateRight();
+		}
 
-    }
+		else if (difference == -1 || difference == 3) {
+			this.rotateRight();
+		} else if (difference == -3 || difference == 1) {
+			this.rotateLeft();
+		}
 
-    /**
-     * Adjusts the Y coordinate
-     */
-    private void adjustY() {
-        for (Box b : this.boxes) {
-            b.setY(b.getY() + Constant.NB_BOXES_PER_PIECE);
-        }
-    }
+	}
 
-    /**
-     * Adjusts the X coordinate
-     */
-    private void adjustX() {
-        for (Box b : this.boxes) {
-            b.setX(b.getX() + Constant.NB_BOXES_PER_PIECE);
-        }
-    }
+	/**
+	 * Rotates the boxes 90 degrees on the right
+	 */
+	public void rotateRight() {
+		int oldX;
+		int oldY;
 
-    /**
-     * Extracts the data of the board piece from the xml file
-     *
-     * @param elem
-     */
-    private void extractBoxInfo(final Element elem) {
+		for (Box b : this.boxes) {
+			oldX = b.getX();
+			oldY = b.getY();
 
-        final Element xmlBoxes = elem.getChild("boxes");
-        final List<Element> xmlBox = xmlBoxes.getChildren("box");
+			b.setX(Constant.NB_BOXES_PER_PIECE - oldY - 1);
+			b.setY(oldX);
+			this.rotateWallsRight(b);
+		}
+	}
 
-        Element xmlWalls;
-        List<Element> walls;
+	/**
+	 * Rotates the boxes 90 degrees on the left
+	 */
+	public void rotateLeft() {
+		int oldX;
+		int oldY;
 
-        Element xmlGoal;
+		for (Box b : this.boxes) {
+			oldX = b.getX();
+			oldY = b.getY();
 
-        Element xmlColor;
-        Element xmlType;
+			b.setX(oldY);
+			b.setY(Constant.NB_BOXES_PER_PIECE - oldX - 1);
+			this.rotateWallsLeft(b);
+		}
+	}
 
-        BoxTypeEnum boxType;
-        ColorRobotEnum boxColor;
+	/**
+	 * Rotates the walls 90 degrees on the right
+	 *
+	 * @param box the box of which the walls have to be rotated
+	 */
+	private void rotateWallsRight(final Box box) {
 
-        Box realBox;
-        int iBox, jBox;
+		final boolean oldSouth = box.isSouth();
+		final boolean oldEast = box.isEast();
+		final boolean oldNorth = box.isNorth();
+		final boolean oldWest = box.isWest();
 
-        for (Element box : xmlBox) {
-            realBox = new Box();
+		box.setWest(oldSouth);
+		box.setNorth(oldWest);
+		box.setEast(oldNorth);
+		box.setSouth(oldEast);
+	}
 
-            iBox = Integer.parseInt(box.getChild("i").getText());
-            jBox = Integer.parseInt(box.getChild("j").getText());
+	/**
+	 * Rotates the walls 90 degrees on the left
+	 *
+	 * @param box the box of which the walls have to be rotated
+	 */
+	private void rotateWallsLeft(final Box box) {
 
-            realBox.setX(iBox);
-            realBox.setY(jBox);
+		final boolean oldSouth = box.isSouth();
+		final boolean oldEast = box.isEast();
+		final boolean oldNorth = box.isNorth();
+		final boolean oldWest = box.isWest();
 
-            xmlWalls = box.getChild("walls");
-            walls = xmlWalls.getChildren("wall");
+		box.setWest(oldNorth);
+		box.setNorth(oldEast);
+		box.setEast(oldSouth);
+		box.setSouth(oldWest);
+	}
 
-            for (Element wall : walls) {
+	/**
+	 * Adjust the coordinates of the boxes in function of the final location of the
+	 * board piece
+	 */
+	private void adjustBoxes() {
 
-                if (wall.getText().equals("Top")) {
-                    realBox.setWall(DirectionDeplacementEnum.Up);
-                } else if (wall.getText().equals("Right")) {
-                    realBox.setWall(DirectionDeplacementEnum.Right);
-                } else if (wall.getText().equals("Bottom")) {
-                    realBox.setWall(DirectionDeplacementEnum.Down);
-                } else if (wall.getText().equals("Left")) {
-                    realBox.setWall(DirectionDeplacementEnum.Left);
-                }
-            }
+		if (this.finalLocation == 2) {
+			this.adjustX();
+		}
 
-            xmlGoal = box.getChild("Goal");
+		else if (this.finalLocation == 3) {
+			this.adjustX();
+			this.adjustY();
+		}
 
-            if (xmlGoal != null) {
-                xmlColor = box.getChild("Goal").getChild("color");
-                xmlType = box.getChild("Goal").getChild("type");
+		else if (this.finalLocation == 4) {
+			this.adjustY();
+		}
 
-                boxType = BoxTypeEnum.valueOf(xmlType.getText());
-                if (boxType == BoxTypeEnum.Multi) {
-                    boxColor = null;
-                } else {
-                    boxColor = ColorRobotEnum.valueOf(xmlColor.getText());
-                }
+	}
 
-                realBox.setType(boxType, boxColor);
+	/**
+	 * Adjusts the Y coordinate
+	 */
+	private void adjustY() {
+		for (Box b : this.boxes) {
+			b.setY(b.getY() + Constant.NB_BOXES_PER_PIECE);
+		}
+	}
 
-            }
-            this.boxes.add(realBox);
-        }
-
-    }
+	/**
+	 * Adjusts the X coordinate
+	 */
+	private void adjustX() {
+		for (Box b : this.boxes) {
+			b.setX(b.getX() + Constant.NB_BOXES_PER_PIECE);
+		}
+	}
 
 }

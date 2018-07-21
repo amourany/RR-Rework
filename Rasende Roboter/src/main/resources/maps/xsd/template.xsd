@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xs:simpleType name="sideEnum" final="restriction" >
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="A" />
+			<xs:enumeration value="B" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="positionMurEnum" final="restriction" >
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Up" />
+			<xs:enumeration value="Down" />
+			<xs:enumeration value="Left" />
+			<xs:enumeration value="Right" />
+		</xs:restriction>
+	</xs:simpleType>	
+	
+	<xs:simpleType name="colorObjectifEnum" final="restriction" >
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Red" />
+			<xs:enumeration value="Green" />
+			<xs:enumeration value="Blue" />
+			<xs:enumeration value="Yellow" />
+			<xs:enumeration value="Multi" />
+		</xs:restriction>
+	</xs:simpleType>	
+	
+	<xs:simpleType name="typeObjectifEnum" final="restriction" >
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Diamond" />
+			<xs:enumeration value="Triangle" />
+			<xs:enumeration value="More" />
+			<xs:enumeration value="Sun" />
+			<xs:enumeration value="Multi" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="boardpiece">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="number" type="xs:int"/>
+				<xs:element name="side" type="sideEnum"/>
+				<xs:element name="boxes">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="box" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="i" type="xs:int"/>
+										<xs:element name="j" type="xs:int"/>
+										<xs:element name="walls">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="wall" type="positionMurEnum" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="goal">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="color" type="colorObjectifEnum"/>
+													<xs:element name="type" type="typeObjectifEnum"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

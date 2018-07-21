@@ -117,10 +117,10 @@ public class Board {
      */
     private void putSurroundingWalls() {
         for (int i = 0; i < Constant.NB_BOXES; i++) {
-            this.gameBoard[i][0].setWall(DirectionDeplacementEnum.Left);
-            this.gameBoard[i][Constant.NB_BOXES - 1].setWall(DirectionDeplacementEnum.Right);
-            this.gameBoard[0][i].setWall(DirectionDeplacementEnum.Up);
-            this.gameBoard[Constant.NB_BOXES - 1][i].setWall(DirectionDeplacementEnum.Down);
+            this.gameBoard[i][0].setWall(DirectionDeplacementEnum.LEFT);
+            this.gameBoard[i][Constant.NB_BOXES - 1].setWall(DirectionDeplacementEnum.RIGHT);
+            this.gameBoard[0][i].setWall(DirectionDeplacementEnum.UP);
+            this.gameBoard[Constant.NB_BOXES - 1][i].setWall(DirectionDeplacementEnum.DOWN);
         }
     }
 
@@ -128,22 +128,22 @@ public class Board {
      * Put central boxes of the board with a wall around this area
      */
     private void putCentralBoxes() {
-        this.gameBoard[7][7].setWall(DirectionDeplacementEnum.Up);
-        this.gameBoard[7][7].setWall(DirectionDeplacementEnum.Left);
+        this.gameBoard[7][7].setWall(DirectionDeplacementEnum.UP);
+        this.gameBoard[7][7].setWall(DirectionDeplacementEnum.LEFT);
 
-        this.gameBoard[7][8].setWall(DirectionDeplacementEnum.Up);
-        this.gameBoard[7][8].setWall(DirectionDeplacementEnum.Right);
+        this.gameBoard[7][8].setWall(DirectionDeplacementEnum.UP);
+        this.gameBoard[7][8].setWall(DirectionDeplacementEnum.RIGHT);
 
-        this.gameBoard[8][7].setWall(DirectionDeplacementEnum.Down);
-        this.gameBoard[8][7].setWall(DirectionDeplacementEnum.Left);
+        this.gameBoard[8][7].setWall(DirectionDeplacementEnum.DOWN);
+        this.gameBoard[8][7].setWall(DirectionDeplacementEnum.LEFT);
 
-        this.gameBoard[8][8].setWall(DirectionDeplacementEnum.Down);
-        this.gameBoard[8][8].setWall(DirectionDeplacementEnum.Right);
+        this.gameBoard[8][8].setWall(DirectionDeplacementEnum.DOWN);
+        this.gameBoard[8][8].setWall(DirectionDeplacementEnum.RIGHT);
 
-        this.gameBoard[7][7].setType(BoxTypeEnum.Central, null);
-        this.gameBoard[7][8].setType(BoxTypeEnum.Central, null);
-        this.gameBoard[8][7].setType(BoxTypeEnum.Central, null);
-        this.gameBoard[8][8].setType(BoxTypeEnum.Central, null);
+        this.gameBoard[7][7].setType(BoxTypeEnum.CENTRAL, null);
+        this.gameBoard[7][8].setType(BoxTypeEnum.CENTRAL, null);
+        this.gameBoard[8][7].setType(BoxTypeEnum.CENTRAL, null);
+        this.gameBoard[8][8].setType(BoxTypeEnum.CENTRAL, null);
     }
 
     /**
@@ -185,16 +185,16 @@ public class Board {
         boolean moved = false;
         while (this.gameBoard[robot.y][robot.x].canContinue(direction) && !robot.robotIsHere(robots, direction)) {
             switch (direction) {
-            case Right:
+            case RIGHT:
                 robot.x++;
                 break;
-            case Left:
+            case LEFT:
                 robot.x--;
                 break;
-            case Down:
+            case DOWN:
                 robot.y++;
                 break;
-            case Up:
+            case UP:
                 robot.y--;
                 break;
             default:

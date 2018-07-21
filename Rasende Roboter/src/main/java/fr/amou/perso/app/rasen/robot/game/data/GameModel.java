@@ -99,7 +99,7 @@ public class GameModel {
 			}
 		} else {
 			if (this.getBoard().getGameBoard()[rob.y][rob.x].getType() == currentGoal.getType()
-					&& currentGoal.getType() == BoxTypeEnum.Multi) {
+					&& currentGoal.getType() == BoxTypeEnum.MULTI) {
 				win = true;
 			}
 		}
