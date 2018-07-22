@@ -32,6 +32,9 @@ public class GameDefaultManager implements GameManager {
 
 	@Autowired
 	private Solver solver;
+	
+	@Autowired
+	private BoardManager boardManager;
 
 	@Override
 	public void run() throws Exception {
@@ -114,9 +117,7 @@ public class GameDefaultManager implements GameManager {
 	@Override
 	public void startNewGame() {
 
-		Board board = this.gameModel.getBoard();
-		board.initBoard();
-		board.setBoard();
+		boardManager.initialiserPlateau();
 
 		this.placeRobots();
 
@@ -134,7 +135,7 @@ public class GameDefaultManager implements GameManager {
 		}
 		goalCardTab[i] = new Box(BoxTypeEnum.MULTI, null);
 
-		// Ajout al�atoire des cartes dans la pile
+		// Ajout aléatoire des cartes dans la pile
 		for (int j = 17; j > 0; j--) {
 			int k = (int) (Math.random() * 100) % j;
 			goalCardsStack.push(goalCardTab[k]);

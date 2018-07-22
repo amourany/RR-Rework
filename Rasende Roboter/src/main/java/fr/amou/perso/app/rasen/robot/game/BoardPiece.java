@@ -1,64 +1,65 @@
 package fr.amou.perso.app.rasen.robot.game;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import fr.amou.perso.app.rasen.robot.enums.BoardPieceNumberEnum;
+import fr.amou.perso.app.rasen.robot.enums.BoardPieceSideEnum;
 import fr.amou.perso.app.rasen.robot.enums.BoxTypeEnum;
 import fr.amou.perso.app.rasen.robot.enums.ColorRobotEnum;
 import fr.amou.perso.app.rasen.robot.enums.DirectionDeplacementEnum;
-import fr.amou.perso.app.rasen.robot.xsd.Boardpiece;
-import fr.amou.perso.app.rasen.robot.xsd.Boardpiece.Boxes;
-import fr.amou.perso.app.rasen.robot.xsd.Boardpiece.Boxes.Box.Goal;
-import fr.amou.perso.app.rasen.robot.xsd.Boardpiece.Boxes.Box.Walls;
+import fr.amou.perso.app.rasen.robot.xsd.BoardPieceType;
+import fr.amou.perso.app.rasen.robot.xsd.BoardPieceType.Boxes;
+import fr.amou.perso.app.rasen.robot.xsd.BoardPieceType.Boxes.Box.Goal;
+import fr.amou.perso.app.rasen.robot.xsd.BoardPieceType.Boxes.Box.Walls;
 import fr.amou.perso.app.rasen.robot.xsd.ColorObjectifEnum;
 import fr.amou.perso.app.rasen.robot.xsd.PositionMurEnum;
 import fr.amou.perso.app.rasen.robot.xsd.TypeObjectifEnum;
 import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * Class containing a quarter of the Board
  */
 @Data
+@Log4j2
 public class BoardPiece {
-	/**
-	 * @see Box
-	 */
 
-	private File xmlFile;
+	@Autowired
+	private Unmarshaller unmarshaller;
 
 	private int initialLocation;
 	private int finalLocation;
 
-	private final transient List<Box> boxes;
+	private List<Box> boxes = new ArrayList<>();
 
-	public BoardPiece(final File xmlFile, final int initialLocation, final int finalLocation) {
+	/** Numéro de la piece du plateau. */
+	private BoardPieceNumberEnum boardPieceNumber;
+
+	/** Face de la piece. */
+	private BoardPieceSideEnum boardPieceSide;
+
+	private BoardPieceType boardPiece;
+
+	public BoardPiece() {
+
+	}
+
+	public BoardPiece(final int initialLocation, final int finalLocation) {
 		this.initialLocation = initialLocation;
 		this.finalLocation = finalLocation;
 
-		this.xmlFile = xmlFile;
-
-		this.boxes = new ArrayList<>();
 	}
 
 	public void initBoardPiece() {
 
-		try {
-			JAXBContext jaxbContext = JAXBContext.newInstance("fr.amou.perso.app.rasen.robot.xsd");
-			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-
-			Boardpiece boardPiece = (Boardpiece) unmarshaller.unmarshal(this.xmlFile);
-
-			this.extractBoxInfo(boardPiece);
-			this.rotateBoxes();
-			this.adjustBoxes();
-		} catch (JAXBException e) {
-			e.printStackTrace();
-		}
+		this.extractBoxInfo(this.boardPiece);
+		this.rotateBoxes();
+		this.adjustBoxes();
 
 	}
 
@@ -67,12 +68,12 @@ public class BoardPiece {
 	 *
 	 * @param boardPiece
 	 */
-	private void extractBoxInfo(Boardpiece boardPiece) {
+	private void extractBoxInfo(BoardPieceType boardPiece) {
 
 		final Boxes xmlBoxes = boardPiece.getBoxes();
-		final List<Boardpiece.Boxes.Box> boxList = xmlBoxes.getBox();
+		final List<BoardPieceType.Boxes.Box> boxList = xmlBoxes.getBox();
 
-		for (Boardpiece.Boxes.Box box : boxList) {
+		for (BoardPieceType.Boxes.Box box : boxList) {
 
 			Integer iBox = box.getI();
 			Integer jBox = box.getJ();
