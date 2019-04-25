@@ -8,47 +8,45 @@ import org.springframework.stereotype.Component;
 
 import fr.amou.perso.app.rasen.robot.enums.ActionPossibleEnum;
 import fr.amou.perso.app.rasen.robot.event.manager.EventManager;
+import lombok.extern.log4j.Log4j2;
 
 @Component
+@Log4j2
 public class ActionDefaultListener implements ActionListener {
 
-    @Autowired
-    private EventManager eventManager;
+	@Autowired
+	private EventManager eventManager;
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
+	@Override
+	public void actionPerformed(ActionEvent e) {
 
-        String actionString = e.getActionCommand();
-        ActionPossibleEnum action = ActionPossibleEnum.valueOf(actionString);
+		String actionString = e.getActionCommand();
+		ActionPossibleEnum action = ActionPossibleEnum.valueOf(actionString);
 
-        switch (action) {
-        case ACTION_PREVIOUS:
-            this.eventManager.loadPreviousPosition();
-            break;
-        case ACTION_NEXT:
-            this.eventManager.loadNextPosition();
-            break;
-        case ACTION_QUIT:
-            this.eventManager.askToQuit();
-            break;
-        case ACTION_NEW_GAME:
-            this.eventManager.startNewGame();
-            break;
-        case ACTION_HELP:
-            this.eventManager.displayHelp();
-            break;
-        case ACTION_SOLVE:
-            this.eventManager.startSolver();
-            break;
-        case ACTION_THEME_DEFAULT:
-            // this.game.setTheme("default/");
-            // this.frame.displayBoard(this.game);
-            break;
-        default:
-            System.out.println("Unknow Action");
-            break;
-        }
+		switch (action) {
+		case ACTION_PREVIOUS:
+			this.eventManager.loadPreviousPosition();
+			break;
+		case ACTION_NEXT:
+			this.eventManager.loadNextPosition();
+			break;
+		case ACTION_QUIT:
+			this.eventManager.askToQuit();
+			break;
+		case ACTION_NEW_GAME:
+			this.eventManager.startNewGame();
+			break;
+		case ACTION_HELP:
+			this.eventManager.displayHelp();
+			break;
+		case ACTION_SOLVE:
+			this.eventManager.startSolver();
+			break;
+		default:
+			log.warn("Action inconnue");
+			break;
+		}
 
-    }
+	}
 
 }

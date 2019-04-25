@@ -17,10 +17,10 @@ import lombok.Data;
 @Data
 public class Box {
 
-	private boolean north; // Is there a wall on the north of the box ?
-	private boolean east;
-	private boolean south;
-	private boolean west;
+	private boolean isWallTop; // Is there a wall on the north of the box ?
+	private boolean isWallRight;
+	private boolean isWallBottom;
+	private boolean isWallLeft;
 
 	private int x, y;
 
@@ -37,10 +37,10 @@ public class Box {
 	 * Default Constructor
 	 */
 	public Box() {
-		this.north = false;
-		this.south = false;
-		this.east = false;
-		this.west = false;
+		this.isWallTop = false;
+		this.isWallRight = false;
+		this.isWallBottom = false;
+		this.isWallLeft = false;
 		this.type = BoxTypeEnum.EMPTY;
 		this.color = null;
 	}
@@ -53,10 +53,10 @@ public class Box {
 
 	public Box(final boolean north, final boolean east, final boolean south, final boolean west,
 			final ColorRobotEnum color, final BoxTypeEnum type) {
-		this.north = north;
-		this.east = east;
-		this.south = south;
-		this.west = west;
+		this.isWallTop = north;
+		this.isWallRight = east;
+		this.isWallBottom = south;
+		this.isWallLeft = west;
 		this.color = color;
 		this.type = type;
 	}
@@ -70,16 +70,16 @@ public class Box {
 	public void setWall(final DirectionDeplacementEnum dir) {
 		switch (dir) {
 		case UP:
-			this.north = true;
+			this.isWallTop = true;
 			break;
 		case DOWN:
-			this.south = true;
+			this.isWallBottom = true;
 			break;
 		case LEFT:
-			this.west = true;
+			this.isWallLeft = true;
 			break;
 		case RIGHT:
-			this.east = true;
+			this.isWallRight = true;
 			break;
 		default:
 
@@ -99,16 +99,16 @@ public class Box {
 
 		switch (dir) {
 		case UP:
-			res ^= this.north;
+			res ^= this.isWallTop;
 			break;
 		case DOWN:
-			res ^= this.south;
+			res ^= this.isWallBottom;
 			break;
 		case LEFT:
-			res ^= this.west;
+			res ^= this.isWallLeft;
 			break;
 		case RIGHT:
-			res ^= this.east;
+			res ^= this.isWallRight;
 			break;
 		default:
 			break;
@@ -125,9 +125,9 @@ public class Box {
 		ImageIcon icon;
 
 		if (this.type == BoxTypeEnum.EMPTY || this.type == BoxTypeEnum.MULTI) {
-			icon = new ImageIcon(Constant.THEME_PATH + game.getTheme() + "box/" + this.type + ".png");
+			icon = new ImageIcon(Constant.THEME_PATH + "box/" + this.type + ".png");
 		} else {
-			icon = new ImageIcon(Constant.THEME_PATH + game.getTheme() + "box/" + this.type + this.color + ".png");
+			icon = new ImageIcon(Constant.THEME_PATH + "box/" + this.type + this.color + ".png");
 		}
 
 		return icon;
@@ -161,28 +161,28 @@ public class Box {
 				icon = new ImageIcon(Constant.IMAGE_PATH + "selection.png");
 				panel.add(new JLabel("", icon, JLabel.CENTER));
 			}
-			icon = new ImageIcon(Constant.THEME_PATH + game.getTheme() + "robots/robot" + rCurrent.getColor() + ".png");
+			icon = new ImageIcon(Constant.THEME_PATH + "robots/robot" + rCurrent.getColor() + ".png");
 			panel.add(new JLabel("", icon, JLabel.CENTER));
 		}
 
-		if (this.isNorth()) {
+		if (this.isWallTop) {
 			icon = new ImageIcon(Constant.IMAGE_PATH + "wall_north.png");
 			JLabel north = new JLabel("", icon, JLabel.CENTER);
 			panel.add(north);
 		}
 
-		if (this.isSouth()) {
+		if (this.isWallBottom) {
 			icon = new ImageIcon(Constant.IMAGE_PATH + "wall_south.png");
 			JLabel south = new JLabel("", icon, JLabel.CENTER);
 			panel.add(south);
 		}
-		if (this.isEast()) {
+		if (this.isWallRight) {
 			icon = new ImageIcon(Constant.IMAGE_PATH + "wall_east.png");
 			JLabel east = new JLabel("", icon, JLabel.CENTER);
 			panel.add(east);
 
 		}
-		if (this.isWest()) {
+		if (this.isWallLeft) {
 			icon = new ImageIcon(Constant.IMAGE_PATH + "/wall_west.png");
 			JLabel west = new JLabel("", icon, JLabel.CENTER);
 			panel.add(west);
@@ -193,7 +193,7 @@ public class Box {
 		}
 
 		if (rOrigin != null) {
-			icon = new ImageIcon(Constant.THEME_PATH + game.getTheme() + "box/Start" + rOrigin.getColor() + ".png");
+			icon = new ImageIcon(Constant.THEME_PATH + "box/Start" + rOrigin.getColor() + ".png");
 			panel.add(new JLabel("", icon, JLabel.CENTER));
 		}
 

@@ -1,11 +1,12 @@
 package fr.amou.perso.app.rasen.robot.game.data;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Stack;
 
 import org.springframework.stereotype.Component;
 
@@ -25,18 +26,17 @@ public class GameModel {
 
 	private Board board;
 	private Map<ColorRobotEnum, Robot> robotMap;
-	private Stack<Entry<ColorRobotEnum, Robot>> previousPositionStack;
-	private Stack<Entry<ColorRobotEnum, Robot>> nextPositionStack;
+	private Deque<Entry<ColorRobotEnum, Robot>> previousPositionStack;
+	private Deque<Entry<ColorRobotEnum, Robot>> nextPositionStack;
 	private ColorRobotEnum selectedRobot;
-	private Stack<Box> goalCardsStack;
+	private Deque<Box> goalCardsStack;
 	private Box currentGoal;
 	private boolean isOver;
-	private String theme = "default/";
 
 	public GameModel() {
 		this.isOver = false;
 		this.board = new Board();
-		this.goalCardsStack = new Stack<>();
+		this.goalCardsStack = new ArrayDeque<>();
 		this.robotMap = new HashMap<>();
 	}
 
@@ -80,11 +80,11 @@ public class GameModel {
 	}
 
 	public Boolean hasPreviousPosition() {
-		return !this.previousPositionStack.empty();
+		return !this.previousPositionStack.isEmpty();
 	}
 
 	public Boolean hasNextPosition() {
-		return !this.nextPositionStack.empty();
+		return !this.nextPositionStack.isEmpty();
 	}
 
 	public boolean isWin(final Robot rob) {

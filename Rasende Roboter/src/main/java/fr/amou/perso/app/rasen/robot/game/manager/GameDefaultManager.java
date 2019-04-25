@@ -1,12 +1,13 @@
 package fr.amou.perso.app.rasen.robot.game.manager;
 
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Stack;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public class GameDefaultManager implements GameManager {
 
 	@Autowired
 	private Solver solver;
-	
+
 	@Autowired
 	private BoardManager boardManager;
 
@@ -117,12 +118,12 @@ public class GameDefaultManager implements GameManager {
 	@Override
 	public void startNewGame() {
 
-		boardManager.initialiserPlateau();
+		this.boardManager.initialiserPlateau();
 
 		this.placeRobots();
 
 		// Création d'un tableau qui contient toutes les cartes possibles
-		Stack<Box> goalCardsStack = new Stack<>();
+		Deque<Box> goalCardsStack = new ArrayDeque<>();
 		int i = 0;
 		Box[] goalCardTab = new Box[17];
 		for (ColorRobotEnum c : ColorRobotEnum.values()) {
@@ -173,9 +174,9 @@ public class GameDefaultManager implements GameManager {
 
 	public void startNewLap() {
 
-		Stack<Box> goalCardsStack = this.gameModel.getGoalCardsStack();
+		Deque<Box> goalCardsStack = this.gameModel.getGoalCardsStack();
 
-		if (goalCardsStack.empty()) {
+		if (goalCardsStack.isEmpty()) {
 			System.out.println("End of game !");
 			this.gameModel.setOver(true);
 		} else {
@@ -187,8 +188,8 @@ public class GameDefaultManager implements GameManager {
 				r.newOrigin();
 			}
 
-			this.gameModel.setPreviousPositionStack(new Stack<>());
-			this.gameModel.setNextPositionStack(new Stack<>());
+			this.gameModel.setPreviousPositionStack(new ArrayDeque<>());
+			this.gameModel.setNextPositionStack(new ArrayDeque<>());
 			this.gameModel.setCurrentGoal(goalCardsStack.pop());
 		}
 	}
@@ -207,13 +208,13 @@ public class GameDefaultManager implements GameManager {
 
 		// Insertion dans la stack des positions uniquement si le robot à vraiment
 		// bougé.
-		if (!this.gameModel.getPreviousPositionStack().empty()) {
+		if (!this.gameModel.getPreviousPositionStack().isEmpty()) {
 			if (this.gameModel.getPreviousPositionStack().peek().equals(entry)) {
 				return;
 			}
 		}
 
-		this.gameModel.getNextPositionStack().removeAllElements();
+		this.gameModel.getNextPositionStack().clear();
 		this.gameModel.getPreviousPositionStack().push(entry);
 	}
 
