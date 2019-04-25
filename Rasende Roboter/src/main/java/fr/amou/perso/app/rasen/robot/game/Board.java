@@ -19,9 +19,9 @@ public class Board {
 	private Box[][] gameBoard = new Box[Constant.NB_BOXES][Constant.NB_BOXES];
 
 	private List<Integer> numBoardPieces = new ArrayList<>();
-	private char boardPiecesSide[] = new char[Constant.NB_BOARD_PIECES];
+	private char[] boardPiecesSide = new char[Constant.NB_BOARD_PIECES];
 
-	private BoardPiece boardPieces[] = new BoardPiece[Constant.NB_BOARD_PIECES];
+	private BoardPiece[] boardPieces = new BoardPiece[Constant.NB_BOARD_PIECES];
 
 	/**
 	 * Getter of GameBoard

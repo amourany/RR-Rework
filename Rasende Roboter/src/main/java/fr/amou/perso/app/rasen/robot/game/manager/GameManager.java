@@ -5,7 +5,7 @@ import fr.amou.perso.app.rasen.robot.enums.DirectionDeplacementEnum;
 
 public interface GameManager {
 
-	void run() throws Exception;
+	void run();
 
 	void moveRobotInDirection(DirectionDeplacementEnum dir);
 
@@ -22,5 +22,7 @@ public interface GameManager {
 	void startNewGame();
 
 	void startSolver();
+
+	void refreshScreen();
 
 }

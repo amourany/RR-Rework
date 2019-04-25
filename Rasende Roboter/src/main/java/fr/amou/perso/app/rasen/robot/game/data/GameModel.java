@@ -3,7 +3,7 @@ package fr.amou.perso.app.rasen.robot.game.data;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,13 +31,13 @@ public class GameModel {
 	private ColorRobotEnum selectedRobot;
 	private Deque<Box> goalCardsStack;
 	private Box currentGoal;
-	private boolean isOver;
+	private Boolean isOver;
 
 	public GameModel() {
 		this.isOver = false;
 		this.board = new Board();
 		this.goalCardsStack = new ArrayDeque<>();
-		this.robotMap = new HashMap<>();
+		this.robotMap = new EnumMap<>(ColorRobotEnum.class);
 	}
 
 	/**
@@ -87,23 +87,16 @@ public class GameModel {
 		return !this.nextPositionStack.isEmpty();
 	}
 
-	public boolean isWin(final Robot rob) {
-		boolean win = false;
+	public Boolean isWin(Robot rob) {
 
-		Box currentGoal = this.getCurrentGoal();
+		Box currentBox = this.board.getGameBoard()[rob.y][rob.x];
 
-		if (rob.getColor() == currentGoal.getColor()) {
-			if (this.getBoard().getGameBoard()[rob.y][rob.x].getType() == currentGoal.getType()
-					&& this.getBoard().getGameBoard()[rob.y][rob.x].getColor() == currentGoal.getColor()) {
-				win = true;
-			}
-		} else {
-			if (this.getBoard().getGameBoard()[rob.y][rob.x].getType() == currentGoal.getType()
-					&& currentGoal.getType() == BoxTypeEnum.MULTI) {
-				win = true;
-			}
-		}
-		return win;
+		Boolean estRobotBonneCouleur = rob.getColor() == this.currentGoal.getColor();
+		Boolean estBonType = currentBox.getType() == this.currentGoal.getType();
+		Boolean estBonneCouleur = currentBox.getColor() == this.currentGoal.getColor()
+				|| this.currentGoal.getType() == BoxTypeEnum.MULTI;
+
+		return estRobotBonneCouleur && estBonType && estBonneCouleur;
 	}
 
 	@Deprecated

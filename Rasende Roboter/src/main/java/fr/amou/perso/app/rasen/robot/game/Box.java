@@ -4,6 +4,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 
 import fr.amou.perso.app.rasen.robot.enums.BoxTypeEnum;
 import fr.amou.perso.app.rasen.robot.enums.ColorRobotEnum;
@@ -17,12 +18,13 @@ import lombok.Data;
 @Data
 public class Box {
 
-	private boolean isWallTop; // Is there a wall on the north of the box ?
-	private boolean isWallRight;
-	private boolean isWallBottom;
-	private boolean isWallLeft;
+	private Boolean isWallTop; // Is there a wall on the north of the box ?
+	private Boolean isWallRight;
+	private Boolean isWallBottom;
+	private Boolean isWallLeft;
 
-	private int x, y;
+	private Integer x;
+	private Integer y;
 
 	/**
 	 * @see ColorRobotEnum
@@ -121,7 +123,7 @@ public class Box {
 		this.color = color;
 	}
 
-	private ImageIcon getImageIcon(GameModel game) {
+	private ImageIcon getImageIcon() {
 		ImageIcon icon;
 
 		if (this.type == BoxTypeEnum.EMPTY || this.type == BoxTypeEnum.MULTI) {
@@ -134,7 +136,8 @@ public class Box {
 	}
 
 	public JPanel getJPanel(GameModel game, int i, int j) {
-		Robot rCurrent = null, rOrigin = null;
+		Robot rCurrent = null;
+		Robot rOrigin = null;
 		Box bObjectif = game.getCurrentGoal();
 
 		for (Robot r : game.getRobotPositionList()) {
@@ -159,45 +162,45 @@ public class Box {
 		if (rCurrent != null) {
 			if (isSelected) {
 				icon = new ImageIcon(Constant.IMAGE_PATH + "selection.png");
-				panel.add(new JLabel("", icon, JLabel.CENTER));
+				panel.add(new JLabel("", icon, SwingConstants.CENTER));
 			}
 			icon = new ImageIcon(Constant.THEME_PATH + "robots/robot" + rCurrent.getColor() + ".png");
-			panel.add(new JLabel("", icon, JLabel.CENTER));
+			panel.add(new JLabel("", icon, SwingConstants.CENTER));
 		}
 
 		if (this.isWallTop) {
 			icon = new ImageIcon(Constant.IMAGE_PATH + "wall_north.png");
-			JLabel north = new JLabel("", icon, JLabel.CENTER);
+			JLabel north = new JLabel("", icon, SwingConstants.CENTER);
 			panel.add(north);
 		}
 
 		if (this.isWallBottom) {
 			icon = new ImageIcon(Constant.IMAGE_PATH + "wall_south.png");
-			JLabel south = new JLabel("", icon, JLabel.CENTER);
+			JLabel south = new JLabel("", icon, SwingConstants.CENTER);
 			panel.add(south);
 		}
 		if (this.isWallRight) {
 			icon = new ImageIcon(Constant.IMAGE_PATH + "wall_east.png");
-			JLabel east = new JLabel("", icon, JLabel.CENTER);
+			JLabel east = new JLabel("", icon, SwingConstants.CENTER);
 			panel.add(east);
 
 		}
 		if (this.isWallLeft) {
 			icon = new ImageIcon(Constant.IMAGE_PATH + "/wall_west.png");
-			JLabel west = new JLabel("", icon, JLabel.CENTER);
+			JLabel west = new JLabel("", icon, SwingConstants.CENTER);
 			panel.add(west);
 		}
 
 		if (this.type == BoxTypeEnum.CENTRAL) {
-			panel.add(new JLabel("", bObjectif.getImageIcon(game), JLabel.CENTER));
+			panel.add(new JLabel("", bObjectif.getImageIcon(), SwingConstants.CENTER));
 		}
 
 		if (rOrigin != null) {
 			icon = new ImageIcon(Constant.THEME_PATH + "box/Start" + rOrigin.getColor() + ".png");
-			panel.add(new JLabel("", icon, JLabel.CENTER));
+			panel.add(new JLabel("", icon, SwingConstants.CENTER));
 		}
 
-		panel.add(new JLabel("", this.getImageIcon(game), JLabel.CENTER));
+		panel.add(new JLabel("", this.getImageIcon(), SwingConstants.CENTER));
 
 		return panel;
 	}

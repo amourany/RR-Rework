@@ -2,9 +2,7 @@ package fr.amou.perso.app.rasen.robot.game.manager;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 import fr.amou.perso.app.rasen.robot.enums.BoxTypeEnum;
 import fr.amou.perso.app.rasen.robot.enums.ColorRobotEnum;
 import fr.amou.perso.app.rasen.robot.enums.DirectionDeplacementEnum;
-import fr.amou.perso.app.rasen.robot.game.Board;
 import fr.amou.perso.app.rasen.robot.game.Box;
 import fr.amou.perso.app.rasen.robot.game.Robot;
 import fr.amou.perso.app.rasen.robot.game.data.GameModel;
@@ -38,10 +35,10 @@ public class GameDefaultManager implements GameManager {
 	private BoardManager boardManager;
 
 	@Override
-	public void run() throws Exception {
+	public void run() {
 		this.startNewGame();
 		this.frame.buildFrame();
-		this.frame.display();
+		this.refreshScreen();
 	}
 
 	@Override
@@ -54,7 +51,7 @@ public class GameDefaultManager implements GameManager {
 			this.frame.displayBoard();
 			this.frame.displayDataInfo();
 
-			if (this.gameModel.isOver()) {
+			if (this.gameModel.getIsOver()) {
 				this.gameOver();
 			}
 		}
@@ -64,7 +61,7 @@ public class GameDefaultManager implements GameManager {
 	public void gameOver() {
 		this.frame.displayWin();
 		this.startNewGame();
-		this.frame.display();
+		this.refreshScreen();
 	}
 
 	@Override
@@ -120,7 +117,7 @@ public class GameDefaultManager implements GameManager {
 
 		this.boardManager.initialiserPlateau();
 
-		this.placeRobots();
+		this.boardManager.placerRobots();
 
 		// Création d'un tableau qui contient toutes les cartes possibles
 		Deque<Box> goalCardsStack = new ArrayDeque<>();
@@ -152,33 +149,13 @@ public class GameDefaultManager implements GameManager {
 		this.startNewLap();
 	}
 
-	private void placeRobots() {
-		List<Robot> robotList = new ArrayList<>();
-		Map<ColorRobotEnum, Robot> robotMap = new HashMap<>();
-
-		Board board = this.gameModel.getBoard();
-
-		for (ColorRobotEnum c : ColorRobotEnum.values()) {
-			Robot rob = new Robot(c);
-			rob.placeOnBoard(robotList);
-			while (board.getBox(rob.originY, rob.originX).getType() != BoxTypeEnum.EMPTY) {
-				rob.placeOnBoard(robotList);
-			}
-			robotList.add(rob);
-
-			robotMap.put(c, rob);
-		}
-
-		this.gameModel.setRobotMap(robotMap);
-	}
-
 	public void startNewLap() {
 
 		Deque<Box> goalCardsStack = this.gameModel.getGoalCardsStack();
 
 		if (goalCardsStack.isEmpty()) {
 			System.out.println("End of game !");
-			this.gameModel.setOver(true);
+			this.gameModel.setIsOver(true);
 		} else {
 
 			Map<ColorRobotEnum, Robot> robotMap = this.gameModel.getRobotMap();
@@ -240,7 +217,7 @@ public class GameDefaultManager implements GameManager {
 		// Déplacement du robot à sa position précédente.
 		this.gameModel.setRobotByColor(previousPos);
 
-		this.frame.display();
+		this.refreshScreen();
 	}
 
 	/**
@@ -263,7 +240,7 @@ public class GameDefaultManager implements GameManager {
 
 		// Déplacement du robot à sa position suivante.
 		this.gameModel.setRobotByColor(nextPos);
-		this.frame.display();
+		this.refreshScreen();
 	}
 
 	/**
@@ -281,9 +258,16 @@ public class GameDefaultManager implements GameManager {
 		Robot robot = this.gameModel.getCurrentRobot();
 
 		this.gameModel.getBoard().getNewPosition(robot, dir, robotList);
-		if (this.gameModel.isWin(robot)) {
+		Boolean win = this.gameModel.isWin(robot);
+
+		if (win) {
 			this.startNewLap();
 		}
+	}
+
+	@Override
+	public void refreshScreen() {
+		this.frame.display();
 	}
 
 }

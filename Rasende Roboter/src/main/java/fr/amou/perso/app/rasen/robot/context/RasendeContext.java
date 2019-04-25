@@ -1,5 +1,9 @@
 package fr.amou.perso.app.rasen.robot.context;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Random;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -17,5 +21,10 @@ public class RasendeContext {
 		JAXBContext jaxbContext = JAXBContext.newInstance("fr.amou.perso.app.rasen.robot.xsd");
 		return jaxbContext.createUnmarshaller();
 
+	}
+
+	@Bean
+	public Random random() throws NoSuchAlgorithmException {
+		return SecureRandom.getInstanceStrong();
 	}
 }

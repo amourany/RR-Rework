@@ -173,15 +173,15 @@ public class BoardPiece {
 	 */
 	private void rotateWallsRight(final Box box) {
 
-		final boolean oldSouth = box.isSouth();
-		final boolean oldEast = box.isEast();
-		final boolean oldNorth = box.isNorth();
-		final boolean oldWest = box.isWest();
+		Boolean oldSouth = box.getIsWallBottom();
+		Boolean oldEast = box.getIsWallRight();
+		Boolean oldNorth = box.getIsWallTop();
+		Boolean oldWest = box.getIsWallLeft();
 
-		box.setWest(oldSouth);
-		box.setNorth(oldWest);
-		box.setEast(oldNorth);
-		box.setSouth(oldEast);
+		box.setIsWallLeft(oldSouth);
+		box.setIsWallTop(oldWest);
+		box.setIsWallRight(oldNorth);
+		box.setIsWallBottom(oldEast);
 	}
 
 	/**
@@ -191,15 +191,15 @@ public class BoardPiece {
 	 */
 	private void rotateWallsLeft(final Box box) {
 
-		final boolean oldSouth = box.isSouth();
-		final boolean oldEast = box.isEast();
-		final boolean oldNorth = box.isNorth();
-		final boolean oldWest = box.isWest();
+		Boolean oldSouth = box.getIsWallBottom();
+		Boolean oldEast = box.getIsWallRight();
+		Boolean oldNorth = box.getIsWallTop();
+		Boolean oldWest = box.getIsWallLeft();
 
-		box.setWest(oldNorth);
-		box.setNorth(oldEast);
-		box.setEast(oldSouth);
-		box.setSouth(oldWest);
+		box.setIsWallLeft(oldNorth);
+		box.setIsWallTop(oldEast);
+		box.setIsWallRight(oldSouth);
+		box.setIsWallBottom(oldWest);
 	}
 
 	/**

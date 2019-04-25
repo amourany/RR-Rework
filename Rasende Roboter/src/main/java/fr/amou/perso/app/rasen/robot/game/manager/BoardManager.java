@@ -8,4 +8,6 @@ public interface BoardManager {
 	 */
 	void initialiserPlateau();
 
+	void placerRobots();
+
 }
