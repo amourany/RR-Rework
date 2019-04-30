@@ -38,8 +38,8 @@ public class EventDefaultManager implements EventManager {
 	 * Redirect System.out to the Frame
 	 */
 	@Override
-	public void println(String message) {
-		this.frame.println(String.valueOf(message));
+	public void afficherMessage(String message) {
+		this.frame.afficherMessage(message);
 	}
 
 	@Override

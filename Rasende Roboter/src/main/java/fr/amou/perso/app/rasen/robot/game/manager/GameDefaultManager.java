@@ -2,13 +2,19 @@ package fr.amou.perso.app.rasen.robot.game.manager;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import fr.amou.perso.app.rasen.robot.enums.BoxTypeEnum;
 import fr.amou.perso.app.rasen.robot.enums.ColorRobotEnum;
@@ -16,6 +22,7 @@ import fr.amou.perso.app.rasen.robot.enums.DirectionDeplacementEnum;
 import fr.amou.perso.app.rasen.robot.game.Box;
 import fr.amou.perso.app.rasen.robot.game.Robot;
 import fr.amou.perso.app.rasen.robot.game.data.GameModel;
+import fr.amou.perso.app.rasen.robot.io.MessageWriter;
 import fr.amou.perso.app.rasen.robot.solver.Solver;
 import fr.amou.perso.app.rasen.robot.userInterface.RasendeViewInterface;
 
@@ -29,10 +36,13 @@ public class GameDefaultManager implements GameManager {
 	private RasendeViewInterface frame;
 
 	@Autowired
-	private Solver solver;
+	private BoardManager boardManager;
 
 	@Autowired
-	private BoardManager boardManager;
+	private Random randomGenerator;
+
+	@Autowired
+	private MessageWriter messageWriter;
 
 	@Override
 	public void run() {
@@ -73,43 +83,48 @@ public class GameDefaultManager implements GameManager {
 	public void handleMouseAction(int line, int column) {
 		Map<ColorRobotEnum, Robot> robotMap = this.gameModel.getRobotMap();
 
-		for (Entry<ColorRobotEnum, Robot> entry : robotMap.entrySet()) {
-
+		List<Entry<ColorRobotEnum, Robot>> selectedRobotEntryList = robotMap.entrySet().stream().filter(entry -> {
 			Robot robot = entry.getValue();
-			ColorRobotEnum color = entry.getKey();
+			return column == robot.x && line == robot.y;
+		}).collect(Collectors.toList());
 
-			if (column == robot.x && line == robot.y) {
-				this.gameModel.setSelectedRobot(color);
-				this.frame.displayBoard();
-				return;
+		if (!CollectionUtils.isEmpty(selectedRobotEntryList)) {
+			Entry<ColorRobotEnum, Robot> selectedRobotEntry = selectedRobotEntryList.get(0);
+
+			this.gameModel.setSelectedRobot(selectedRobotEntry.getKey());
+		}
+
+		Robot robot = this.gameModel.getCurrentRobot();
+
+		DirectionDeplacementEnum direction = null;
+
+		if (robot.x == column) {
+			if (robot.y > line) {
+				direction = DirectionDeplacementEnum.UP;
+			} else if (robot.y < line) {
+				direction = DirectionDeplacementEnum.DOWN;
+			}
+		} else if (robot.y == line) {
+			if (robot.x > column) {
+				direction = DirectionDeplacementEnum.LEFT;
+			} else if (robot.x < column) {
+				direction = DirectionDeplacementEnum.RIGHT;
 			}
 		}
 
-		ColorRobotEnum selectedRobot = this.gameModel.getSelectedRobot();
-		if (selectedRobot != null) {
-
-			Robot robot = robotMap.get(selectedRobot);
-
-			if (robot.x == column) {
-				if (robot.y > line) {
-					this.moveRobotInDirection(DirectionDeplacementEnum.UP);
-				} else {
-					this.moveRobotInDirection(DirectionDeplacementEnum.DOWN);
-				}
-			} else if (robot.y == line) {
-				if (robot.x > column) {
-					this.moveRobotInDirection(DirectionDeplacementEnum.LEFT);
-				} else {
-					this.moveRobotInDirection(DirectionDeplacementEnum.RIGHT);
-				}
-			}
+		if (direction != null) {
+			this.moveRobotInDirection(direction);
 		}
+
+		this.frame.displayBoard();
 
 	}
 
 	@Override
 	public void startSolver() {
-		this.solver.solve(this.gameModel);
+		Solver solver = new Solver(this.gameModel);
+		String result = solver.solve();
+		this.messageWriter.ecrireMessage(result);
 	}
 
 	@Override
@@ -119,34 +134,31 @@ public class GameDefaultManager implements GameManager {
 
 		this.boardManager.placerRobots();
 
+		this.genererObjectifs();
+
+		this.startNewLap();
+	}
+
+	private void genererObjectifs() {
 		// Création d'un tableau qui contient toutes les cartes possibles
-		Deque<Box> goalCardsStack = new ArrayDeque<>();
-		int i = 0;
-		Box[] goalCardTab = new Box[17];
+		List<BoxTypeEnum> typeInterdits = Arrays.asList(BoxTypeEnum.CENTRAL, BoxTypeEnum.EMPTY, BoxTypeEnum.MULTI);
+
+		List<Box> goalCardList = new ArrayList<>();
 		for (ColorRobotEnum c : ColorRobotEnum.values()) {
 			for (BoxTypeEnum bt : BoxTypeEnum.values()) {
-				if (bt != BoxTypeEnum.CENTRAL && bt != BoxTypeEnum.EMPTY && bt != BoxTypeEnum.MULTI) {
-					goalCardTab[i] = new Box(bt, c);
-					i++;
+				if (!typeInterdits.contains(bt)) {
+					goalCardList.add(new Box(bt, c));
 				}
 			}
 		}
-		goalCardTab[i] = new Box(BoxTypeEnum.MULTI, null);
 
-		// Ajout aléatoire des cartes dans la pile
-		for (int j = 17; j > 0; j--) {
-			int k = (int) (Math.random() * 100) % j;
-			goalCardsStack.push(goalCardTab[k]);
-			if (k != (j - 1)) {
-				Box tmp = goalCardTab[j - 1];
-				goalCardTab[j - 1] = goalCardTab[k];
-				goalCardTab[k] = tmp;
-			}
-		}
+		goalCardList.add(new Box(BoxTypeEnum.MULTI, null));
+
+		Collections.shuffle(goalCardList, this.randomGenerator);
+		Deque<Box> goalCardsStack = new ArrayDeque<>();
+		goalCardsStack.addAll(goalCardList);
 
 		this.gameModel.setGoalCardsStack(goalCardsStack);
-
-		this.startNewLap();
 	}
 
 	public void startNewLap() {
@@ -154,7 +166,7 @@ public class GameDefaultManager implements GameManager {
 		Deque<Box> goalCardsStack = this.gameModel.getGoalCardsStack();
 
 		if (goalCardsStack.isEmpty()) {
-			System.out.println("End of game !");
+			this.messageWriter.ecrireMessage("End of game !");
 			this.gameModel.setIsOver(true);
 		} else {
 

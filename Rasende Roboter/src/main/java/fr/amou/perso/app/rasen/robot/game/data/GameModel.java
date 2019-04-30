@@ -91,14 +91,17 @@ public class GameModel {
 
 		Box currentBox = this.board.getGameBoard()[rob.y][rob.x];
 
-		Boolean estRobotBonneCouleur = rob.getColor() == this.currentGoal.getColor();
-		Boolean estBonType = currentBox.getType() == this.currentGoal.getType();
-		Boolean estBonneCouleur = currentBox.getColor() == this.currentGoal.getColor()
+		Boolean estRobotBonneCouleur = rob.getColor() == this.currentGoal.getColor()
 				|| this.currentGoal.getType() == BoxTypeEnum.MULTI;
+		Boolean estBonType = currentBox.getType() == this.currentGoal.getType();
+		Boolean estBonneCouleur = currentBox.getColor() == this.currentGoal.getColor();
 
 		return estRobotBonneCouleur && estBonType && estBonneCouleur;
 	}
 
+	/**
+	 * @deprecated Utiliser this.robotMap à la place
+	 */
 	@Deprecated
 	public List<Robot> getRobotPositionList() {
 

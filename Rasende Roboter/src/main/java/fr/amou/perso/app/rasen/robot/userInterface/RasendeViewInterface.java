@@ -1,22 +1,22 @@
 package fr.amou.perso.app.rasen.robot.userInterface;
 
 public interface RasendeViewInterface {
-    public void display();
+	public void display();
 
-    public void displayDataInfo();
+	public void displayDataInfo();
 
-    public void displayBoard();
+	public void displayBoard();
 
-    public void displayHelp();
+	public void displayHelp();
 
-    public void displayWin();
+	public void displayWin();
 
-    public void setFocusOnBoard();
+	public void setFocusOnBoard();
 
-    public void println(final String string);
+	public void afficherMessage(String message);
 
-    public void dispose();
+	public void dispose();
 
-    void buildFrame();
+	void buildFrame();
 
 }

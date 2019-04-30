@@ -5,32 +5,28 @@ import fr.amou.perso.app.rasen.robot.enums.DirectionDeplacementEnum;
 
 public interface EventManager {
 
-    void moveRobotInDirection(DirectionDeplacementEnum dir);
+	void moveRobotInDirection(DirectionDeplacementEnum dir);
 
-    void gameOver();
+	void gameOver();
 
-    // void refreshBoard();
+	void refreshColumn();
 
-    void refreshColumn();
+	void setSelectedRobot(ColorRobotEnum c);
 
-    // void setCurrentGoal(Stack<Box> goal);
+	void loadPreviousPosition();
 
-    void setSelectedRobot(ColorRobotEnum c);
+	void loadNextPosition();
 
-    void loadPreviousPosition();
+	void askToQuit();
 
-    void loadNextPosition();
+	void startNewGame();
 
-    void askToQuit();
+	void displayHelp();
 
-    void startNewGame();
+	void startSolver();
 
-    void displayHelp();
+	void handleMouseAction(int line, int column);
 
-    void startSolver();
-
-    void handleMouseAction(int line, int column);
-
-    void println(String valueOf);
+	void afficherMessage(String message);
 
 }

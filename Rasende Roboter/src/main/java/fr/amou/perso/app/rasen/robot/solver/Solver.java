@@ -1,145 +1,192 @@
 package fr.amou.perso.app.rasen.robot.solver;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Deque;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.apache.commons.lang3.StringUtils;
 
 import fr.amou.perso.app.rasen.robot.enums.ColorRobotEnum;
 import fr.amou.perso.app.rasen.robot.enums.DirectionDeplacementEnum;
+import fr.amou.perso.app.rasen.robot.game.Board;
 import fr.amou.perso.app.rasen.robot.game.Constant;
 import fr.amou.perso.app.rasen.robot.game.Robot;
 import fr.amou.perso.app.rasen.robot.game.data.GameModel;
+import lombok.extern.log4j.Log4j2;
 
-@Component
+@Log4j2
 public class Solver {
 
-	@Autowired
-	private StructTree tree;
+	private StructTree tree = new StructTree();
 
 	private GameModel game;
 
-	private String root;
-	private String leaf;
-	private int depth;
-	private boolean solved;
+	private String positionSolution = StringUtils.EMPTY;
+	private Integer profondeur = 0;
+	private Boolean solved = false;
 
-	public void initSolver(GameModel game) {
-		this.root = "";
-		this.leaf = "";
-		this.tree.clear();
-		this.depth = 0;
-		this.solved = false;
+	public Solver(GameModel game) {
 		this.game = game;
+
 	}
 
-	public void solve(GameModel game) {
-		this.initSolver(game);
-		this.createRoot();
+	public String solve() {
+		List<Robot> robotList = this.game.getRobotPositionList();
 
-		while (!this.solved && this.depth < 13) {
-			this.depth++;
-			this.solved = this.buildPossibilities();
+		// Création de la configuration initiale
+		String positionInitiale = this.encodeKey(robotList);
+		this.tree.addPossibility(positionInitiale, this.profondeur);
+		log.debug("Debut de la recherche");
+
+		while (!this.solved) {
+			this.profondeur++;
+
+			log.debug("Construction des possibilités pour la profondeur : " + this.profondeur);
+			this.buildPossibilities();
 		}
 
-		if (this.solved) {
-			System.out.println("Solution found, number of moves : " + (this.depth - 1));
-			this.tree.buildStack(this.leaf, this.root);
-		} else {
-			System.out.println("No solutions found, try to do some moves and try again");
-		}
-	}
+		log.debug("Fin de la recherche");
 
-	public void createRoot() {
-		this.root = this.encodeKey(this.game.getRobotPositionList());
-		this.tree.addPossibility(this.root, this.depth);
+		StringBuilder solutionSB = new StringBuilder();
+
+		solutionSB.append("Solution found, number of moves : " + (this.profondeur) + "\n");
+		String etapes = this.buildStack(this.positionSolution, positionInitiale);
+		solutionSB.append(etapes);
+
+		return solutionSB.toString();
 	}
 
 	/**
 	 * This function create all the possible moves
 	 */
-	private boolean buildPossibilities() {
-		boolean moved;
-		String toAdd;
-		List<Robot> robots = new ArrayList<>();
-		List<Robot> copyRobot = new ArrayList<>();
-		Map<String, Integer> copyTree = new HashMap<>();
+	private void buildPossibilities() {
 
-		copyTree = this.tree.getKeyFromValue(this.depth - 1);
+		Board board = this.game.getBoard();
 
-		for (String s : copyTree.keySet()) {
+		List<String> positionInitialeList = this.tree.getPositionInitialeProfondeur(this.profondeur - 1);
 
-			robots = this.decodeKey(s);
+		for (String positionInitiale : positionInitialeList) {
 
-			for (Robot r : robots) {
-				for (DirectionDeplacementEnum d : DirectionDeplacementEnum.values()) { // Then for
-																						// each robot
-																						// we move
-																						// them in
-																						// all
-																						// directions
-					copyRobot.clear();
-					copyRobot.addAll(robots);
-					Robot rCopy = new Robot(r);
+			List<Robot> robots = this.decodeKey(positionInitiale);
 
-					moved = this.game.getBoard().getNewPosition(rCopy, d, copyRobot);
+			for (Robot robot : robots) {
+				for (DirectionDeplacementEnum direction : DirectionDeplacementEnum.values()) {
+					List<Robot> robotTravailList = new ArrayList<>(robots);
+					Robot robotTravail = new Robot(robot);
 
-					for (int i = 0; i < copyRobot.size(); i++) {
-						if (copyRobot.get(i).getColor() == rCopy.getColor()) {
-							copyRobot.set(i, rCopy);
-						}
-					}
-					if (moved) { // And then we add the key made by the move of each robot to the
-									// hashmap
-						if (!this.solved) {
-							if (this.game.isWin(r)) {
-								toAdd = this.encodeKey(copyRobot);
-								if (!this.tree.containsKey(toAdd)) {
-									this.leaf = toAdd;
-									this.tree.addParent(toAdd, s);
-									this.solved = true;
-								}
-							} else {
-								toAdd = this.encodeKey(copyRobot);
-								if (!this.tree.containsKey(toAdd)) {
-									this.tree.addPossibility(toAdd, this.depth);
-									this.tree.addParent(toAdd, s);
-								}
+					Boolean hasMoved = board.getNewPosition(robotTravail, direction, robotTravailList);
+
+					robotTravailList = robotTravailList.stream()
+							.map(r -> r.getColor() == robotTravail.getColor() ? robotTravail : r)
+							.collect(Collectors.toList());
+
+					if (hasMoved) {
+
+						String nouvellePosition = this.encodeKey(robotTravailList);
+						Boolean estConfigurationExistante = this.tree.containsKey(nouvellePosition);
+
+						Boolean win = this.game.isWin(robotTravail);
+						if (win) {
+							if (!estConfigurationExistante) {
+								this.positionSolution = nouvellePosition;
+								this.tree.addParent(nouvellePosition, positionInitiale);
+								this.solved = true;
 							}
+						} else if (!estConfigurationExistante) {
+							this.tree.addPossibility(nouvellePosition, this.profondeur);
+							this.tree.addParent(nouvellePosition, positionInitiale);
 						}
+
 					}
 				}
 			}
 		}
-		return this.solved;
+	}
+
+	private String buildStack(String feuille, String racine) {
+
+		Deque<String> solutionStack = new ArrayDeque<>();
+
+		StringBuilder etapesSB = new StringBuilder();
+
+		solutionStack.push(feuille);
+
+		String next = this.tree.getParent(feuille);
+		solutionStack.push(next);
+
+		while (!StringUtils.equals(next, racine)) {
+			next = this.tree.getParent(next);
+			solutionStack.push(next);
+		}
+
+		String positionInitiale = solutionStack.pop();
+
+		for (String positionDepilee : solutionStack) {
+			String direction = this.findDirection(positionInitiale, positionDepilee);
+			etapesSB.append(direction + "\n");
+			positionInitiale = positionDepilee;
+		}
+
+		return etapesSB.toString();
+	}
+
+	private String findDirection(String after, String before) {
+
+		List<Robot> robotAvantList = this.decodeKey(before);
+		List<Robot> robotApresList = this.decodeKey(after);
+
+		String[] nodeBefore;
+		String[] nodeAfter;
+		String[] robotInfoBefore;
+		String[] robotInfoAfter;
+		String res = "Move the ";
+		DirectionDeplacementEnum d = null;
+
+		nodeBefore = before.split("&");
+		nodeAfter = after.split("&");
+
+		for (int i = 0; i < Constant.NB_ROBOT; i++) {
+			if (!nodeBefore[i].equals(nodeAfter[i])) {
+				robotInfoBefore = nodeBefore[i].split(";");
+				robotInfoAfter = nodeAfter[i].split(";");
+
+				res += ColorRobotEnum.valueOf(robotInfoBefore[2]) + " robot in the ";
+
+				if (Integer.parseInt(robotInfoBefore[0]) > Integer.parseInt(robotInfoAfter[0])) {
+					d = DirectionDeplacementEnum.RIGHT;
+				} else if (Integer.parseInt(robotInfoBefore[0]) < Integer.parseInt(robotInfoAfter[0])) {
+					d = DirectionDeplacementEnum.LEFT;
+				} else if (Integer.parseInt(robotInfoBefore[1]) > Integer.parseInt(robotInfoAfter[1])) {
+					d = DirectionDeplacementEnum.DOWN;
+				} else if (Integer.parseInt(robotInfoBefore[1]) < Integer.parseInt(robotInfoAfter[1])) {
+					d = DirectionDeplacementEnum.UP;
+				}
+			}
+		}
+		res += d + " direction.";
+		return res;
 	}
 
 	private String encodeKey(List<Robot> robots) {
-		String s = "";
-		for (Robot r : robots) {
-			s += r.toString() + "&";
-		}
-		return s;
+		return robots.stream().map(Robot::toString).collect(Collectors.joining("&"));
 	}
 
 	private List<Robot> decodeKey(String key) {
-		String subKey[];
-		String robotInfo[];
-		Robot rob;
-		List<Robot> robots = new ArrayList<>();
+		List<String> keySplit = Arrays.asList(key.split("&"));
 
-		subKey = key.split("&");
+		return keySplit.stream().map(Solver::creerRobotDepuisClef).collect(Collectors.toList());
+	}
 
-		for (int i = 0; i < Constant.NB_ROBOT; i++) {
-			robotInfo = subKey[i].split(";"); // We split the keys in order to get the four robots
-			rob = new Robot(Integer.parseInt(robotInfo[0]), Integer.parseInt(robotInfo[1]),
-					ColorRobotEnum.valueOf(robotInfo[2]));
-			robots.add(rob);
-		}
+	private static Robot creerRobotDepuisClef(String key) {
+		String[] robotCaract = key.split(";");
 
-		return robots;
+		Integer x = Integer.parseInt(robotCaract[0]);
+		Integer y = Integer.parseInt(robotCaract[1]);
+		ColorRobotEnum couleur = ColorRobotEnum.valueOf(robotCaract[2]);
+
+		return new Robot(x, y, couleur);
 	}
 }

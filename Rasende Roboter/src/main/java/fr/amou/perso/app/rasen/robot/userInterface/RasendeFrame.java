@@ -78,7 +78,6 @@ public class RasendeFrame implements RasendeViewInterface {
 
 		this.jFrame.addWindowListener(this.windowAdapter);
 
-		// this.buildFrame();
 	}
 
 	/**
@@ -297,8 +296,8 @@ public class RasendeFrame implements RasendeViewInterface {
 	 * @param s : a String
 	 */
 	@Override
-	public void println(final String s) {
-		this.mConsoleText.append(s);
+	public void afficherMessage(String message) {
+		this.mConsoleText.append(message);
 		this.mConsoleText.setCaretPosition(this.mConsoleText.getDocument().getLength());
 	}
 

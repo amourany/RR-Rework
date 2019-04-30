@@ -237,8 +237,8 @@ public class BoardDefaultManager implements BoardManager {
 
 		Integer y = yTmp;
 
-		Integer nbRobotColision = robots.stream().filter(robot -> robot.x == x && robot.y == y)
-				.collect(Collectors.toList()).size();
+		Long nbRobotColision = robots.stream().filter(robot -> robot.x == x && robot.y == y)
+				.collect(Collectors.counting());
 
 		if (nbRobotColision == 0) {
 			return new Robot(x, y, color);
