@@ -1,5 +1,7 @@
 package fr.amou.perso.app.rasen.robot.solver;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import fr.amou.perso.app.rasen.robot.enums.ColorRobotEnum;
 import fr.amou.perso.app.rasen.robot.enums.DirectionDeplacementEnum;
 import fr.amou.perso.app.rasen.robot.game.Board;
-import fr.amou.perso.app.rasen.robot.game.Constant;
 import fr.amou.perso.app.rasen.robot.game.Robot;
 import fr.amou.perso.app.rasen.robot.game.data.GameModel;
 import lombok.extern.log4j.Log4j2;
@@ -30,7 +31,6 @@ public class Solver {
 
 	public Solver(GameModel game) {
 		this.game = game;
-
 	}
 
 	public String solve() {
@@ -39,16 +39,17 @@ public class Solver {
 		// Création de la configuration initiale
 		String positionInitiale = this.encodeKey(robotList);
 		this.tree.addPossibility(positionInitiale, this.profondeur);
-		log.debug("Debut de la recherche");
+
+		Instant debutRecherche = Instant.now();
 
 		while (!this.solved) {
 			this.profondeur++;
-
-			log.debug("Construction des possibilités pour la profondeur : " + this.profondeur);
 			this.buildPossibilities();
 		}
 
-		log.debug("Fin de la recherche");
+		Instant finRecherche = Instant.now();
+		Long tempsRecherche = Duration.between(debutRecherche, finRecherche).toMillis();
+		log.debug("Solution trouvée - profondeur : {} - durée : {} ms", this.profondeur, tempsRecherche);
 
 		StringBuilder solutionSB = new StringBuilder();
 
@@ -135,39 +136,40 @@ public class Solver {
 
 	private String findDirection(String after, String before) {
 
-		List<Robot> robotAvantList = this.decodeKey(before);
-		List<Robot> robotApresList = this.decodeKey(after);
+		String deplacement = StringUtils.EMPTY;
 
-		String[] nodeBefore;
-		String[] nodeAfter;
-		String[] robotInfoBefore;
-		String[] robotInfoAfter;
-		String res = "Move the ";
-		DirectionDeplacementEnum d = null;
+		List<Robot> posRobotAvantList = this.decodeKey(before);
+		List<Robot> posRobotApresList = this.decodeKey(after);
 
-		nodeBefore = before.split("&");
-		nodeAfter = after.split("&");
+		for (Robot posRobotAvant : posRobotAvantList) {
+			Integer indexRobot = posRobotAvantList.indexOf(posRobotAvant);
+			Robot posRobotApres = posRobotApresList.get(indexRobot);
 
-		for (int i = 0; i < Constant.NB_ROBOT; i++) {
-			if (!nodeBefore[i].equals(nodeAfter[i])) {
-				robotInfoBefore = nodeBefore[i].split(";");
-				robotInfoAfter = nodeAfter[i].split(";");
+			if (!posRobotAvant.equals(posRobotApres)) {
+				ColorRobotEnum couleur = posRobotAvant.getColor();
+				Integer xAvant = posRobotAvant.x;
+				Integer yAvant = posRobotAvant.y;
 
-				res += ColorRobotEnum.valueOf(robotInfoBefore[2]) + " robot in the ";
+				Integer xApres = posRobotApres.x;
+				Integer yApres = posRobotApres.y;
 
-				if (Integer.parseInt(robotInfoBefore[0]) > Integer.parseInt(robotInfoAfter[0])) {
+				DirectionDeplacementEnum d = null;
+				if (xAvant > xApres) {
 					d = DirectionDeplacementEnum.RIGHT;
-				} else if (Integer.parseInt(robotInfoBefore[0]) < Integer.parseInt(robotInfoAfter[0])) {
+				} else if (xAvant < xApres) {
 					d = DirectionDeplacementEnum.LEFT;
-				} else if (Integer.parseInt(robotInfoBefore[1]) > Integer.parseInt(robotInfoAfter[1])) {
+				} else if (yAvant > yApres) {
 					d = DirectionDeplacementEnum.DOWN;
-				} else if (Integer.parseInt(robotInfoBefore[1]) < Integer.parseInt(robotInfoAfter[1])) {
+				} else if (yAvant < yApres) {
 					d = DirectionDeplacementEnum.UP;
 				}
+
+				deplacement = "Robot : " + couleur + " - Direction : " + d;
+
 			}
 		}
-		res += d + " direction.";
-		return res;
+
+		return deplacement;
 	}
 
 	private String encodeKey(List<Robot> robots) {

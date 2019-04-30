@@ -19,7 +19,7 @@ public class StructTree {
 		this.parentMap.put(key, keyParent);
 	}
 
-	public void addPossibility(String key, int depth) {
+	public void addPossibility(String key, Integer depth) {
 		this.possibilities.put(key, depth);
 	}
 
